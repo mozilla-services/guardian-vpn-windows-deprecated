@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Supported languages -->
+    <x:Array Type="system:String" x:Key="SupportedLanguages">
+        <system:String>en-US</system:String>
+        <system:String>de</system:String>
+    </x:Array>
+    
+    <!-- Fluent translation file uris -->
+    <system:String x:Key="en-US">pack://application:,,,/UI/Resources/Localization/Translations/en-us.ftl</system:String>
+    <system:String x:Key="de">pack://application:,,,/UI/Resources/Localization/Translations/de.ftl</system:String>
+
+</ResourceDictionary>

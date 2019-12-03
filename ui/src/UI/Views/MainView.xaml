@@ -1,0 +1,121 @@
+﻿<UserControl x:Class="FirefoxPrivateNetwork.UI.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI"
+             xmlns:uc="clr-namespace:FirefoxPrivateNetwork.UI.Components"
+             mc:Ignorable="d" 
+             VerticalContentAlignment="Top"
+             d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+    <UserControl.Resources>
+        <uc:VpnNotUnprotectedConverter x:Key="VpnNotUnprotectedConverter"></uc:VpnNotUnprotectedConverter>
+        <uc:VpnProtectedConverter x:Key="VpnProtectedConverter"></uc:VpnProtectedConverter>
+    </UserControl.Resources>
+
+    <Grid x:Name="MainViewGrid" Height="Auto" Width="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="338" />
+            <RowDefinition Height="56" />
+            <RowDefinition Height="48"/>
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="MainCardGrid" Width="Auto" Height="334" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,8,0,0" Grid.Row="0" Grid.Column="0">
+            <!-- Card background-->
+            <uc:Card x:Name="MainCard" Active="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnNotUnprotectedConverter}, UpdateSourceTrigger=PropertyChanged}" AnimateRipple="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnProtectedConverter}, UpdateSourceTrigger=PropertyChanged}" />
+            
+            <!-- Card content -->
+            <Grid Height="Auto" Width="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="48" />
+                    <RowDefinition Height="104" />
+                    <RowDefinition Height="32" />
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="104" />
+                </Grid.RowDefinitions>
+
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">
+                    <DockPanel VerticalAlignment="Center" Width="328">
+                        <!-- Dev mode badge -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <Image Style="{StaticResource DevMode}" Source="{Binding Source={StaticResource 'dev'}}" Width="44" Height="18" Margin="16,0" />
+                        </StackPanel>
+
+                        <!-- Navigate settings button -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Width="40" Height="40" Margin="8,0" local:ButtonExtensions.IconUri="{StaticResource 'settings'}" Click="NavigateSettings">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="0">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <Button Width="40" Height="40" Margin="8,0" local:ButtonExtensions.IconUri="{StaticResource 'settings-white'}" local:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" local:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="NavigateSettings">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="0">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+                </Grid>
+
+                <!-- VPN status image -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
+                    <uc:HeroImage Width="80" Height="80" IsHitTestVisible="False" local:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+
+                <!-- VPN status text -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0">
+                    <uc:HeroText IsHitTestVisible="False" local:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+
+                <!-- VPN stability text -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+                    <uc:HeroSubText IsHitTestVisible="False" local:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" local:CardExtensions.VpnStability="{Binding Stability, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
+
+                <!-- VPN toggle -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" Grid.Column="0">
+                    <uc:VPNToggle x:Name="Toggle" Margin="0,24,0,0" EnableWhiteSwitchBorder="True" Status="{Binding TunnelStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}" TargetUpdated="Toggle_TargetUpdated"/>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <!-- Connection view navigation button -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,8,0,0" Grid.Row="1" Grid.Column="0">
+            <uc:PageNavigation x:Name="ConnectionNavButton" Title="{Binding Path=[connection-page-title]}" TitleIconUrl="{StaticResource 'connection'}" SubtitleColor="{StaticResource 'Grey/Grey 40'}" Margin="8,4" Click="NavigateConnection"/>
+        </Grid>
+
+        <!-- Devices view navigation button -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0">
+            <uc:PageNavigation Title="{Binding Path=[devices-page-title]}" TitleIconUrl="{StaticResource 'devices'}" SubtitleColor="{StaticResource 'Grey/Grey 40'}" Margin="8,4" Click="NavigateDevices">
+                <uc:PageNavigation.Subtitle>
+                    <MultiBinding StringFormat="{}{0} {1} {2}">
+                        <Binding Path="UserNumDevices" UpdateSourceTrigger="PropertyChanged" />
+                        <Binding Path="[devices-of]" />
+                        <Binding Path="MaxNumDevices" UpdateSourceTrigger="PropertyChanged" />
+                    </MultiBinding>
+                </uc:PageNavigation.Subtitle>
+            </uc:PageNavigation>
+        </Grid>
+    </Grid>
+</UserControl>

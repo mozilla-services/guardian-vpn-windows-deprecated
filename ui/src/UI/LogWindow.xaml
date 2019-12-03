@@ -1,0 +1,54 @@
+﻿<Window x:Class="FirefoxPrivateNetwork.UI.LogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI"
+        mc:Ignorable="d"
+        SizeChanged="Window_SizeChanged"
+        Title="{Binding Path=[viewlog-window-title]}" Height="450" Width="800" Closed="WindowClosed">
+    <Window.InputBindings>
+        <KeyBinding Key="C" Modifiers="Ctrl" Command="Copy" />
+        <KeyBinding Key="A" Modifiers="Ctrl" Command="SelectAll" />
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="Save" />
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="Copy" Executed="Copy" />
+        <CommandBinding Command="SelectAll" Executed="SelectAll" />
+        <CommandBinding Command="Save" Executed="Save" />
+    </Window.CommandBindings>
+    <Grid Margin="4">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" x:Name="logView" BorderThickness="0">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Background" Value="White" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridView.ColumnHeaderContainerStyle>
+                        <Style BasedOn="{StaticResource 'Header 20'}" TargetType="GridViewColumnHeader">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Padding" Value="0,5,0,0" />
+                        </Style>
+                    </GridView.ColumnHeaderContainerStyle>
+                    <GridViewColumn Header="{Binding Path=[viewlog-timestamp-header]}" DisplayMemberBinding="{Binding Timestamp}" />
+                    <GridViewColumn Header="{Binding Path=[viewlog-message-header]}" DisplayMemberBinding="{Binding Message}" />
+                </GridView>
+            </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{Binding Path=[viewlog-copy-menuitem]}" Command="Copy" InputGestureText="Ctrl+C" />
+                    <MenuItem Header="{Binding Path=[viewlog-select-all-menuitem]}" Command="SelectAll" InputGestureText="Ctrl+A" />
+                    <MenuItem Header="{Binding Path=[viewlog-save-to-file-menuitem]}" Command="Save" InputGestureText="Ctrl+S" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+        <Button Grid.Row="1" Margin="0,5,0,5" Style="{StaticResource 'Standard'}" Content="{Binding Path=[viewlog-save-button]}" FontWeight="SemiBold" Width="296" Height="40" HorizontalAlignment="Right" Click="Save" />
+    </Grid>
+</Window>

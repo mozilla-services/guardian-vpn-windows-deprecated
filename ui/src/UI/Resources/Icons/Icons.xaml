@@ -1,0 +1,61 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <!-- General Icons -->
+    <system:String x:Key="account">pack://application:,,,/UI/Resources/Icons/account.svg</system:String>
+    <system:String x:Key="back">pack://application:,,,/UI/Resources/Icons/back.svg</system:String>
+    <system:String x:Key="bug">pack://application:,,,/UI/Resources/Icons/bug.svg</system:String>
+    <system:String x:Key="chat">pack://application:,,,/UI/Resources/Icons/chat.svg</system:String>
+    <system:String x:Key="chevron">pack://application:,,,/UI/Resources/Icons/chevron.svg</system:String>
+    <system:String x:Key="close-small">pack://application:,,,/UI/Resources/Icons/close-small.svg</system:String>
+    <system:String x:Key="close-white">pack://application:,,,/UI/Resources/Icons/close-white.svg</system:String>
+    <system:String x:Key="close">pack://application:,,,/UI/Resources/Icons/close.svg</system:String>
+    <system:String x:Key="connection">pack://application:,,,/UI/Resources/Icons/connection.svg</system:String>
+    <system:String x:Key="delete">pack://application:,,,/UI/Resources/Icons/delete.svg</system:String>
+    <system:String x:Key="delete2">pack://application:,,,/UI/Resources/Icons/delete2.svg</system:String>
+    <system:String x:Key="devices">pack://application:,,,/UI/Resources/Icons/devices.svg</system:String>
+    <system:String x:Key="drop-closed">pack://application:,,,/UI/Resources/Icons/drop-closed.svg</system:String>
+    <system:String x:Key="drop-open">pack://application:,,,/UI/Resources/Icons/drop-open.svg</system:String>
+    <system:String x:Key="dev">pack://application:,,,/UI/Resources/Icons/dev.png</system:String>
+    <system:String x:Key="info-red">pack://application:,,,/UI/Resources/Icons/info-red.svg</system:String>
+    <system:String x:Key="info">pack://application:,,,/UI/Resources/Icons/info.svg</system:String>
+    <system:String x:Key="languages">pack://application:,,,/UI/Resources/Icons/languages.svg</system:String>
+    <system:String x:Key="list">pack://application:,,,/UI/Resources/Icons/list.svg</system:String>
+    <system:String x:Key="no-signal">pack://application:,,,/UI/Resources/Icons/nosignal.svg</system:String>
+    <system:String x:Key="open-window-blue50">pack://application:,,,/UI/Resources/Icons/open-window-blue50.svg</system:String>
+    <system:String x:Key="open-window-blue60">pack://application:,,,/UI/Resources/Icons/open-window-blue60.svg</system:String>
+    <system:String x:Key="open-window">pack://application:,,,/UI/Resources/Icons/open-window.svg</system:String>
+    <system:String x:Key="plus">pack://application:,,,/UI/Resources/Icons/plus.svg</system:String>
+    <system:String x:Key="settings-white">pack://application:,,,/UI/Resources/Icons/settings-white.svg</system:String>
+    <system:String x:Key="settings">pack://application:,,,/UI/Resources/Icons/settings.svg</system:String>
+    <system:String x:Key="spinner">pack://application:,,,/UI/Resources/Icons/spinner.svg</system:String>
+    <system:String x:Key="star-filled">pack://application:,,,/UI/Resources/Icons/star-filled.svg</system:String>
+    <system:String x:Key="star-outline">pack://application:,,,/UI/Resources/Icons/star-outline.svg</system:String>
+    <system:String x:Key="star-pressed">pack://application:,,,/UI/Resources/Icons/star-pressed.svg</system:String>
+    <system:String x:Key="unstable">pack://application:,,,/UI/Resources/Icons/unstable.svg</system:String>
+    <system:String x:Key="wifi">pack://application:,,,/UI/Resources/Icons/wifi.svg</system:String>
+    <!-- Tray Icons -->
+    <system:String x:Key="tray-off">pack://application:,,,/UI/Resources/Icons/Tray/tray-off.svg</system:String>
+    <system:String x:Key="tray-on-error">pack://application:,,,/UI/Resources/Icons/Tray/tray-on-error.svg</system:String>
+    <system:String x:Key="tray-on-unstable">pack://application:,,,/UI/Resources/Icons/Tray/tray-on-unstable.svg</system:String>
+    <system:String x:Key="tray-on">pack://application:,,,/UI/Resources/Icons/Tray/tray-on.svg</system:String>
+    <!-- Tray Toast Icons -->
+    <system:String x:Key="toast-off">pack://application:,,,/UI/Resources/Icons/Tray/Toast/off.svg</system:String>
+    <system:String x:Key="toast-on">pack://application:,,,/UI/Resources/Icons/Tray/Toast/on.svg</system:String>
+    <system:String x:Key="tray-switch">pack://application:,,,/UI/Resources/Icons/Tray/Toast/switch.svg</system:String>
+    <!-- Illustration Icons -->
+    <system:String x:Key="illu-beta-announcement">pack://application:,,,/UI/Resources/Icons/Illustration/illu-beta-announcement.svg</system:String>
+    <system:String x:Key="illu-firefox">pack://application:,,,/UI/Resources/Icons/Illustration/illu-firefox.svg</system:String>
+    <system:String x:Key="illu-loading">pack://application:,,,/UI/Resources/Icons/Illustration/illu-loading.svg</system:String>
+    <system:String x:Key="illu-loading2">pack://application:,,,/UI/Resources/Icons/Illustration/illu-loading2.svg</system:String>
+    <system:String x:Key="illu-logo">pack://application:,,,/UI/Resources/Icons/Illustration/illu-logo.svg</system:String>
+    <system:String x:Key="illu-off">pack://application:,,,/UI/Resources/Icons/Illustration/illu-off.svg</system:String>
+    <system:String x:Key="illu-on">pack://application:,,,/UI/Resources/Icons/Illustration/illu-on.svg</system:String>
+    <system:String x:Key="illu-tray-tip">pack://application:,,,/UI/Resources/Icons/Illustration/illu-tray-tip.svg</system:String>
+    <system:String x:Key="illu-upgrade">pack://application:,,,/UI/Resources/Icons/Illustration/illu-upgrade.svg</system:String>
+    <system:String x:Key="illu-window-left-decoration">pack://application:,,,/UI/Resources/Icons/Illustration/illu-window-left-decoration.png</system:String>
+    <system:String x:Key="illu-window-left-shadow">pack://application:,,,/UI/Resources/Icons/Illustration/illu-window-left-shadow.png</system:String>
+    <system:String x:Key="illu-window-right-decoration">pack://application:,,,/UI/Resources/Icons/Illustration/illu-window-right-decoration.png</system:String>
+    <system:String x:Key="illu-window-right-shadow">pack://application:,,,/UI/Resources/Icons/Illustration/illu-window-right-shadow.png</system:String>
+</ResourceDictionary>

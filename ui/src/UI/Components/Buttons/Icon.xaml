@@ -1,0 +1,55 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI"
+                    xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <local:StringEmptyConverter x:Key="StringEmptyConverter"/>
+
+    <Style x:Key="Icon" TargetType="{x:Type Button}">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+        <Setter Property="MinWidth" Value="40"/>
+        <Setter Property="MinHeight" Value="40"/>
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                        <Grid>
+                            <Image x:Name="Icon" Margin="13" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Image.Style>
+                                    <Style TargetType="{x:Type Image}">
+                                        <Setter Property="Source" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(local:ButtonExtensions.IconUri), Converter={svgc:SvgImageConverter}}" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=IsMouseOver}" Value="True" />
+                                                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(local:ButtonExtensions.HoverIconUri), Converter={StaticResource StringEmptyConverter}}" Value="False"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Source" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(local:ButtonExtensions.HoverIconUri), Converter={svgc:SvgImageConverter}}" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(local:ButtonExtensions.HoverBackground)}" />
+            </Trigger>
+            <Trigger Property="Button.IsFocused" Value="True">
+                <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(local:ButtonExtensions.HoverBackground)}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{Binding RelativeSource={RelativeSource Self}, Path=(local:ButtonExtensions.PressedBackground)}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

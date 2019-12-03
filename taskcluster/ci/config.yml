@@ -1,0 +1,18 @@
+---
+trust-domain: mpd001
+
+task-priority: lowest
+
+taskgraph:
+    repositories:
+        vcs:
+            name: "Project VPN Client"
+            ssh-secret-name: project/releng/callek/mpd001-deploykey
+
+workers:
+    aliases:
+        windows:
+            provisioner: aws-provisioner-v1
+            implementation: generic-worker
+            os: windows
+            worker-type: 'mpd001-{level}-b-win2012'

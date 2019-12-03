@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Firefox Private Network", "src\Firefox Private Network.csproj", "{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirefoxPrivateNetwork.Tests", "Guardian.Tests\FirefoxPrivateNetwork.Tests.csproj", "{4A94480C-43C1-42DF-AFCF-CFB1D7574595}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_QA|x64 = Debug_QA|x64
+		Debug_QA|x86 = Debug_QA|x86
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug_QA|x64.ActiveCfg = Debug_QA|x64
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug_QA|x64.Build.0 = Debug_QA|x64
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug_QA|x86.ActiveCfg = Debug_QA|x86
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug_QA|x86.Build.0 = Debug_QA|x86
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug|x64.ActiveCfg = Debug|x64
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug|x64.Build.0 = Debug|x64
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug|x86.ActiveCfg = Debug|x86
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Debug|x86.Build.0 = Debug|x86
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Release|x64.ActiveCfg = Release|x64
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Release|x64.Build.0 = Release|x64
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Release|x86.ActiveCfg = Release|x86
+		{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}.Release|x86.Build.0 = Release|x86
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug_QA|x64.ActiveCfg = Debug_QA|x64
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug_QA|x64.Build.0 = Debug_QA|x64
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug_QA|x86.ActiveCfg = Debug_QA|Any CPU
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug_QA|x86.Build.0 = Debug_QA|Any CPU
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug|x64.ActiveCfg = Debug|x64
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug|x64.Build.0 = Debug|x64
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Debug|x86.Build.0 = Debug|Any CPU
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Release|x64.ActiveCfg = Release|x64
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Release|x64.Build.0 = Release|x64
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Release|x86.ActiveCfg = Release|Any CPU
+		{4A94480C-43C1-42DF-AFCF-CFB1D7574595}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0336B87-1A82-4E5C-AC20-67627C0648BD}
+	EndGlobalSection
+EndGlobal

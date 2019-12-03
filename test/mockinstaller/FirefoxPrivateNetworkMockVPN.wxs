@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<Product
+		Id="*"
+		Name="Firefox Private Network Mock VPN Installer"
+		Language="1033"
+		Version="0.1.0.0"
+		Manufacturer="Mozilla Corporation"
+		UpgradeCode="82d003cb-10df-44c1-90c0-05762d975909">
+		<Package
+			InstallerVersion="400"
+			Compressed="yes"
+			InstallScope="perMachine"
+			Description="Firefox Private Network Mock VPN"
+			ReadOnly="yes"	
+		/>
+
+		<MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+		<Property Id="ARPURLINFOABOUT" Value="https://mozilla.com" />
+		<Property Id="ARPNOMODIFY" Value="yes" />
+		<Property Id="DISABLEADVTSHORTCUTS" Value="yes" />
+		<Property Id="DISABLEROLLBACK" Value="yes" />
+		<Property Id="MSIDISABLERMRESTART" Value="1" />
+		<Property Id="MSIRMSHUTDOWN" Value="1" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFiles64Folder">
+				<Directory Id="MozillaFolder" Name="Mozilla">
+					<Directory Id="FirefoxPrivateNetworkMockVPNFolder" Name="Firefox Private Network Mock VPN" />
+				</Directory>
+			</Directory>
+		</Directory>
+
+		<ComponentGroup Id="FirefoxPrivateNetworkMockVPNComponents">
+			<Component Directory="FirefoxPrivateNetworkMockVPNFolder" Id="FirefoxPrivateNetworkVPNMockFile" Guid="dd597a2c-b8af-439d-97ec-fd1bc527d709">
+				<File Source="mockdata/MockInstallFile.txt" />
+			</Component>
+		</ComponentGroup>
+
+		<Feature Id="FirefoxPrivateNetworkMockVPNFeature" Title="Firefox Private Network Mock VPN" Level="1">
+			<ComponentGroupRef Id="FirefoxPrivateNetworkMockVPNComponents" />
+		</Feature>
+	</Product>
+</Wix>

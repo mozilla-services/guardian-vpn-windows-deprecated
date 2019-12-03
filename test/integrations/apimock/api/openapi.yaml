@@ -1,0 +1,408 @@
+openapi: 3.0.1
+info:
+  title: Firefox Guardian API
+  description: API to manage Guardian accounts, devices and servers
+  version: "0.1"
+servers:
+  - url: "https://guardian-dev.herokuapp.com"
+    description: Development server
+  - url: "http://localhost:3000"
+    description: Local server
+paths:
+  /api/v1/vpn/account:
+    get:
+      summary: Account Information
+      description: Returns information about the user, their devices and subscription status.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/AccountDetails"
+              example:
+                email: johndoe@example.com
+                display_name: John Doe
+                avatar: https://example.com/avatar.jpg
+                subscriptions:
+                  vpn:
+                    active: true
+                    created_at: "2019-08-01T10:22:16.853Z"
+                    renews_on: "2019-08-01T10:22:16.853Z"
+                devices:
+                  - name: Windows-4242
+                    pubkey: veGD6/aEY6sMfN3Ls7YWPmNgu3AheO7nQqsFT47YSws=
+                    ipv4_address: 10.99.0.1/32
+                    ipv6_address: fc00:bbbb:bbbb:bb01::1/128
+                    created_at: "2019-08-01T10:22:16.853Z"
+                  - name: Android-2424
+                    pubkey: j38fC/fjlkdDFSAFFGDKLVCASDCLDKFLDSCsfdslaDs=
+                    pv4_address: 10.99.0.1/32
+                    ipv6_address: fc00:bbbb:bbbb:bb01::1/128
+                    created_at: "2019-08-01T10:22:16.853Z"
+                max_devices: 5
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  /api/v1/vpn/device:
+    post:
+      summary: Add Device
+      description: Adds a new device to the user's account.
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Human friendly name of the device.
+                pubkey:
+                  type: string
+                  description: Public key of the device.
+              required:
+                - name
+                - pubkey
+            example:
+              name: Windows-4242
+              pubkey: veGD6/aEY6sMfN3Ls7YWPmNgu3AheO7nQqsFT47YSws=
+      responses:
+        "201":
+          description: Device added successfully.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: "#/components/schemas/GuardianDevice"
+              example:
+                name: Windows-4242
+                pubkey: veGD6/aEY6sMfN3Ls7YWPmNgu3AheO7nQqsFT47YSws=
+                ipv4_address: 10.99.0.1/32
+                ipv6_address: fc00:bbbb:bbbb:bb01::1/128
+                created_at: "2019-08-01T10:22:16.853Z"
+        "400":
+          $ref: "#/components/responses/GuardianAddDeviceError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  /api/v1/vpn/device/{pubkey}:
+    delete:
+      summary: Remove Device
+      description: Removes a device from a user's account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: pubkey
+          in: path
+          schema:
+            type: string
+          required: true
+          description: The WireGuard public key, urlencoded.
+          example: veGD6%2FaEY6sMfN3Ls7YWPmNgu3AheO7nQqsFT47YSws%3D
+      responses:
+        "204":
+          description: Device removed successfully.
+        "400":
+          $ref: "#/components/responses/GuardianDeleteDeviceError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  /api/v1/vpn/servers:
+    get:
+      summary: List Servers
+      description: Returns a list of wireguard servers.
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: 200 response. The schema is defined by Mullvad API.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+  /api/v1/vpn/versions:
+    get:
+      summary: App Versions
+      description: Returns the versions of the client apps
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  windows:
+                    type: object
+                    properties:
+                      latest:
+                        type: object
+                        description: Latest version of the client.
+                      minimum:
+                        type: object
+                        description: Minimum version the client must be at.
+                        properties:
+                          version:
+                            type: string
+                            description: The version string
+                          released_on:
+                            type: string
+                            description: The release date
+                          message:
+                            type: string
+                            description: (optional) release message
+              example:
+                windows:
+                  latest:
+                    version: "1.0"
+                    released_on: "2019-08-01T10:22:16.853Z"
+                    message: Our first real release. Get it while it's hot!
+                  minimum:
+                    version: "0.1"
+                    released_on: "2019-08-01T10:22:16.853Z"
+                    message: Our first alpha release!
+  /api/v1/vpn/login:
+    post:
+      summary: Token-based authentication flow.
+      description: This endpoint returns urls, an expiration and poll interval for token-based authentication.
+      responses:
+        "200":
+          description: 200 response
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  login_url:
+                    type: string
+                    description: URL to open in the user's browser
+                  verification_url:
+                    type: string
+                    description: URL to poll for authentication status
+                  expires_on:
+                    type: string
+                    description: The expiration date for the URLs
+                  poll_interval:
+                    type: number
+                    description: Poll interval in seconds
+              example:
+                login_url: https://guardian-dev.herokuapp.com/oauth/client/login/token-1234567890
+                verification_url: https://guardian-dev.herokuapp.com/v1/vpn/login/verify/token-1234567890
+                expires_on: "2019-08-01T10:22:16.853Z"
+                poll_interval: 20
+  /v1/vpn/login/verify/{token}:
+    get:
+      summary: Check authentication status.
+      parameters:
+        - name: token
+          in: path
+          schema:
+            type: string
+          required: true
+          description: The authentication token.
+          example:
+      responses:
+        "200":
+          description: 200 response. Successful authentication.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/AccountDetails"
+                  token:
+                    type: string
+                    description: API authentication token
+              example:
+                user:
+                  email: johndoe@example.com
+                  display_name: John Doe
+                  avatar: https://example.com/avatar.jpg
+                  subscriptions:
+                    vpn:
+                      active: true
+                      created_at: "2019-08-01T10:22:16.853Z"
+                      renews_on: "2019-08-01T10:22:16.853Z"
+                  devices:
+                    - name: Windows-4242
+                      pubkey: veGD6/aEY6sMfN3Ls7YWPmNgu3AheO7nQqsFT47YSws=
+                      ipv4_address: 10.99.0.1/32
+                      ipv6_address: fc00:bbbb:bbbb:bb01::1/128
+                      created_at: "2019-08-01T10:22:16.853Z"
+                    - name: Android-2424
+                      pubkey: j38fC/fjlkdDFSAFFGDKLVCASDCLDKFLDSCsfdslaDs=
+                      pv4_address: 10.99.0.1/32
+                      ipv6_address: fc00:bbbb:bbbb:bb01::1/128
+                      created_at: "2019-08-01T10:22:16.853Z"
+                  max_devices: 5
+                token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJycm9zYXJpb0Btb3ppbGxhLmNvbSIsImRldmljZV91aWQiOiIzYmI1NDk4MC0yYmQ4LTQ4ODctOTI2OS1lMjlmYWNhNjU0ZWMiLCJpYXQiOjE1NjczNzAyMDN9.pF9tVYmfcuFW-7PdK7NrsczxbchLag9kSRYimN8kW0U
+        "401":
+          $ref: "#/components/responses/AuthenticationError"
+components:
+  securitySchemes:
+    bearerAuth:
+      description: The client must send token as "Bearer <token>" in the Authorization header
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorSchema:
+      type: object
+      properties:
+        code:
+          type: integer
+          description: The HTTP status code.
+        errno:
+          type: integer
+          description: The error number.
+        error:
+          type: string
+          description: The error message.
+    GuardianDevice:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Human friendly name of the device.
+        pubkey:
+          type: string
+          description: The WireGuard public key for the device.
+        ipv4_address:
+          type: string
+          description: The ipv4 peer adress for WireGuard. Note that the mask may be bigger then a single IP.
+        ipv6_address:
+          type: string
+          description: The ipv6 peer address for WireGuard. Note that the mask may be bigger then a single IP.
+        created_at:
+          type: string
+          description: Datetime when the device first authenticated.
+    AccountDetails:
+      type: object
+      properties:
+        email:
+          type: string
+        display_name:
+          type: string
+          description: User defined display name. Empty string for users that haven't set one.
+        avatar:
+          type: string
+        subcriptions:
+          type: object
+          description: Subscriptions information
+          properties:
+            vpn:
+              type: object
+              description: The VPN Subscription information
+              properties:
+                active:
+                  type: boolean
+                  description: Is the VPN subscription active?
+                created_at:
+                  type: string
+                renews_on:
+                  type: string
+        devices:
+          type: array
+          description: List of devices
+          items:
+            $ref: "#/components/schemas/GuardianDevice"
+        max_devices:
+          type: number
+          description: Maximum number of devices for this user
+  responses:
+    GuardianAddDeviceError:
+      description: Guardian Add Device Error
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ErrorSchema"
+          examples:
+            MissingPubkeyError:
+              value:
+                code: 400
+                errno: 100
+                error: "Missing argument: 'pubkey'"
+            MissingNameError:
+              value:
+                code: 400
+                errno: 101
+                error: "Missing argument: 'name'"
+            InvalidPubkeyError:
+              value:
+                code: 400
+                errno: 102
+                error: "'pubkey' is not a valid WireGuard public key"
+            PubkeyAlreadyUsed:
+              value:
+                code: 400
+                errno: 103
+                error: WireGuard public key already used by other account
+            KeyLimitReachedError:
+              value:
+                code: 400
+                errno: 104
+                error: An account can only have up to 5 pubkeys
+    GuardianDeleteDeviceError:
+      description: Guardian Delete Device Error
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ErrorSchema"
+          examples:
+            PubkeyNotFound:
+              value:
+                code: 404
+                errno: 105
+                error: "A device with that 'pubkey' does not exist"
+    UnauthorizedError:
+      description: Access token is missing or invalid
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ErrorSchema"
+          examples:
+            InvalidToken:
+              value:
+                code: 401
+                errno: 120
+                error: invalid token
+            UserNotFound:
+              value:
+                code: 401
+                errno: 121
+                error: User not found
+            DeviceNotFound:
+              value:
+                code: 401
+                errno: 122
+                error: Device not found
+            NoActiveSubscription:
+              value:
+                code: 401
+                errno: 123
+                error: "User doesn't have an active subscription"
+    AuthenticationError:
+      description: Client authentication token is missing, unverified or expired
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ErrorSchema"
+          examples:
+            LoginTokenNotFound:
+              value:
+                code: 401
+                errno: 124
+                error: Login token not found
+            LoginTokenExpired:
+              value:
+                code: 401
+                errno: 125
+                error: Login token expired
+            LoginTokenUnverified:
+              value:
+                code: 401
+                errno: 126
+                error: Login token isn't verified

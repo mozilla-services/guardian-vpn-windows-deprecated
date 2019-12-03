@@ -1,0 +1,275 @@
+{
+  "countries": [
+    {
+      "name": "Austria",
+      "code": "at",
+      "cities": [
+        {
+          "name": "Wien",
+          "code": "vie",
+          "latitude": 48.210033,
+          "longitude": 16.363449,
+          "servers": [
+            {
+              "hostname": "at1-wireguard",
+              "ipv4_addr_in": "185.210.219.242",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "iE7SukqspT1UtQxce9S5plJ+GpAXdl4zG2oqpbhzvAw=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            },
+            {
+              "hostname": "at2-wireguard",
+              "ipv4_addr_in": "5.253.207.34",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "ngwwZX8DV5/0e3P/Sm+GqlYapk6ZkDET7FDY/wfESTw=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Czech Republic",
+      "code": "cz",
+      "cities": [
+        {
+          "name": "Prague",
+          "code": "prg",
+          "latitude": 50.083333,
+          "longitude": 14.466667,
+          "servers": [
+            {
+              "hostname": "cz1-wireguard",
+              "ipv4_addr_in": "185.242.6.18",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "/LNuMn2Q3PXMjc5c84bAgf5efyXsKTQxPm45ywSK/Gg=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            },
+            {
+              "hostname": "cz2-wireguard",
+              "ipv4_addr_in": "193.9.112.114",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "5cnukfXHWIBm3FxF6uJSsG3jPuZM6NtSK05vl2a84Ug=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            },
+            {
+              "hostname": "cz3-wireguard",
+              "ipv4_addr_in": "185.242.6.194",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "sTYtbdXVJFJgtLKzmlg6WKiOdRZ00DSnu+8mwLQxFQk=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            }
+          ]
+        },
+        {
+          "name": "Brno",
+          "code": "brn",
+          "latitude": 51.083333,
+          "longitude": 13.466667,
+          "servers": [
+            {
+              "hostname": "cz4-wireguard",
+              "ipv4_addr_in": "193.9.112.115",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "5cnukfXHWIBm3FzF6uJSsG3jPuZM6NtSK05vl2a84Ug=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Hong Kong",
+      "code": "hk",
+      "cities": [
+        {
+          "name": "Hong Kong",
+          "code": "hkg",
+          "latitude": 22.2833333,
+          "longitude": 114.15,
+          "servers": [
+            {
+              "hostname": "hk1-wireguard",
+              "ipv4_addr_in": "209.58.188.180",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "ZlAoBnq2CCqVfyHVkohdXRGGRdEXax65TdsS+CjjKmA=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Serbia",
+      "code": "rs",
+      "cities": [
+        {
+          "name": "Belgrade",
+          "code": "beg",
+          "latitude": 44.787197,
+          "longitude": 20.457273,
+          "servers": [
+            {
+              "hostname": "rs1-wireguard",
+              "ipv4_addr_in": "141.98.103.58",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "vzkvSeh2PLpWJnTQuP8ni63Sd+YHNDQckgNE6ZBQeD0=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            },
+            {
+              "hostname": "rs2-wireguard",
+              "ipv4_addr_in": "152.89.160.178",
+              "weight": 100,
+              "include_in_country": true,
+              "public_key": "69Hs7s4NKa/sO6T/FOUrPfwZe5QvQy/MWtmtz/5IjEY=",
+              "port_ranges": [
+                [
+                  53,
+                  53
+                ],
+                [
+                  10000,
+                  51820
+                ],
+                [
+                  52000,
+                  60000
+                ]
+              ],
+              "ipv4_gateway": "10.64.0.1",
+              "ipv6_gateway": "fc00:bbbb:bbbb:bb01::1"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

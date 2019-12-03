@@ -1,0 +1,29 @@
+﻿<Application x:Class="FirefoxPrivateNetwork.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:FirefoxPrivateNetwork"
+             Exit="Application_Exit" Startup="Application_Startup"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="UI/Resources/Colors/Colors.xaml" />
+                <ResourceDictionary Source="UI/Components/Text/Text.xaml" />
+                <ResourceDictionary Source="UI/Components/Buttons/Standard.xaml" />
+                <ResourceDictionary Source="UI/Components/Buttons/Icon.xaml" />
+                <ResourceDictionary Source="UI/Components/Buttons/Popup.xaml" />
+                <ResourceDictionary Source="UI/Components/Radio.xaml" />
+                <ResourceDictionary Source="UI/Components/Checkbox.xaml" />
+                <ResourceDictionary Source="UI/Components/Card/Avatar/AvatarMenu.xaml" />
+                <ResourceDictionary Source="UI/Resources/Icons/Icons.xaml" />
+                <ResourceDictionary Source="UI/Resources/Icons/Flags/Flags.xaml" />
+                <ResourceDictionary Source="UI/Components/Dev.xaml" />
+                <ResourceDictionary Source="UI/Resources/Localization/Translations/Translations.xaml" />
+                <ResourceDictionary Source="Resources/Animations/Animations.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <FontFamily x:Key="Inter">pack://application:,,,/UI/Resources/Fonts/Inter/#Inter</FontFamily>
+            <FontFamily x:Key="metropolis">pack://application:,,,/UI/Resources/Fonts/metropolis/#Metropolis</FontFamily>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

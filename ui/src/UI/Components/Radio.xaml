@@ -1,0 +1,102 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI.Components">
+
+    <Style x:Key="Radio" TargetType="{x:Type RadioButton}" >
+        <Setter Property="BorderBrush" Value="{StaticResource 'Grey/Grey 30'}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RadioButton}">
+                    <BulletDecorator Background="Transparent" Cursor="Hand">
+                        <BulletDecorator.Bullet>
+                            <Grid Height="21" Width="21">
+                                <!--The two borders-->
+                                <Border Name="RadioOuter" Background="Transparent" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="2" CornerRadius="{Binding Path=ActualHeight, ElementName=RadioOuter}"/>
+                                <Border CornerRadius="{Binding Path=ActualHeight, ElementName=RadioOuter}" Margin="5" Name="RadioMark" Background="{TemplateBinding Background}"/>
+                            </Grid>
+                        </BulletDecorator.Bullet>
+
+                        <!--Text element-->
+                        <TextBlock Style="{StaticResource 'Body 10'}" Margin="18,0,0,0" Text="{TemplateBinding Content}"/>
+                    </BulletDecorator>
+
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Grey/Grey 40'}" />
+                            <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Grey/Grey 10'}" />
+                        </MultiTrigger>
+
+                        <!--
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsFocused" Value="True"/>
+                                <Condition Property="IsChecked" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Grey/Grey 40'}" />
+                            <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Grey/Grey 10'}" />
+                        </MultiTrigger>
+                        -->
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True"/>
+                                <Condition Property="IsChecked" Value="False"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Grey/Grey 40'}" />
+                            <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Grey/Grey 20'}" />
+                        </MultiTrigger>
+
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Blue/Blue 50'}" />
+                            <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Blue/Blue 50'}" />
+                        </Trigger>
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                                <Condition Property="IsChecked" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Blue/Blue 70'}" />
+                            <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Blue/Blue 70'}" />
+                        </MultiTrigger>
+
+                        <!--
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsFocused" Value="True"/>
+                                <Condition Property="IsChecked" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Blue/Blue 70'}" />
+                            <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Blue/Blue 70'}" />
+                        </MultiTrigger>
+                        -->
+
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsPressed" Value="True"/>
+                                <Condition Property="IsChecked" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Blue/Blue 80'}" />
+                            <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Blue/Blue 80'}" />
+                        </MultiTrigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="True">
+                            <Setter Property="Opacity" Value="1"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

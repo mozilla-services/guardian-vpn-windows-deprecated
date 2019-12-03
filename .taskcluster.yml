@@ -1,0 +1,294 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+version: 1
+reporting: checks-v1
+policy:
+    pullRequests: collaborators
+tasks:
+    - $let:
+          taskgraph:
+              branch: taskgraph-try
+              revision: 9b0cdcfd6c3995075f1b37dd11c1602168eb2a11
+              repository:
+                  name: mpd001
+                  description: Project VPN Client
+                  ssh_secret_name: "project/releng/callek/mpd001-deploykey"
+              treeherder: false
+          trustDomain: mpd001
+          canonicalRepo: git@github.com:mozilla-services/guardian-vpn-windows.git
+      in:
+          $if: 'tasks_for in ["github-pull-request", "github-push", "action", "cron"]'
+          then:
+              $let:
+                  # Github events have this stuff in different places...
+                  ownerEmail:
+                      $if: 'tasks_for == "github-push"'
+                      then: '${event.pusher.email}'
+                      # Assume Pull Request
+                      else:
+                          $if: 'tasks_for == "github-pull-request"'
+                          then: '${event.pull_request.user.login}@users.noreply.github.com'
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              then: '${tasks_for}@noreply.mozilla.org'
+                  baseRepoUrl:
+                      $if: 'tasks_for == "github-push"'
+                      then: '${event.repository.ssh_url}'
+                      else:
+                          $if: 'tasks_for == "github-pull-request"'
+                          then: '${event.pull_request.base.repo.ssh_url}'
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              then: '${repository.url}'
+                  repoFullName:
+                      $if: 'tasks_for in "github-push"'
+                      then: '${event.repository.full_name}'
+                      else:
+                          $if: 'tasks_for == "github-pull-request"'
+                          then: '${event.pull_request.base.repo.full_name}'
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              # Trim https://github.com/
+                              then: '${repository.url[19:]}'
+                  repoUrl:
+                      $if: 'tasks_for == "github-push"'
+                      then: '${event.repository.ssh_url}'
+                      else:
+                          $if: 'tasks_for == "github-pull-request"'
+                          then: '${event.pull_request.base.repo.ssh_url}'
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              then: '${repository.url}'
+                  project:
+                      $if: 'tasks_for == "github-push"'
+                      then: '${event.repository.name}'
+                      else:
+                          $if: 'tasks_for == "github-pull-request"'
+                          then: '${event.pull_request.head.repo.name}'
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              then: '${repository.project}'
+                  head_branch:
+                      $if: 'tasks_for == "github-pull-request"'
+                      then: refs/pull/${event.pull_request.number}/head
+                      else:
+                          $if: 'tasks_for == "github-push"'
+                          then: ${event.ref}
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              then: '${push.branch}'
+                  head_sha:
+                      $if: 'tasks_for == "github-push"'
+                      then: '${event.after}'
+                      else:
+                          $if: 'tasks_for == "github-pull-request"'
+                          then: '${event.pull_request.head.sha}'
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              then: '${push.revision}'
+                  ownTaskId:
+                      $if: '"github" in tasks_for'
+                      then: {$eval: as_slugid("decision_task")}
+                      else:
+                          $if: 'tasks_for == "cron"'
+                          then: '${ownTaskId}'
+                  repositoryPrefix: '${uppercase(taskgraph.repository.name)}'
+              in:
+                  $let:
+                      level:
+                          $if: 'tasks_for in ["github-push"] && repoUrl == canonicalRepo'
+                          then: '3'
+                          else:
+                              $if: 'tasks_for in ["cron", "action"]'
+                              then: '${repository.level}'
+                              else: 1
+                  in:
+                      taskId: '${ownTaskId}'
+                      taskGroupId:
+                          $if: 'tasks_for == "action"'
+                          then:
+                              '${action.taskGroupId}'
+                          else:
+                              '${ownTaskId}'  # same as taskId; this is how automation identifies a decision task
+                      schedulerId: '${trustDomain}-level-${level}'
+                      created: {$fromNow: ''}
+                      deadline: {$fromNow: '1 day'}
+                      expires: {$fromNow: '1 year 1 second'}  # 1 second so artifacts expire first, despite rounding errors
+                      metadata:
+                          $merge:
+                              - owner: "${ownerEmail}"
+                                source: 'https://github.com/${repoUrl[15:-4]}/raw/${head_sha}/.taskcluster.yml'
+                              - $if: 'tasks_for in ["github-push", "github-pull-request"]'
+                                then:
+                                    name: "Decision Task"
+                                    description: 'The task that creates all of the other tasks in the task graph'
+                                else:
+                                    $if: 'tasks_for == "action"'
+                                    then:
+                                        name: "Action: ${action.title}"
+                                        description: '${action.description}'
+                                    else:
+                                        name: "Decision Task for cron job ${cron.job_name}"
+                                        description: 'Created by a [cron task](https://tools.taskcluster.net/tasks/${cron.task_id})'
+                      provisionerId: "${trustDomain}-${level}"
+                      workerType: "decision"
+                      tags:
+                          $if: 'tasks_for in ["github-push", "github-pull-request"]'
+                          then:
+                              kind: decision-task
+                          else:
+                              $if: 'tasks_for == "action"'
+                              then:
+                                  kind: 'action-callback'
+                              else:
+                                  $if: 'tasks_for == "cron"'
+                                  then:
+                                      kind: cron-task
+                      routes:
+                          $flatten:
+                              - checks
+                              - $if: 'tasks_for != "github-pull-request" && taskgraph.treeherder'
+                                then:
+                                    - "tc-treeherder.v2.${project}.${head_sha}"
+                                else: []
+                      scopes:
+                          # `ssh://` is 8 characters so, ${repoUrl[8:]} is the repository without the protocol.
+                          $if: 'tasks_for == "github-push"'
+                          then:
+                            $let:
+                                short_head_branch:
+                                    $if: 'head_branch[:10] == "refs/tags/"'
+                                    then: {$eval: 'head_branch[10:]'}
+                                    else:
+                                        $if: 'head_branch[:11] == "refs/heads/"'
+                                        then: {$eval: 'head_branch[11:]'}
+                                        else: ${head_branch}
+                            in:
+                                - 'assume:repo:github.com/${repoFullName}:branch:${short_head_branch}'
+                          else:
+                              $if: 'tasks_for == "github-pull-request"'
+                              then:
+                                  - 'assume:repo:github.com/${repoFullName}:pull-request'
+                              else:
+                                  $if: 'tasks_for == "action"'
+                                  then:
+                                      # when all actions are hooks, we can calculate this directly rather than using a variable
+                                      - '${action.repo_scope}'
+                                  else:
+                                      - 'assume:repo:github.com/${repoFullName}:cron:${cron.job_name}'
+
+                      requires: all-completed
+                      priority: lowest
+                      retries: 5
+
+                      payload:
+                          env:
+                              # run-task uses these to check out the source; the inputs
+                              # to `mach taskgraph decision` are all on the command line.
+                              $merge:
+                                  - '${repositoryPrefix}_BASE_REPOSITORY': '${baseRepoUrl}'
+                                    '${repositoryPrefix}_HEAD_REPOSITORY': '${repoUrl}'
+                                    '${repositoryPrefix}_HEAD_REF': '${head_branch}'
+                                    '${repositoryPrefix}_HEAD_REV': '${head_sha}'
+                                    '${repositoryPrefix}_REPOSITORY_TYPE': git
+                                    TASKGRAPH_BASE_REPOSITORY: https://hg.mozilla.org/ci/taskgraph
+                                    TASKGRAPH_HEAD_REPOSITORY: https://hg.mozilla.org/ci/${taskgraph.branch}
+                                    TASKGRAPH_HEAD_REV: ${taskgraph.revision}
+                                    TASKGRAPH_REPOSITORY_TYPE: hg
+                                    REPOSITORIES: {$json: {'${taskgraph.repository.name}': '${taskgraph.repository.description}', taskgraph: "Taskgraph"}}
+                                    HG_STORE_PATH: /builds/worker/checkouts/hg-store
+                                    ANDROID_SDK_ROOT: /builds/worker/android-sdk
+                                  - $if: '"ssh_secret_name" in taskgraph.repository'
+                                    then:
+                                        '${repositoryPrefix}_SSH_SECRET_NAME': '${taskgraph.repository.ssh_secret_name}'
+                                  - $if: 'tasks_for in ["github-pull-request"]'
+                                    then:
+                                        '${repositoryPrefix}_PULL_REQUEST_NUMBER': '${event.pull_request.number}'
+                                  - $if: 'tasks_for == "action"'
+                                    then:
+                                        ACTION_TASK_GROUP_ID: '${action.taskGroupId}'  # taskGroupId of the target task
+                                        ACTION_TASK_ID: {$json: {$eval: 'taskId'}}  # taskId of the target task (JSON-encoded)
+                                        ACTION_INPUT: {$json: {$eval: 'input'}}
+                                        ACTION_CALLBACK: '${action.cb_name}'
+                          features:
+                              taskclusterProxy: true
+                              chainOfTrust: true
+                          # Note: This task is built server side without the context or tooling that
+                          # exist in tree so we must hard code the hash
+                          image:
+                              mozillareleases/taskgraph:decision-f865054fe545593d599d805ca1478709f469ee3cc50b6068a032723fce4668c8@sha256:a24c7e72cc8fc9715f17c81a6ab66fe895fcb864fd8b23870715302a3031525b
+
+                          maxRunTime: 1800
+
+                          command:
+                              - /usr/local/bin/run-task
+                              - '--${taskgraph.repository.name}-checkout=/builds/worker/checkouts/src'
+                              - '--taskgraph-checkout=/builds/worker/checkouts/taskgraph'
+                              - '--task-cwd=/builds/worker/checkouts/src'
+                              - '--'
+                              - bash
+                              - -cx
+                              - $let:
+                                    extraArgs: {$if: 'tasks_for == "cron"', then: '${cron.quoted_args}', else: ''}
+                                in:
+                                    $if: 'tasks_for == "action"'
+                                    then: >
+                                        cd /builds/worker/checkouts/src &&
+                                        ln -s /builds/worker/artifacts artifacts &&
+                                        taskgraph action-callback
+                                    else: >
+                                        pip install --user /builds/worker/checkouts/taskgraph &&
+                                        ln -s /builds/worker/artifacts artifacts &&
+                                        ~/.local/bin/taskgraph decision
+                                        --pushlog-id='0'
+                                        --pushdate='0'
+                                        --project='${project}'
+                                        --message=""
+                                        --owner='${ownerEmail}'
+                                        --level='${level}'
+                                        --base-repository="${'$'+repositoryPrefix}_BASE_REPOSITORY"
+                                        --head-repository="${'$'+repositoryPrefix}_HEAD_REPOSITORY"
+                                        --head-ref="${'$'+repositoryPrefix}_HEAD_REF"
+                                        --head-rev="${'$'+repositoryPrefix}_HEAD_REV"
+                                        --repository-type="${'$'+repositoryPrefix}_REPOSITORY_TYPE"
+                                        --tasks-for='${tasks_for}'
+                                        ${extraArgs}
+
+                          artifacts:
+                              'public':
+                                  type: 'directory'
+                                  path: '/builds/worker/artifacts'
+                                  expires: {$fromNow: '1 year'}
+
+                      extra:
+                          $merge:
+                              - treeherder:
+                                    $merge:
+                                        - machine:
+                                              platform: gecko-decision
+                                        - $if: 'tasks_for in ["github-push", "github-pull-request"]'
+                                          then:
+                                              symbol: D
+                                          else:
+                                              $if: 'tasks_for == "action"'
+                                              then:
+                                                  groupName: 'action-callback'
+                                                  groupSymbol: AC
+                                                  symbol: "${action.symbol}"
+                                              else:
+                                                  groupSymbol: cron
+                                                  symbol: "${cron.job_symbol}"
+                              - $if: 'tasks_for == "action"'
+                                then:
+                                    parent: '${action.taskGroupId}'
+                                    action:
+                                        name: '${action.name}'
+                                        context:
+                                            taskGroupId: '${action.taskGroupId}'
+                                            taskId: {$eval: 'taskId'}
+                                            input: {$eval: 'input'}
+                              - $if: 'tasks_for == "cron"'
+                                then:
+                                    cron: {$json: {$eval: 'cron'}}
+                              - tasks_for: '${tasks_for}'

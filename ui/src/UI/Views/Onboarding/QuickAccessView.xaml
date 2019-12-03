@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="FirefoxPrivateNetwork.UI.QuickAccessView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             mc:Ignorable="d" 
+             VerticalContentAlignment="Top"
+             d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+
+    <Grid Height="454" Width="Auto">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="70" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Quick access message -->
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0">
+            <StackPanel Orientation="Vertical" Margin="0,32,0,0">
+                <TextBlock Style="{StaticResource 'Title 10'}" Foreground="{StaticResource 'Grey/Grey 50'}" HorizontalAlignment="Center" TextAlignment="Center" Text="{Binding Path=[nux-title-5]}" />
+                <TextBlock Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Grey/Grey 40'}" Margin="32,8,32,64" HorizontalAlignment="Center" TextAlignment="Center" Text="{Binding Path=[nux-content-5-1]}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- Tray tip image -->
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="0">
+            <Image Source="{svgc:SvgImage Source={StaticResource 'illu-tray-tip'}}" Margin="71,8"/>
+        </Grid>
+
+        <!-- Tray tip message -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0">
+            <TextBlock Style="{StaticResource 'Caption 10'}" Foreground="{StaticResource 'Grey/Grey 40'}" Margin="71.5,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Text="{Binding Path=[nux-content-5-2]}"/>
+        </Grid>
+
+        <!-- Continue button -->
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+            <Button Style="{StaticResource 'Standard'}" Content="{Binding Path=[nux-continue]}" FontWeight="SemiBold" Margin="32" Height="40" Click="NavigateQuickAccess" />
+        </Grid>
+    </Grid>
+    
+</UserControl>

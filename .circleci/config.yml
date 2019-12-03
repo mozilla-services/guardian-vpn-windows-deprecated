@@ -1,0 +1,96 @@
+version: 2.1
+orbs:
+  win: circleci/windows@1.0.0
+jobs:
+  build:
+    executor:
+      name: win/vs2019
+      shell: powershell.exe
+    environment:
+      GO111MODULE: "on"
+    steps:
+      - checkout
+      - run:
+          name: Build Tunnel
+          command: |               
+            .\tunnel\build.cmd
+      - run: 
+          name: Build Application
+          command: |
+            cd ui
+            nuget restore -SolutionDirectory ./ 
+            MSBuild /t:Rebuild /p:Configuration=Release /p:Platform="x64" 
+            MSBuild /t:Rebuild /p:Configuration=Release /p:Platform="x86"
+            MSBuild /t:Rebuild /p:Configuration=Debug_QA /p:Platform="x64"
+      - run: 
+          name: Build MSI
+          command: |
+            .\installer\build.cmd  
+      - run:
+          name: Install MSI
+          command: |
+            Start-Process msiexec.exe -Wait -ArgumentList '/log install.log /qn /i installer\x64\FirefoxPrivateNetworkVPN.msi'
+            Get-Content install.log
+      - run:
+          name: Initial Check
+          command: |
+            cd test
+            go test github.com/mozilla-services/guardian-vpn-windows/test/initial -v
+      - run:
+          name: Run Unit Tests
+          command: |
+            cd ui\Guardian.Tests\bin\x64\Debug_QA
+            ..\..\..\..\packages\NUnit.ConsoleRunner.3.10.0\tools\nunit3-console.exe /result:..\..\..\..\..\test\result\unittests\result.xml FirefoxPrivateNetwork.Tests.dll
+      - run:
+          name: Run Application On Debug_QA mode
+          command: |
+            netsh http add urlacl url=http://+:8000/ user=Everyone
+            Get-Process FirefoxPrivateNetworkVPN -ErrorAction SilentlyContinue | Stop-Process -Force
+            Start-Process -FilePath ".\ui\src\bin\x64\Debug_QA\FirefoxPrivateNetworkVPN.exe"
+      - run: 
+          name: Run Integration Tests
+          command: |
+            .\test\mockinstaller\build.cmd
+            cd test
+            go test github.com/mozilla-services/guardian-vpn-windows/test/integrations -v | tee test.out
+      - run:
+          name: Generate Tests Report
+          command: |
+            ui\packages\extent.0.0.3\tools\extent.exe -i test\result\unittests\result.xml -o test\result\unittests
+            .\ui\coverage.bat
+            New-Item -ItemType directory -Path test\result\integration-tests
+            cd test
+            go get -u github.com/jstemmer/go-junit-report
+            Get-Content -Path test.out | C:\Users\circleci\go\bin\go-junit-report > ./result/integration-tests/report.xml
+            cd result\integration-tests
+            Get-Content report.xml | Set-Content -Encoding utf8 report-utf8.xml
+            Remove-Item report.xml
+            npm config set unsafe-perm true
+            npm i -g xunit-viewer@5.1.11
+            xunit-viewer --results=report-utf8.xml --output=report.html
+            Copy-Item "C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin" -Destination "..\"
+          when: always
+      - run:
+          name: Deploy
+          command: |
+            Copy-Item ".\installer\x64\FirefoxPrivateNetworkVPN.msi" -Destination ".\test\result"
+          when: on_success
+      - store_test_results:
+          path: test/result
+      - store_artifacts:
+          path: test/result
+workflows:
+  nightly:
+    triggers:
+      - schedule:
+          cron: "00 04 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build
+  workflow:
+    jobs:
+      - build
+

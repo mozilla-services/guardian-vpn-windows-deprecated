@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="FirefoxPrivateNetwork.UI.VerifyAccountView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:uc="clr-namespace:FirefoxPrivateNetwork.UI.Components"
+             mc:Ignorable="d" 
+             VerticalContentAlignment="Top"
+             d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+    <Grid>
+        <Grid Height="454" Width="360">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Awaiting signin confirmation message -->
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">
+                <TextBlock Style="{StaticResource 'Title 10'}" Margin="32" TextAlignment="Center" Foreground="{StaticResource 'Grey/Grey 50'}" Text="{Binding Path=[verify-account-title]}"/>
+            </Grid>
+
+            <!-- Waiting spinner -->
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0">
+                <uc:Spinner Width="80" Height="80" />
+            </Grid>
+
+            <!-- Retry signin link -->
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0">
+                <TextBlock Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextDecorations="{x:Null}" Margin="32">
+                        <Hyperlink Click="TryAgain_Click" TextDecorations="{x:Null}">
+                            <TextBlock Text="{Binding Path=[verify-account-try-again]}"/>
+                        </Hyperlink>
+                </TextBlock>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

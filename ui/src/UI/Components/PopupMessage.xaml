@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="FirefoxPrivateNetwork.UI.Components.PopupMessage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI.Components"
+             xmlns:ui="clr-namespace:FirefoxPrivateNetwork.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="167" d:DesignWidth="330">
+
+    <Popup x:Name="DeleteDevicesPopup"  Margin="15" MaxWidth="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=ActualWidth}" Height="auto" PopupAnimation="Fade" AllowsTransparency="True" Placement="Center" Focusable="True" IsOpen="False" StaysOpen="False" Closed="Popup_Closed">
+        <Border Background="{StaticResource 'Grey/Grey Popup 10'}" BorderThickness="1" BorderBrush="{StaticResource 'Grey/Grey Popup 20'}" Padding="0,23">
+            <StackPanel>
+                <TextBlock x:Name="Title" Style="{StaticResource 'Header Windows'}" Margin="23,0" Width="Auto" Height="24" VerticalAlignment="Top" TextWrapping="Wrap" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopupMessage}}, Path=PopupTitle}" />
+                <TextBlock x:Name="Message" Style="{StaticResource 'Body Windows'}" Margin="23,7,23,0" Width="Auto" MaxHeight="150" VerticalAlignment="Top" TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopupMessage}}, Path=PopupContent}" />
+                
+                <UniformGrid Margin="18,20,18,0" Rows="1">
+                    <Button Width="Auto" Height="32" Margin="5,0" Content="{Binding Path=[popup-cancel-button-text]}" ui:ButtonExtensions.Background="{StaticResource 'Grey/Grey Popup 30'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/Grey Popup 40'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/Grey Popup 50'}" Click="CancelButton_Click">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource Popup}" TargetType="{x:Type Button}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopupMessage}}, Path=CancelButton}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Width="Auto" Height="32" Margin="5,0" Content="{Binding Path=[popup-remove-button-text]}" Foreground="{StaticResource 'Grey/White'}" ui:ButtonExtensions.Background="{StaticResource 'Red/Red 50'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Red/Red 60'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Red/Red 70'}" Click="RemoveButton_Click">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource Popup}" TargetType="{x:Type Button}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopupMessage}}, Path=RemoveButton}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Width="Auto" Height="32" Margin="5,0" Content="{Binding Path=[popup-ok-button-text]}" Foreground="{StaticResource 'Grey/White'}" ui:ButtonExtensions.Background="{StaticResource 'Blue/Blue 50'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Blue/Blue 70'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Blue/Blue 80'}" Click="OkButton_Click">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource Popup}" TargetType="{x:Type Button}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PopupMessage}}, Path=OkButton}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </UniformGrid>
+            </StackPanel>
+        </Border>
+    </Popup>
+    
+</UserControl>

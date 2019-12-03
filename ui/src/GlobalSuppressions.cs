@@ -1,0 +1,11 @@
+﻿// <copyright file="GlobalSuppressions.cs" company="Mozilla">
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, you can obtain one at http://mozilla.org/MPL/2.0/.
+// </copyright>
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1101:Prefix local calls with this", Justification = "Conflicting with Visual Studio guidelines", Scope = "namespaceanddescendants", Target = "FirefoxPrivateNetwork")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1128:Put constructor initializers on their own line", Justification = "Not aligned with our current preferred style guidelines", Scope = "namespaceanddescendants", Target = "FirefoxPrivateNetwork")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1111:Closing parenthesis should not be preceded by a space", Justification = "Not aligned with our current preferred style guidelines", Scope = "namespaceanddescendants", Target = "FirefoxPrivateNetwork")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1009:Closing parenthesis should not be preceded by a space", Justification = "Not aligned with our current preferred style guidelines", Scope = "namespaceanddescendants", Target = "FirefoxPrivateNetwork")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1116:Split parameters must start on line after declaration", Justification = "Not aligned with our current preferred style guidelines", Scope = "namespaceanddescendants", Target = "FirefoxPrivateNetwork")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1200:Using directive should appear within a namespace declaration", Justification = "C# language reference indicates that both styles are acceptable")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1636:File header copyright text should match", Justification = "Copyright text contents may change occasionally, no easy way to suppress per-file")]

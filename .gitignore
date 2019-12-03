@@ -1,0 +1,75 @@
+#binaries
+*.exe
+*.exe~
+*.so
+*.dylib
+*.out
+*.msi
+*.dll
+*.so
+*.dylib
+*.out
+
+#linter cache
+StyleCop.Cache
+
+#wix installer
+*.wixobj
+*.wixpdb
+
+#service
+*.exe
+*.exe~
+*.so
+*.jar
+*.dylib
+guardian
+*.out
+
+#general purpose
+*.log
+.vscode
+.idea
+
+#testing configs
+test_credentials.txt
+FirefoxGuardian.conf
+ec2.json
+key.txt
+
+#binaries
+bin/
+obj/
+
+#visual studio
+.vs/
+parameters.json
+aws/guardian.pem
+
+#nuget
+ui/packages/
+
+#tunnel dll
+tunnel/tunnel.h
+tunnel/.deps/
+
+#wix installer
+*.wixobj
+*.wixpdb
+!installer/appdata/FirefoxGuardian.conf
+installer/.deps/
+
+#report
+**/*/report/
+ui/GeneratedReports
+ui/TestResult.xml
+test/result
+
+#wireguard
+wireguard_ec2.json
+wireguard_parameters.json
+wireguard.server.config
+wireguard.server.base64.config
+
+#vim
+*.swp
