@@ -7,24 +7,24 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
-	sw "github.com/mozilla-services/guardian-vpn-windows/test/integrations/apimock/server"
+	"github.com/mozilla-services/guardian-vpn-windows/test/integrations/apimock/server"
 	"github.com/mozilla-services/guardian-vpn-windows/test/integrations/apimock/server/models"
+	"github.com/stretchr/testify/assert"
 )
 
 var BASEURL = "http://localhost:8000"
-var PrjDir = os.Getenv("PRJ_DIR")
 
 func TestMain(m *testing.M) {
 	setup()
 	code := m.Run()
+	teardown()
 	os.Exit(code)
 }
 
 func setup() {
 	go func() {
 		log.Printf("Server started")
-		router, err := sw.NewRouter()
+		router, err := server.NewRouter()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -37,7 +37,10 @@ func setup() {
 		}
 		time.Sleep(2 * time.Second)
 	}
+}
 
+func teardown() {
+	http.Post(BASEURL+"/CloseConnection", "none", nil)
 }
 
 func TestVPNConnection(t *testing.T) {
