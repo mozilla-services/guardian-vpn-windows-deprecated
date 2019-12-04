@@ -35,8 +35,7 @@ namespace FirefoxPrivateNetwork.WCF
         /// <returns>User details object.</returns>
         public User AccountDetails()
         {
-            var user = new FxA.Account().GetAccountDetails();
-            return user;
+            return new FxA.Account().GetAccountDetails();
         }
 
         /// <summary>
@@ -58,13 +57,11 @@ namespace FirefoxPrivateNetwork.WCF
                     return new Response(result ? 200 : 500, result ? "successfully connect!" : "fail to connect");
                 }
 
-                Response res = new Response(200, "successfully connect!");
-                return res;
+                return new Response(200, "successfully connect!");
             }
             catch (Exception ex)
             {
-                Response res = new Response(500, ex.Message, ex.StackTrace);
-                return res;
+                return new Response(500, ex.Message, ex.StackTrace);
             }
         }
 
@@ -77,13 +74,11 @@ namespace FirefoxPrivateNetwork.WCF
             try
             {
                 ConnectionState connectionState = Manager.Tunnel.ConnectionStatus().Status;
-                Response res = new Response(200, connectionState == ConnectionState.Protected ? "Protected" : "Unprotected");
-                return res;
+                return new Response(200, connectionState.ToString());
             }
             catch (Exception ex)
             {
-                Response res = new Response(500, ex.Message);
-                return res;
+                return new Response(500, ex.Message);
             }
         }
 
@@ -93,8 +88,7 @@ namespace FirefoxPrivateNetwork.WCF
         /// <returns>List of Device objects.</returns>
         public List<Device> DeviceList()
         {
-            var devices = new FxA.Account().GetAccountDevices();
-            return devices;
+            return new FxA.Account().GetAccountDevices();
         }
 
         /// <summary>
@@ -106,13 +100,11 @@ namespace FirefoxPrivateNetwork.WCF
             try
             {
                 Manager.Tunnel.Disconnect();
-                Response res = new Response(200, "successfully disconnect!");
-                return res;
+                return new Response(200, "successfully disconnect!");
             }
             catch (Exception ex)
             {
-                Response res = new Response(500, ex.Message);
-                return res;
+                return new Response(500, ex.Message);
             }
         }
 
@@ -160,8 +152,7 @@ namespace FirefoxPrivateNetwork.WCF
         /// <returns>List of ServerListItems.</returns>
         public List<ServerListItem> ServerList()
         {
-            var servers = FxA.Cache.FxAServerList.GetServerList();
-            return servers;
+            return FxA.Cache.FxAServerList.GetServerList();
         }
 
         /// <summary>
@@ -280,6 +271,23 @@ namespace FirefoxPrivateNetwork.WCF
             {
                 bool result = await Update.Update.Run(req.CurrentVersion);
                 return result ? new Response(200, "Success") : new Response(500, "Fail");
+            }
+            catch (Exception ex)
+            {
+                return new Response(500, ex.Message, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Close WCF server.
+        /// </summary>
+        /// <returns>WCF response.</returns>
+        public Response CloseConnection()
+        {
+            try
+            {
+                Tester.CloseConnection();
+                return new Response(200, "Success");
             }
             catch (Exception ex)
             {
