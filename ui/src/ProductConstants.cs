@@ -68,7 +68,7 @@ namespace FirefoxPrivateNetwork
         /// {1} - Current platform (e.g. WINNT_x86_64).
         /// </summary>
 #if DEBUG_QA
-        public const string UpdateTemplateUrl = "http://localhost:8080/json/1/FirefoxVPN/{0}/{1}/release/update.json";
+        public const string UpdateTemplateUrl = "http://127.0.0.1:8080/json/1/FirefoxVPN/{0}/{1}/release/update.json";
 #else
         public const string UpdateTemplateUrl = "https://aus5.mozilla.org/json/1/FirefoxVPN/{0}/{1}/release/update.json";
 #endif
@@ -152,7 +152,7 @@ namespace FirefoxPrivateNetwork
         /// Gets or sets the currently used base URL for communicating with FxA.
         /// </summary>
 #if DEBUG_QA
-        public static string BaseUrl = "http://localhost:8080";
+        public static string BaseUrl = "http://127.0.0.1:8080";
 #else
         public static string BaseUrl { get; set; } = "https://fpn.firefox.com";
 #endif
