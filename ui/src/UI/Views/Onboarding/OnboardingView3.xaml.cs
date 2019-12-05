@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 namespace FirefoxPrivateNetwork.UI
 {
     /// <summary>
-    /// Interaction logic for OnboardingView3.xaml
+    /// Interaction logic for OnboardingView3.xaml.
     /// </summary>
     public partial class OnboardingView3 : UserControl
     {
