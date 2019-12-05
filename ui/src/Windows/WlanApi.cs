@@ -291,6 +291,7 @@ namespace FirefoxPrivateNetwork.Windows
             IhvStart = 0x30000000,
             IhvEnd = 0x3fffffff,
             #pragma warning restore SA1602 // EnumerationItemsMustBeDocumented
+
         }
 
         /// <summary>
