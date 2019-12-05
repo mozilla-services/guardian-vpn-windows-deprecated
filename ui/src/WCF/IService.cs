@@ -158,5 +158,13 @@ namespace FirefoxPrivateNetwork.WCF
         [OperationContract]
         [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
         Task<Response> DownloadMSIAndUpdate(VersionRequest req);
+
+        /// <summary>
+        /// Close WCF server.
+        /// </summary>
+        /// <returns>WCF response.</returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json)]
+        Response CloseConnection();
     }
 }

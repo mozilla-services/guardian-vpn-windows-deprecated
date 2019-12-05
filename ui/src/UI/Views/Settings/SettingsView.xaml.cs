@@ -149,7 +149,7 @@ namespace FirefoxPrivateNetwork.UI
             Manager.Account.Logout(removeDevice: true);
 
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.NavigateToView(new LinkAccountView(), MainWindow.SlideDirection.Down);
+            mainWindow.NavigateToView(new LandingView(), MainWindow.SlideDirection.Down);
         }
 
         private void ManageAccount_Click(object sender, RoutedEventArgs e)
