@@ -15,13 +15,20 @@ jobs:
           command: |               
             .\tunnel\build.cmd
       - run: 
+          name: Build Logger
+          command: |
+            cd test/logger
+            nuget install packages.config -OutputDirectory packages
+            C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe -target:library SALogger.cs -reference:.\packages\Microsoft.Build.Utilities.Core.16.3.0\lib\net472\Microsoft.Build.Utilities.Core.dll,.\packages\Microsoft.Build.Framework.16.3.0\lib\net472\Microsoft.Build.Framework.dll,.\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll
+      - run: 
           name: Build Application
           command: |
+            New-Item -ItemType directory -Path test\result
             cd ui
             nuget restore -SolutionDirectory ./ 
-            MSBuild /t:Rebuild /p:Configuration=Release /p:Platform="x64" 
-            MSBuild /t:Rebuild /p:Configuration=Release /p:Platform="x86"
-            MSBuild /t:Rebuild /p:Configuration=Debug_QA /p:Platform="x64"
+            MSBuild -t:Rebuild -p:Configuration=Release -p:Platform="x64" -logger:"..\test\logger\SALogger.dll;..\test\result\Output.log"
+            MSBuild -t:Rebuild -p:Configuration=Release -p:Platform="x86"
+            MSBuild -t:Rebuild -p:Configuration=Debug_QA -p:Platform="x64"
       - run: 
           name: Build MSI
           command: |
@@ -56,19 +63,37 @@ jobs:
       - run:
           name: Generate Tests Report
           command: |
-            ui\packages\extent.0.0.3\tools\extent.exe -i test\result\unittests\result.xml -o test\result\unittests
-            .\ui\coverage.bat
-            New-Item -ItemType directory -Path test\result\integration-tests
-            cd test
-            go get -u github.com/jstemmer/go-junit-report
-            Get-Content -Path test.out | C:\Users\circleci\go\bin\go-junit-report > ./result/integration-tests/report.xml
-            cd result\integration-tests
-            Get-Content report.xml | Set-Content -Encoding utf8 report-utf8.xml
-            Remove-Item report.xml
-            npm config set unsafe-perm true
-            npm i -g xunit-viewer@5.1.11
-            xunit-viewer --results=report-utf8.xml --output=report.html
-            Copy-Item "C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin" -Destination "..\"
+            If ([System.IO.File]::Exists("test\result\unittests\result.xml")) {
+              # unit test report
+              ui\packages\extent.0.0.3\tools\extent.exe -i test\result\unittests\result.xml -o test\result\unittests;
+              # code coverage report
+              .\ui\coverage.bat
+            }
+            # integration test report
+            If ([System.IO.File]::Exists("test\test.out")) {
+              New-Item -ItemType directory -Path test\result\integration-tests;
+              cd test;
+              go get -u github.com/jstemmer/go-junit-report;
+              Get-Content -Path test.out | C:\Users\circleci\go\bin\go-junit-report > ./result/integration-tests/report.xml;
+              cd result\integration-tests;
+              Get-Content report.xml | Set-Content -Encoding utf8 report-utf8.xml;
+              Remove-Item report.xml;
+              npm config set unsafe-perm true;
+              npm i -g xunit-viewer@5.1.11;
+              xunit-viewer --results=report-utf8.xml --output=report.html;
+            }
+            # save application log
+            If ([System.IO.File]::Exists("C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin")) {
+              cd C:\Users\circleci\project\test\ringloggerParser
+              MSBuild -t:Rebuild -p:Configuration=Release
+              .\bin\Release\RingloggerParser.exe C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin C:\Users\circleci\project\test\result\log.txt
+            }
+            # add comments to PR if there are any warnings or errors on committed files
+            If ([System.IO.File]::Exists("C:\Users\circleci\project\test\result\Output.log")) {
+              cd C:\Users\circleci\project\test\comment
+              npm i
+              node index.js
+            }
           when: always
       - run:
           name: Deploy
