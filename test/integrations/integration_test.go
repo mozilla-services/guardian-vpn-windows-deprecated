@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var BASEURL = "http://localhost:8000"
+var BASEURL = "http://127.0.0.1:8000"
 
 func TestMain(m *testing.M) {
 	setup()
