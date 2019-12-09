@@ -337,6 +337,7 @@
     <Compile Include="ErrorHandling\UserFacingMessage.cs" />
     <Compile Include="FxA\ServerList\VPNServer.cs" />
     <Compile Include="JSONStructures\BalrogResponse.cs" />
+    <Compile Include="Network\CaptivePortalDetection.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="UIUpdaters\ToastManager\EphemeralToastQueue.cs" />
     <Compile Include="UIUpdaters\ToastManager\PersistentToastList.cs" />
