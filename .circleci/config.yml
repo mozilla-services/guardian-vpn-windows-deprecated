@@ -19,7 +19,7 @@ jobs:
           command: |
             cd test/logger
             nuget install packages.config -OutputDirectory packages
-            csc -target:library SALogger.cs -reference:.\packages\Microsoft.Build.Utilities.Core.16.3.0\lib\net472\Microsoft.Build.Utilities.Core.dll,.\packages\Microsoft.Build.Framework.16.3.0\lib\net472\Microsoft.Build.Framework.dll,.\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll
+            C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe -target:library SALogger.cs -reference:.\packages\Microsoft.Build.Utilities.Core.16.3.0\lib\net472\Microsoft.Build.Utilities.Core.dll,.\packages\Microsoft.Build.Framework.16.3.0\lib\net472\Microsoft.Build.Framework.dll,.\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll
       - run: 
           name: Build Application
           command: |
@@ -83,12 +83,15 @@ jobs:
             }
             # save application log
             If ([System.IO.File]::Exists("C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin")) {
-              Copy-Item "C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin" -Destination "..\"
+              cd C:\Users\circleci\project\test\result
+              Copy-Item "C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin" -Destination ".\"
             }
             # add comments to PR if there are any warnings or errors on committed files
-            cd ../../test/comment
-            npm i
-            node comment.js
+            If ([System.IO.File]::Exists("C:\Users\circleci\project\test\logger\Output.log")) {
+              cd C:\Users\circleci\project\test\comment
+              npm i
+              node index.js
+            }
           when: always
       - run:
           name: Deploy

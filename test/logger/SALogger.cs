@@ -67,7 +67,6 @@ namespace SALogger
                     throw;
                 }
             }
-            // string directory = "C:\\Users\\MiaoHuang\\Projects\\guardian-vpn"; // directory of the git repository
             // Get the files that had changes in the last commit 
             GetLastCommitChanges();
 
@@ -124,6 +123,9 @@ namespace SALogger
             streamWriter.WriteLine(line + e.Message);
         }
 
+        /// <summary>
+        /// Get all changes in the last commit.
+        /// </summary>      
         private void GetLastCommitChanges()
         {
             using (PowerShell powershell = PowerShell.Create())
