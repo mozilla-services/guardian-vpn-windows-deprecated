@@ -3,7 +3,9 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
@@ -113,9 +115,13 @@ namespace FirefoxPrivateNetwork.UI
         private void Copy(object sender, RoutedEventArgs e)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var item in logView.SelectedItems)
+            var items = new List<WireGuard.Ringlogger.Entry>();
+
+            items.AddRange(logView.SelectedItems.Cast<WireGuard.Ringlogger.Entry>().ToArray());
+
+            var logEntries = items.OrderBy(i => i.Timestamp).ToList();
+            foreach (var entry in logEntries)
             {
-                var entry = (WireGuard.Ringlogger.Entry)item;
                 sb.AppendLine(string.Format("{0}: {1}", entry.Timestamp, entry.Message));
             }
 
