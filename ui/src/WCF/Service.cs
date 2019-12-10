@@ -269,8 +269,8 @@ namespace FirefoxPrivateNetwork.WCF
         {
             try
             {
-                bool result = await Update.Update.Run(req.CurrentVersion);
-                return result ? new Response(200, "Success") : new Response(500, "Fail");
+                var result = await Update.Update.Run(req.CurrentVersion);
+                return result == Update.Update.UpdateResult.Success ? new Response(200, "Success") : new Response(500, "Fail");
             }
             catch (Exception ex)
             {
