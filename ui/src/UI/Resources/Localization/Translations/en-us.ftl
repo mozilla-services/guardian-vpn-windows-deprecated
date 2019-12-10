@@ -108,11 +108,11 @@ beta-announcement-content-1 = It may take a few minutes to connect you to our gl
 beta-announcement-content-2 = If you're still not connected after 5 minutes, disconnect and try again.
 beta-announcement-ok-button-text = Okay, got it
 
-## Link Account
-link-account-title = {application-name}
-link-account-content = {application-description}
-link-account-signin-button-text = Get started
-link-account-not-subscriber-text = Not a subscriber?
+## Landing
+landing-title = {application-name}
+landing-content = {application-description}
+landing-signin-button-text = Get started
+landing-not-subscriber-text = Not a subscriber?
 
 ## Verify Account
 verify-account-title = Waiting for sign in and subscription confirmation...
@@ -142,6 +142,7 @@ nux-content-5-2 = Located next to the clock at the bottom right of your screen
 nux-learn-more = Learn more
 nux-skip = Skip
 nux-continue = Continue
+nux-next = Next
 
 ## Feedback
 feedback-upset = I'm upset

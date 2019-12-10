@@ -108,11 +108,11 @@ beta-announcement-content-1 = Es kann einige Minuted dauern, um eine Verbindung 
 beta-announcement-content-2 = Wenn die Verbindung nach 5 Minuten noch nicht hergestellt wurde, bitte abbrechen und erneut versuchen.
 beta-announcement-ok-button-text = Okay
 
-## Link Account
-link-account-title = {application-name}
-link-account-content = {application-description}
-link-account-signin-button-text = Anmelden
-link-account-not-subscriber-text = Noch nicht angemeldet?
+## Landing
+landing-title = {application-name}
+landing-content = {application-description}
+landing-signin-button-text = Anmelden
+landing-not-subscriber-text = Noch nicht angemeldet?
 
 ## Verify Account
 verify-account-title = Die Anmeldung wird bestätigt...
@@ -124,6 +124,8 @@ update-title = Sicherheitsupdate
 update-content-1 = Update {application-name}, um es weiter zu verwenden
 update-content-2 = Die Verbindung ist während des Updateprozesses nicht sicher.
 update-update-button-text = Update starten
+update-update-failed = Update fehler
+update-update-started = Update starten
 
 ## New User Experience
 nux-title-1 = Kein Aktivitätsprotokoll vorhanden
@@ -140,6 +142,7 @@ nux-content-5-2 = Neben der Uhr unten rechts auf Ihrem Bildschirm.
 nux-learn-more = Weitere Informationen
 nux-skip = Überspringen
 nux-continue = Weiter
+nux-next = Weiter
 
 ## Feedback
 feedback-upset = Ich bin enttäuscht

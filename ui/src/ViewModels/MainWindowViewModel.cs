@@ -80,7 +80,7 @@ namespace FirefoxPrivateNetwork.ViewModels
             }
             else
             {
-                InitialViewFrameSourceType = typeof(UI.LinkAccountView);
+                InitialViewFrameSourceType = typeof(UI.LandingView);
             }
         }
 

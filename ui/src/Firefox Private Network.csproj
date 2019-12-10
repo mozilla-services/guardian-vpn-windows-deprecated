@@ -344,8 +344,20 @@
     <Compile Include="UIUpdaters\ToastManager\ToastCollection.cs" />
     <Compile Include="UI\Components\Converters\EqualityConverter.cs" />
     <Compile Include="UI\Components\Converters\StringEmptyConverter.cs" />
-    <Compile Include="UI\Views\Onboarding\QuickAccessView.xaml.cs">
-      <DependentUpon>QuickAccessView.xaml</DependentUpon>
+    <Compile Include="UI\Views\Onboarding\OnboardingView1.xaml.cs">
+      <DependentUpon>OnboardingView1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Onboarding\OnboardingView2.xaml.cs">
+      <DependentUpon>OnboardingView2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Onboarding\OnboardingView3.xaml.cs">
+      <DependentUpon>OnboardingView3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Onboarding\OnboardingView4.xaml.cs">
+      <DependentUpon>OnboardingView4.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Views\Onboarding\OnboardingView5.xaml.cs">
+      <DependentUpon>OnboardingView5.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Views\Settings\LanguageView.xaml.cs">
       <DependentUpon>LanguageView.xaml</DependentUpon>
@@ -457,8 +469,8 @@
     <Compile Include="UI\Views\VerifyAccountView.xaml.cs">
       <DependentUpon>VerifyAccountView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Views\LinkAccountView.xaml.cs">
-      <DependentUpon>LinkAccountView.xaml</DependentUpon>
+    <Compile Include="UI\Views\LandingView.xaml.cs">
+      <DependentUpon>LandingView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -513,7 +525,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Views\Onboarding\QuickAccessView.xaml">
+    <Page Include="UI\Views\Onboarding\OnboardingView1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\Onboarding\OnboardingView2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\Onboarding\OnboardingView3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\Onboarding\OnboardingView4.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Resources\Storyboards\FrameTransitions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\Onboarding\OnboardingView5.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -529,7 +561,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Resources\Localization\Translations\Translations.xaml">
+    <Page Include="UI\Resources\Localization\Translations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -613,7 +645,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\Views\LinkAccountView.xaml">
+    <Page Include="UI\Views\LandingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -626,10 +658,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Resources\Colors\Colors.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\Resources\Icons\Flags\Flags.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -736,46 +764,50 @@
     <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="UI\Resources\Icons\star-filled.svg" />
-    <Resource Include="UI\Resources\Icons\star-outline.svg" />
-    <Resource Include="UI\Resources\Icons\bug.svg" />
-    <Resource Include="UI\Resources\Icons\open-window.svg" />
-    <Resource Include="UI\Resources\Icons\back.svg" />
-    <Resource Include="UI\Resources\Icons\delete.svg" />
-    <Resource Include="UI\Resources\Icons\account.svg" />
-    <Resource Include="UI\Resources\Icons\chevron.svg" />
-    <Resource Include="UI\Resources\Icons\close.svg" />
-    <Resource Include="UI\Resources\Icons\connection.svg" />
-    <Resource Include="UI\Resources\Icons\devices.svg" />
-    <Resource Include="UI\Resources\Icons\drop-closed.svg" />
-    <Resource Include="UI\Resources\Icons\drop-open.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\star-filled.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\star-outline.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\bug.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\open-window.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\back.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\delete.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\account.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\chevron.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\close.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\connection.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\devices.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\drop-closed.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\drop-open.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-loading.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-off.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-on.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-upgrade.svg" />
-    <Resource Include="UI\Resources\Icons\list.svg" />
-    <Resource Include="UI\Resources\Icons\settings.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\list.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\settings.svg" />
     <Resource Include="UI\Resources\Icons\Tray\tray-on-error.svg" />
     <Resource Include="UI\Resources\Icons\Tray\tray-off.svg" />
     <Resource Include="UI\Resources\Icons\Tray\tray-on.svg" />
     <Resource Include="UI\Resources\Icons\Tray\tray-on-unstable.svg" />
-    <Resource Include="UI\Resources\Icons\wifi.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\wifi.svg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UI\Resources\Icons\Illustration\illu-firefox.svg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="UI\Resources\Icons\star-pressed.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\star-pressed.svg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="UI\Resources\Icons\Illustration\illu-logo.svg" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="UI\Resources\Icons\Illustration\illu-power.svg" />
+    <Resource Include="UI\Resources\Icons\Illustration\illu-connection.svg" />
+    <Resource Include="UI\Resources\Icons\Illustration\illu-tracking.svg" />
+    <Resource Include="UI\Resources\Icons\Illustration\illu-lock.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-tray-tip.svg" />
-    <Resource Include="UI\Resources\Icons\unstable.svg" />
-    <Resource Include="UI\Resources\Icons\info-red.svg" />
-    <Resource Include="UI\Resources\Icons\settings-white.svg" />
-    <Resource Include="UI\Resources\Icons\close-small.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\unstable.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\info-red.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\settings-white.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\close-small.svg" />
     <Content Include="Resources\Animations\ripple.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -1051,8 +1083,8 @@
     <Content Include="FirefoxPrivateNetworkVPN.visualelementsmanifest.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Resource Include="UI\Resources\Icons\dev.png" />
-    <Resource Include="UI\Resources\Icons\languages.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\dev.png" />
+    <Resource Include="UI\Resources\Icons\Generic\languages.svg" />
     <None Include="Resources\TrayToastOn.ico" />
     <None Include="Resources\TrayToastOff.ico" />
     <None Include="Resources\TrayToastError.ico" />
@@ -1060,22 +1092,22 @@
     <None Include="Resources\TrayIconOn.ico" />
     <None Include="Resources\TrayIconOff.ico" />
     <None Include="Resources\TrayIconError.ico" />
-    <Resource Include="UI\Resources\Icons\spinner.svg" />
-    <Resource Include="UI\Resources\Icons\nosignal.svg" />
-    <Resource Include="UI\Resources\Icons\delete2.svg" />
-    <Resource Include="UI\Resources\Icons\open-window-blue50.svg" />
-    <Resource Include="UI\Resources\Icons\open-window-blue60.svg" />
-    <Resource Include="UI\Resources\Icons\chat.svg" />
-    <Resource Include="UI\Resources\Icons\plus.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\spinner.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\nosignal.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\delete2.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\open-window-blue50.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\open-window-blue60.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\chat.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\plus.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-window-left-decoration.png" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-window-right-decoration.png" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-window-left-shadow.png" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-window-right-shadow.png" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-loading2.svg" />
-    <Resource Include="UI\Resources\Icons\close-white.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\close-white.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-beta-announcement.svg" />
-    <Resource Include="UI\Resources\Icons\info.svg" />
-    <Resource Include="UI\Resources\Icons\MainIcon.ico" />
+    <Resource Include="UI\Resources\Icons\Generic\info.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\MainIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

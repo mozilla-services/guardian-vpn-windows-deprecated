@@ -206,7 +206,7 @@ namespace FirefoxPrivateNetwork.FxA
                                 }
                                 else
                                 {
-                                    ((UI.MainWindow)owner).NavigateToView(new UI.QuickAccessView(), UI.MainWindow.SlideDirection.Left);
+                                    ((UI.MainWindow)owner).NavigateToView(new UI.OnboardingView5(), UI.MainWindow.SlideDirection.Left);
                                 }
                             }
 

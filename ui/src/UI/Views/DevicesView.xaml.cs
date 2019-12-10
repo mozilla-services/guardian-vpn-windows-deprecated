@@ -172,7 +172,7 @@ namespace FirefoxPrivateNetwork.UI
                                 var owner = Application.Current.MainWindow;
                                 if (owner != null)
                                 {
-                                    ((UI.MainWindow)owner).NavigateToView(new UI.QuickAccessView(), UI.MainWindow.SlideDirection.Left);
+                                    ((UI.MainWindow)owner).NavigateToView(new UI.OnboardingView5(), UI.MainWindow.SlideDirection.Left);
                                     ((UI.MainWindow)owner).Activate();
                                 }
                             });
