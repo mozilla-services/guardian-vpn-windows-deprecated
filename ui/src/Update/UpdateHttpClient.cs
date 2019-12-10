@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace FirefoxPrivateNetwork.Update
     /// </summary>
     internal class UpdateHttpClient : IDisposable
     {
-        private readonly HttpClient httpClient;
+        private HttpClient httpClient;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UpdateHttpClient"/> class.
@@ -28,6 +29,15 @@ namespace FirefoxPrivateNetwork.Update
             {
                 MaxResponseContentBufferSize = maxDownloadSizeBytes,
             };
+
+            httpClient.DefaultRequestHeaders.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
+                MustRevalidate = true,
+                NoStore = true,
+            };
+
+            httpClient.DefaultRequestHeaders.ConnectionClose = true;
         }
 
         /// <inheritdoc/>
@@ -46,6 +56,7 @@ namespace FirefoxPrivateNetwork.Update
         {
             HttpResponseMessage response = null;
 
+            // No caching
             for (var attempt = 0; attempt <= maxRetries; attempt++)
             {
                 try

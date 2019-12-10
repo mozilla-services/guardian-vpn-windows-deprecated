@@ -126,6 +126,7 @@ update-content-2 = Your connection will not be secure while you update.
 update-update-button-text = Update now
 update-update-failed = Update failed
 update-update-started = Update started
+update-update-failed-georestricted = Updates are only available for users located in the US
 
 ## New User Experience
 nux-title-1 = No activity logs

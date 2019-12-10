@@ -32,11 +32,64 @@ namespace FirefoxPrivateNetwork.Update
         private static readonly UpdateHttpClient UpdateHttpClient = new UpdateHttpClient(MaxMsiDownloadSize);
 
         /// <summary>
+        /// Result values for the Run() method.
+        /// </summary>
+        public enum UpdateResult
+        {
+            /// <summary>
+            /// Request has successfully been executed, but there are no new updates.
+            /// </summary>
+            SuccessNoUpdate = 0,
+
+            /// <summary>
+            /// Request has successfully been executed, new updates are available and have been executed.
+            /// </summary>
+            Success,
+
+            /// <summary>
+            /// New updates are available, but the downloaded file's signature is invalid.
+            /// </summary>
+            InvalidSignature,
+
+            /// <summary>
+            /// New updates are available, but we were unable to disconnect before attempting to execute the update process.
+            /// </summary>
+            DisconnectTimeout,
+
+            /// <summary>
+            /// Could not retrieve update information or files due to an HTTP error.
+            /// </summary>
+            HttpError,
+
+            /// <summary>
+            /// New updates are available, signatures are valid, but there was an error when attempting to run the MSI update file.
+            /// </summary>
+            RunFailure,
+
+            /// <summary>
+            /// New updates are available, but we cannot access the MSI update file due to georestrictions.
+            /// </summary>
+            Georestricted,
+
+            /// <summary>
+            /// Unspecified failure.
+            /// </summary>
+            GeneralFailure,
+        }
+
+        private enum UpdateDownloadResult
+        {
+            Success = 0,
+            GeneralFailure,
+            Georestricted,
+        }
+
+        /// <summary>
         /// Starts the update process, downloads the MSI file from Balrog and launches it.
         /// </summary>
         /// <param name="currentVersion">current version of the application.</param>
         /// <returns>Returns an awaitable boolean value indicating whether the update has succeeded or not.</returns>
-        public static async Task<bool> Run(string currentVersion)
+        public static async Task<UpdateResult> Run(string currentVersion)
         {
             var balrogResponse = default(JSONStructures.BalrogResponse);
             try
@@ -46,13 +99,13 @@ namespace FirefoxPrivateNetwork.Update
             catch (HttpRequestException e)
             {
                 ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-                return false;
+                return UpdateResult.HttpError;
             }
 
             // Null Balrog response indicates no new update
             if (balrogResponse == null)
             {
-                return false;
+                return UpdateResult.SuccessNoUpdate;
             }
 
             var randomBytes = new byte[32];
@@ -74,7 +127,7 @@ namespace FirefoxPrivateNetwork.Update
                 {
                     ErrorHandling.ErrorHandler.Handle("Unsupported MSI file hash.", ErrorHandling.LogLevel.Error);
                     File.Delete(fileName);
-                    return false;
+                    return UpdateResult.InvalidSignature;
                 }
 
                 // Computes the hash of the file as we write to the file
@@ -82,11 +135,11 @@ namespace FirefoxPrivateNetwork.Update
                 {
                     using (var cryptoStream = new CryptoStream(fileStream, computedHash, CryptoStreamMode.Write))
                     {
-                        var downloadSuccessful = false;
+                        var downloadStatus = UpdateDownloadResult.GeneralFailure;
 
                         try
                         {
-                            downloadSuccessful = await DownloadAndComputeHashAsync(balrogResponse.MsiUrl, cryptoStream);
+                            downloadStatus = await DownloadAndComputeHashAsync(balrogResponse.MsiUrl, cryptoStream);
 
                             // Clean up data streams
                             cryptoStream.FlushFinalBlock();
@@ -96,14 +149,24 @@ namespace FirefoxPrivateNetwork.Update
                         {
                             ErrorHandling.ErrorHandler.Handle(string.Concat("Update MSI file download error: ", e.Message), ErrorHandling.LogLevel.Error);
                             File.Delete(fileName);
-                            return false;
+                            return UpdateResult.HttpError;
                         }
 
-                        if (!downloadSuccessful)
+                        switch (downloadStatus)
                         {
-                            ErrorHandling.ErrorHandler.Handle("Could not download MSI update file.", ErrorHandling.LogLevel.Error);
-                            File.Delete(fileName);
-                            return false;
+                            case UpdateDownloadResult.GeneralFailure:
+                                ErrorHandling.ErrorHandler.Handle("Could not download MSI update file.", ErrorHandling.LogLevel.Error);
+                                File.Delete(fileName);
+                                return UpdateResult.GeneralFailure;
+
+                            case UpdateDownloadResult.Georestricted:
+                                ErrorHandling.ErrorHandler.Handle("Could not download MSI update file, georestrictions enforced.", ErrorHandling.LogLevel.Error);
+                                File.Delete(fileName);
+                                return UpdateResult.Georestricted;
+
+                            case UpdateDownloadResult.Success:
+                                ErrorHandling.ErrorHandler.Handle("Successfully downloaded MSI update file.", ErrorHandling.LogLevel.Info);
+                                break;
                         }
                     }
 
@@ -115,7 +178,7 @@ namespace FirefoxPrivateNetwork.Update
                     {
                         // If the hash comparison fails, delete the file
                         File.Delete(fileName);
-                        return false;
+                        return UpdateResult.InvalidSignature;
                     }
 
                     // Send a disconnect command to the tunnel if the VPN is not already turned off
@@ -136,8 +199,11 @@ namespace FirefoxPrivateNetwork.Update
                     if (waitUntilDisconnected != await Task.WhenAny(waitUntilDisconnected, Task.Delay(DisconnectTimeout)))
                     {
                         File.Delete(fileName);
-                        return false;
+                        return UpdateResult.DisconnectTimeout;
                     }
+
+                    // Shut down broker before updating
+                    Manager.Broker.ShutDown();
 
                     ErrorHandling.ErrorHandler.WriteToLog("Running MSI update...", ErrorHandling.LogLevel.Info);
 
@@ -145,28 +211,36 @@ namespace FirefoxPrivateNetwork.Update
                     if (!msiUpdateLaunch)
                     {
                         File.Delete(fileName);
+                        return UpdateResult.RunFailure;
                     }
 
-                    return msiUpdateLaunch;
+                    return UpdateResult.Success;
                 }
             }
         }
 
-        private static async Task<bool> DownloadAndComputeHashAsync(string msiUrl, CryptoStream cryptoStream)
+        private static async Task<UpdateDownloadResult> DownloadAndComputeHashAsync(string msiUrl, CryptoStream cryptoStream)
         {
             using (var response = await UpdateHttpClient.QueryWithRetryAsync(msiUrl, MaxHttpRetries))
             {
                 if (!response.IsSuccessStatusCode)
                 {
+                    // Georestriction check
+                    if (response.StatusCode == (System.Net.HttpStatusCode)451)
+                    {
+                        ErrorHandling.ErrorHandler.Handle(string.Concat("Error code received while downloading MSI update: ", response.StatusCode), ErrorHandling.LogLevel.Error);
+                        return UpdateDownloadResult.Georestricted;
+                    }
+
                     ErrorHandling.ErrorHandler.Handle(string.Concat("Error code received while downloading MSI update: ", response.StatusCode), ErrorHandling.LogLevel.Error);
-                    return false;
+                    return UpdateDownloadResult.GeneralFailure;
                 }
 
                 // Copy response content to newly created update file
                 await response.Content.CopyToAsync(cryptoStream);
             }
 
-            return true;
+            return UpdateDownloadResult.Success;
         }
 
         private static bool LaunchUpdatedApplication(string fileName)
@@ -179,7 +253,7 @@ namespace FirefoxPrivateNetwork.Update
                     msiProcess.StartInfo.FileName = "msiexec.exe";
 
                     // Runs the MSI installation in basic GUI mode
-                    msiProcess.StartInfo.Arguments = string.Format("/qb!- /i {0}", Path.GetFileName(fileName));
+                    msiProcess.StartInfo.Arguments = string.Format("/qb!- REBOOT=ReallySuppress /i {0}", Path.GetFileName(fileName));
 
                     if (!msiProcess.Start())
                     {

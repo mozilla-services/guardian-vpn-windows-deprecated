@@ -124,6 +124,7 @@ update-title = Sicherheitsupdate
 update-content-1 = Update {application-name}, um es weiter zu verwenden
 update-content-2 = Die Verbindung ist während des Updateprozesses nicht sicher.
 update-update-button-text = Update starten
+update-update-failed-georestricted = Updates are only available for users located in the US
 update-update-failed = Update fehler
 update-update-started = Update starten
 
