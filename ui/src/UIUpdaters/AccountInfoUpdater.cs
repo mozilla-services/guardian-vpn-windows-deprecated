@@ -141,7 +141,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
                                 var owner = Application.Current.MainWindow;
                                 if (owner != null)
                                 {
-                                    ((UI.MainWindow)owner).NavigateToView(new UI.LinkAccountView(), UI.MainWindow.SlideDirection.Right);
+                                    ((UI.MainWindow)owner).NavigateToView(new UI.LandingView(), UI.MainWindow.SlideDirection.Right);
                                 }
                             });
                         }
@@ -245,7 +245,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
                     var owner = Application.Current.MainWindow;
                     if (owner != null)
                     {
-                        ((UI.MainWindow)owner).NavigateToView(new UI.LinkAccountView(), UI.MainWindow.SlideDirection.Right);
+                        ((UI.MainWindow)owner).NavigateToView(new UI.LandingView(), UI.MainWindow.SlideDirection.Right);
 
                         // Create a subscription expired toast
                         var message = new ErrorHandling.UserFacingMessage(

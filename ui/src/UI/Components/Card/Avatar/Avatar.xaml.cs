@@ -162,7 +162,7 @@ namespace FirefoxPrivateNetwork.UI.Components
             AvatarMenu.IsOpen = false;
 
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.NavigateToView(new LinkAccountView(), MainWindow.SlideDirection.Right);
+            mainWindow.NavigateToView(new LandingView(), MainWindow.SlideDirection.Right);
         }
     }
 }

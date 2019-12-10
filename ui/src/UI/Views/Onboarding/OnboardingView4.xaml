@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="FirefoxPrivateNetwork.UI.OnboardingView4"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI"
+             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
+             mc:Ignorable="d" 
+             VerticalContentAlignment="Top"
+             d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+
+    <Grid>
+        <Grid Height="454" Width="360">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Navigation header bar -->
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">
+                <DockPanel VerticalAlignment="Center">
+                    <Button Style="{StaticResource 'Icon'}" HorizontalAlignment="Left" Width="40" Height="40" Margin="8" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="ExitOnboarding"/>
+                </DockPanel>
+            </Grid>
+
+            <!-- Onboarding logo -->
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="0">
+                <Image Source="{svgc:SvgImage Source={StaticResource 'illu-power'}}" Margin="0,16,0,0" Width="80" Height="80" />
+            </Grid>
+
+            <!-- Onboarding title and content -->
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="2" Grid.Column="0">
+                <StackPanel Margin="0,23,0,0">
+                    <TextBlock Style="{StaticResource 'Title 10'}" Width="250" TextAlignment="Center" Foreground="{StaticResource 'Grey/Grey 50'}" Text="{Binding Path=[nux-title-4]}" />
+                    <TextBlock Style="{StaticResource 'Body 10'}" Width="296" Margin="0,8,0,0" TextAlignment="Center" Foreground="{StaticResource 'Grey/Grey 50'}" Text="{Binding Path=[nux-content-4]}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Next button -->
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+                <Button Style="{StaticResource 'Standard'}" Content="{Binding Path=[landing-signin-button-text]}" FontWeight="SemiBold" Width="296" Height="40" Margin="32,24" Click="Signin_Click" />
+            </Grid>
+
+            <!-- Next link -->
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="4" Grid.Column="0">
+                <UniformGrid Rows="1" Width="48" Margin="0,8,0,40">
+                    <Ellipse Width="6" Height="6" Fill="{StaticResource 'Grey/Grey 20'}" />
+                    <Ellipse Width="6" Height="6" Fill="{StaticResource 'Grey/Grey 20'}" />
+                    <Ellipse Width="6" Height="6" Fill="{StaticResource 'Grey/Grey 20'}" />
+                    <Ellipse Width="6" Height="6" Fill="{StaticResource 'Blue/Blue 50'}" />
+                </UniformGrid>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

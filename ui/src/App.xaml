@@ -16,9 +16,9 @@
                 <ResourceDictionary Source="UI/Components/Checkbox.xaml" />
                 <ResourceDictionary Source="UI/Components/Card/Avatar/AvatarMenu.xaml" />
                 <ResourceDictionary Source="UI/Resources/Icons/Icons.xaml" />
-                <ResourceDictionary Source="UI/Resources/Icons/Flags/Flags.xaml" />
                 <ResourceDictionary Source="UI/Components/Dev.xaml" />
-                <ResourceDictionary Source="UI/Resources/Localization/Translations/Translations.xaml" />
+                <ResourceDictionary Source="UI/Resources/Localization/Translations.xaml" />
+                <ResourceDictionary Source="UI/Resources/Storyboards/FrameTransitions.xaml" />
                 <ResourceDictionary Source="Resources/Animations/Animations.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
