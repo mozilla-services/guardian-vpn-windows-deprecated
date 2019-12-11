@@ -25,7 +25,7 @@
 
         <Grid x:Name="MainCardGrid" Width="Auto" Height="334" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,8,0,0" Grid.Row="0" Grid.Column="0">
             <!-- Card background-->
-            <uc:Card x:Name="MainCard" Active="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnNotUnprotectedConverter}, UpdateSourceTrigger=PropertyChanged}" AnimateRipple="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnProtectedConverter}, UpdateSourceTrigger=PropertyChanged}" />
+            <uc:Card x:Name="MainCard" IsHitTestVisible="False" Active="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnNotUnprotectedConverter}, UpdateSourceTrigger=PropertyChanged}" AnimateRipple="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnProtectedConverter}, UpdateSourceTrigger=PropertyChanged}" />
             
             <!-- Card content -->
             <Grid Height="Auto" Width="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
