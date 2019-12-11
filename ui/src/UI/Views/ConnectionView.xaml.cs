@@ -50,10 +50,6 @@ namespace FirefoxPrivateNetwork.UI
                 {
                     WireGuard.Connector.Connect(switchServer: true, previousServerCity: previousSelectedItem.Name, switchServerCity: selectedServer.Name);
                 }
-                else if (Manager.MainWindowViewModel.Status == Models.ConnectionState.Unprotected)
-                {
-                    WireGuard.Connector.Connect();
-                }
 
                 NavigateMain(sender, e);
             }
