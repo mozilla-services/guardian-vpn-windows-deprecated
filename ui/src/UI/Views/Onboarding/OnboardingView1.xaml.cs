@@ -45,10 +45,10 @@ namespace FirefoxPrivateNetwork.UI
             mainWindow.NavigateToView(new LandingView(), MainWindow.SlideDirection.Down);
         }
 
-        private void Skip_Click(object sender, RoutedEventArgs e)
+        private void SkipOnboarding(object sender, RoutedEventArgs e)
         {
-            var fxaLoginThread = new FxA.Login();
-            fxaLoginThread.StartLogin();
+            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+            mainWindow.NavigateToView(new OnboardingView4(), MainWindow.SlideDirection.Left);
         }
     }
 }

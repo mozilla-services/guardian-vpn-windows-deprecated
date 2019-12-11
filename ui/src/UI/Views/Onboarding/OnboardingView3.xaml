@@ -27,7 +27,7 @@
                 <DockPanel VerticalAlignment="Center">
                     <Button Style="{StaticResource 'Icon'}" Width="40" Height="40" Margin="8,0" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="ExitOnboarding"/>
                     <TextBlock Style="{StaticResource 'Header 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextAlignment="Right" TextDecorations="{x:Null}" Margin="16,17,16,16">
-                        <Hyperlink Click="Skip_Click" TextDecorations="{x:Null}">
+                        <Hyperlink Click="SkipOnboarding" TextDecorations="{x:Null}">
                             <TextBlock Text="{Binding Path=[nux-skip]}"/>
                         </Hyperlink>
                     </TextBlock>
