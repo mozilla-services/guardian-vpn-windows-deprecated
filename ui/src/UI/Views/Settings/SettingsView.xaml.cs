@@ -39,11 +39,6 @@ namespace FirefoxPrivateNetwork.UI
         public string InstalledUICulture => CultureInfo.InstalledUICulture.ToString();
 
         /// <summary>
-        /// Gets a value indicating whether the "Unsecure network alert" checkbox is checked.
-        /// </summary>
-        public bool UnsecureNetworkAlert => Manager.Settings.Network.UnsecureNetworkAlert;
-
-        /// <summary>
         /// Gets a value indicating whether the "Allow local device access" checkbox is checked.
         /// </summary>
         public bool AllowLocalDeviceAccess => Manager.Settings.Network.AllowLocalDeviceAccess;
@@ -110,20 +105,16 @@ namespace FirefoxPrivateNetwork.UI
             mainWindow.NavigateToView(new LanguageView(this), MainWindow.SlideDirection.Left);
         }
 
+        private void NavigateNotifications(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+            mainWindow.NavigateToView(new NotificationsView(this), MainWindow.SlideDirection.Left);
+        }
+
         private void RunOnStartup_Click(object sender, RoutedEventArgs e)
         {
             CheckBox runOnStartupCheckBox = sender as CheckBox;
             RunOnStartup = runOnStartupCheckBox.IsChecked ?? false;
-        }
-
-        private void UnsecureNetworkAlertCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            CheckBox unsecureNetworkAlertCheckBox = sender as CheckBox;
-
-            // Save the new Unsecured Network Alert settings
-            var networkSettings = Manager.Settings.Network;
-            networkSettings.UnsecureNetworkAlert = unsecureNetworkAlertCheckBox.IsChecked ?? false;
-            Manager.Settings.Network = networkSettings;
         }
 
         private void AllowLocalDeviceAccessCheckBox_Click(object sender, RoutedEventArgs e)

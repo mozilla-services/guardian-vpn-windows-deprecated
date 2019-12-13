@@ -31,6 +31,7 @@
             </Border>
         </Grid>
 
+        <!-- Scrollabe page content -->
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
@@ -40,11 +41,11 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="56" />
-                    <RowDefinition Height="56" />
-                    <RowDefinition Height="56" />
-                    <RowDefinition Height="56" />
+                    <RowDefinition Height="48" />
+                    <RowDefinition Height="48" />
+                    <RowDefinition Height="48" />
+                    <RowDefinition Height="48" />
+                    <RowDefinition Height="48" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
@@ -54,7 +55,7 @@
                         <StackPanel>
                             <!-- Profile picture -->
                             <uc:Avatar x:Name="Avatar" Size="90" IsEnabled="False" />
-                            
+
                             <!-- Display name -->
                             <TextBlock Foreground="{StaticResource 'Grey/Grey 50'}" HorizontalAlignment="Center" Margin="0,14,0,0" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SettingsView}}, Path=UserDisplayName}">
                                 <TextBlock.Style>
@@ -68,38 +69,18 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-                            
+
                             <!-- Email address -->
                             <TextBlock Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Grey/Grey 40'}" HorizontalAlignment="Center" Margin="0,8,0,0" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SettingsView}}, Path=UserEmail}"/>
-                            
+
                             <!-- Manage account button -->
                             <Button Style="{StaticResource 'Standard'}" FontWeight="SemiBold" Margin="0,24,0,0" Content="{Binding Path=[avatar-menu-manage-account]}" Click="ManageAccount_Click" />
                         </StackPanel>
                     </Border>
                 </Grid>
-
-                <!-- Unsecure network alert setting -->
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
-                    <StackPanel Margin="18,18,18,16">
-                        <CheckBox Content="{Binding Path=[settings-unsecured-network-title]}" Click="UnsecureNetworkAlertCheckBox_Click">
-                            <CheckBox.Style>
-                                <Style BasedOn="{StaticResource Checkbox}" TargetType="{x:Type CheckBox}">
-                                    <Setter Property="IsChecked" Value="False" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SettingsView}}, Path=UnsecureNetworkAlert}" Value="True">
-                                            <Setter Property="IsChecked" Value="True" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </CheckBox.Style>
-                        </CheckBox>
-                        <TextBlock Style="{StaticResource 'Byline 10'}" Foreground="{StaticResource 'Grey/Grey 40'}" Margin="38,0,0,0" Text="{Binding Path=[settings-unsecured-network-content]}" />
-                    </StackPanel>
-                    <Separator VerticalAlignment="Bottom" Width="288" Margin="55,0,16,0" BorderThickness="1" BorderBrush="{StaticResource 'Grey/Grey 10'}" />
-                </Grid>
-
+                
                 <!-- Local device access setting -->
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0">
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
                     <StackPanel Margin="18,18,18,16">
                         <CheckBox x:Name="AllowLocalDeviceAccessCheckBox" Content="{Binding Path=[settings-local-device-access-title]}" Click="AllowLocalDeviceAccessCheckBox_Click">
                             <CheckBox.Style>
@@ -153,22 +134,29 @@
                 </Grid>
 
                 <!-- Launch VPN on startup setting -->
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="3" Grid.Column="0">
-                    <CheckBox Margin="18" Content="{Binding Path=[settings-auto-launch]}" Click="RunOnStartup_Click">
-                        <CheckBox.Style>
-                            <Style BasedOn="{StaticResource Checkbox}" TargetType="{x:Type CheckBox}">
-                                <Setter Property="IsChecked" Value="False" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SettingsView}}, Path=RunOnStartup}" Value="True">
-                                        <Setter Property="IsChecked" Value="True" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </CheckBox.Style>
-                    </CheckBox>
-                    <Separator VerticalAlignment="Bottom" Width="288" Margin="55,0,16,0" BorderThickness="1" BorderBrush="{StaticResource 'Grey/Grey 10'}" />
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0">
+                    <StackPanel Margin="0,0,0,8">
+                        <CheckBox Margin="18" Content="{Binding Path=[settings-auto-launch]}" Click="RunOnStartup_Click">
+                            <CheckBox.Style>
+                                <Style BasedOn="{StaticResource Checkbox}" TargetType="{x:Type CheckBox}">
+                                    <Setter Property="IsChecked" Value="False" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SettingsView}}, Path=RunOnStartup}" Value="True">
+                                            <Setter Property="IsChecked" Value="True" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                        <Separator VerticalAlignment="Bottom" Width="288" Margin="55,0,16,0" BorderThickness="1" BorderBrush="{StaticResource 'Grey/Grey 10'}" />
+                    </StackPanel>
                 </Grid>
 
+                <!-- Notifications view navigation button -->
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+                    <uc:PageNavigation x:Name="NotificationsNavButton" Title="{Binding Path=[notifications-page-title]}" TitleIconUrl="{StaticResource 'notifications'}" Click="NavigateNotifications" />
+                </Grid>
+                
                 <!-- Language view navigation button -->
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0">
                     <uc:PageNavigation x:Name="LanguageNavButton" Title="{Binding Path=[language-page-title]}" TitleIconUrl="{StaticResource 'languages'}" Click="NavigateLanguage" />
@@ -199,7 +187,7 @@
 
                 <!-- Sign out button -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="8" Grid.Column="0">
-                    <Button Margin="0,40" Background="Transparent" Cursor="Hand" Click="Signout_Click">
+                    <Button Margin="0,32,0,40" Background="Transparent" Cursor="Hand" Click="Signout_Click">
                         <Button.Template>
                             <ControlTemplate>
                                 <TextBlock Style="{StaticResource 'Header 20'}" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="{StaticResource 'Red/Red 50'}" Text="{Binding Path=[avatar-menu-sign-out]}" />

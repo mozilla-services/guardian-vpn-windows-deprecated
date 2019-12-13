@@ -344,6 +344,9 @@
     <Compile Include="UIUpdaters\ToastManager\ToastCollection.cs" />
     <Compile Include="UI\Components\Converters\EqualityConverter.cs" />
     <Compile Include="UI\Components\Converters\StringEmptyConverter.cs" />
+    <Compile Include="UI\Views\Settings\NotificationsView.xaml.cs">
+      <DependentUpon>NotificationsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Views\Onboarding\OnboardingView1.xaml.cs">
       <DependentUpon>OnboardingView1.xaml</DependentUpon>
     </Compile>
@@ -522,6 +525,10 @@
     <Compile Include="NotificationArea\Tray.cs" />
     <Compile Include="ProductConstants.cs" />
     <Page Include="UI\Components\Dev.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Views\Settings\NotificationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -799,6 +806,7 @@
     <Resource Include="UI\Resources\Icons\Illustration\illu-logo.svg" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="UI\Resources\Icons\Generic\notifications.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-power.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-connection.svg" />
     <Resource Include="UI\Resources\Icons\Illustration\illu-tracking.svg" />

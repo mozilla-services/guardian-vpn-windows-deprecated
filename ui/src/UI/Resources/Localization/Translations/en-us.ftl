@@ -13,6 +13,7 @@ get-help-page-title = Get Help
 about-page-title = About
 feedback-page-title = Give feedback
 language-page-title = Language
+notifications-page-title = Notifications
 
 ## Urls
 terms-service-url-title = Terms of Service
@@ -61,6 +62,8 @@ settings-local-device-access-title = Allow access to your local network
 settings-local-device-access-content = Access printers, streaming sticks and all other devices on your local network
 settings-local-device-access-checked-disabled-message = VPN must be off before disabling
 settings-local-device-access-unchecked-disabled-message = VPN must be off before enabling
+settings-captive-portal-title = Guest Wi-Fi portal alert
+settings-captive-portal-content = Get notified if a guest Wi-Fi portal is blocked due to VPN connection
 
 ## About
 about-version-title = Release version
@@ -164,6 +167,10 @@ windows-notification-vpn-switch-title = From {$currentServer} to {$switchServer}
 windows-notification-vpn-switch-content = You switched servers.
 windows-notification-vpn-turn-on-title = Turn on VPN?
 windows-notification-vpn-turn-on-content = Connect to your last location: {$serverCity}.
+windows-notification-unsecure-network-title = Unsecured Wi-Fi network detected
+windows-notification-unsecure-network-content = "{$wifiName}" is not secure. Turn on VPN to secure your device.
+windows-notification-captive-portal-title = Guest Wi-Fi portal blocked
+windows-notification-captive-portal-content = The guest Wi-Fi network you're connected to requires action. Turn off VPN to see portal.
 
 ## In-app toasts
 toast-debug-export-error = We ran into an error while exporting your debug information.
@@ -186,11 +193,6 @@ toast-unable-to-connect = Unable to connect.{" "}
 toast-try-again = Try again
 toast-feedback-submitted = Feedback submitted!{" "}
 toast-feedback-undo = Undo
-
-## Unsecure wifi network detection
-wifi-unsecure-network-detected-msg = Unsecured Wi-Fi network detected
-wifi-you-should-turn-on-msg = Turn on VPN to secure your device.
-wifi-network-unsecure-msg = "{$wifiName}" is not secure.
 
 ## ViewLog window
 viewlog-save-button = Save

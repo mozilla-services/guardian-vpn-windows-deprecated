@@ -122,8 +122,8 @@ namespace FirefoxPrivateNetwork.Network
                         if (showNotification)
                         {
                             Manager.TrayIcon.ShowNotification(
-                                Manager.TranslationService.GetString("wifi-unsecure-network-detected-msg"),
-                                string.Concat(Manager.TranslationService.GetString("wifi-network-unsecure-msg", UI.Resources.Localization.TranslationService.Args("wifiName", connectionData.WlanAssociationAttributes.Dot11Ssid.ToString())), " ", Manager.TranslationService.GetString("wifi-you-should-turn-on-msg")),
+                                Manager.TranslationService.GetString("windows-notification-unsecure-network-title"),
+                                Manager.TranslationService.GetString("windows-notification-unsecure-network-content", UI.Resources.Localization.TranslationService.Args("wifiName", connectionData.WlanAssociationAttributes.Dot11Ssid.ToString())),
                                 NotificationArea.ToastIconType.Disconnected
                             );
                         }
