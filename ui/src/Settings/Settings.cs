@@ -86,6 +86,7 @@ namespace FirefoxPrivateNetwork
             InputSettingsConfig(iniData, "FxA", "PublicKey", FxA.PublicKey);
             InputSettingsConfig(iniData, "Language", "PreferredLanguage", Language.PreferredLanguage);
             InputSettingsConfig(iniData, "Network", "UnsecureNetworkAlert", Network.UnsecureNetworkAlert.ToString());
+            InputSettingsConfig(iniData, "Network", "CaptivePortalAlert", Network.CaptivePortalAlert.ToString());
             InputSettingsConfig(iniData, "Network", "AllowLocalDeviceAccess", Network.AllowLocalDeviceAccess.ToString());
 
             return iniData.ToString();
@@ -180,6 +181,11 @@ namespace FirefoxPrivateNetwork
                 networkSettings.UnsecureNetworkAlert = bool.Parse(data["Network"]["UnsecureNetworkAlert"]);
             }
 
+            if (ContainsSettingsConfig(data, "Network", "CaptivePortalAlert"))
+            {
+                networkSettings.CaptivePortalAlert = bool.Parse(data["Network"]["CaptivePortalAlert"]);
+            }
+
             if (ContainsSettingsConfig(data, "Network", "AllowLocalDeviceAccess"))
             {
                 networkSettings.AllowLocalDeviceAccess = bool.Parse(data["Network"]["AllowLocalDeviceAccess"]);
@@ -269,6 +275,7 @@ namespace FirefoxPrivateNetwork
         public struct NetworkSettings
         {
             private bool? unsecureNetworkAlert;
+            private bool? captivePortalAlert;
 
             /// <summary>
             /// Gets or sets a value indicating whether the user's unsecure network alert is on or off.
@@ -278,6 +285,16 @@ namespace FirefoxPrivateNetwork
             {
                 get { return unsecureNetworkAlert ?? true; }
                 set { unsecureNetworkAlert = value; }
+            }
+
+            /// <summary>
+            /// Gets or sets a value indicating whether the user's captive portal alert is on or off.
+            /// </summary>
+            [DisplayName("CaptivePortalAlert")]
+            public bool CaptivePortalAlert
+            {
+                get { return captivePortalAlert ?? true; }
+                set { captivePortalAlert = value; }
             }
 
             /// <summary>

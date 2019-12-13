@@ -13,6 +13,7 @@ get-help-page-title = Hilfe
 about-page-title = Über
 feedback-page-title = Feedback
 language-page-title = Sprache
+notifications-page-title = Mitteilungen
 
 ## Urls
 terms-service-url-title = Nutzungsbedingungen
@@ -61,6 +62,8 @@ settings-local-device-access-title = Zugriff zum lokalen Netzwerk erlauben
 settings-local-device-access-content = Zugriff auf Drucker, Streaming und alle anderen Geräte im lokalen Netzwerk
 settings-local-device-access-checked-disabled-message = VPN muss vor der Deaktivierung ausgeschaltet werden
 settings-local-device-access-unchecked-disabled-message = VPN muss vor der Aktivierung ausgeschaltet werden
+settings-captive-portal-title = Guest Wi-Fi portal alert
+settings-captive-portal-content = Get notified if a guest Wi-Fi portal is blocked due to VPN connection
 
 ## About
 about-version-title = Version
@@ -164,6 +167,10 @@ windows-notification-vpn-switch-title = Von {$currentServer} zu {$switchServer} 
 windows-notification-vpn-switch-content = {windows-notification-vpn-on-title}
 windows-notification-vpn-turn-on-title = VPN anschalten?
 windows-notification-vpn-turn-on-content = Wir verbinden dich mit deinem letzten Standort: {$serverCity}
+windows-notification-unsecure-network-title = Unsicheres Netzwerk erkannt
+windows-notification-unsecure-network-content = "{$wifiName}" ist nicht sicher. Du solltest Dein VPN einschalten.
+windows-notification-captive-portal-title = Guest Wi-Fi portal blocked
+windows-notification-captive-portal-content = The guest Wi-Fi network you're connected to requires action. Turn off VPN to see portal.
 
 ## In-app toasts
 toast-debug-export-error = Wir sind beim Export Ihrer Debug-Informationen auf einen Fehler gestoßen.
@@ -186,11 +193,6 @@ toast-unable-to-connect = Verbindung kann nicht hergestellt werden.{" "}
 toast-try-again = Nochmal versuchen
 toast-feedback-submitted = Feedback abgeschickt!{" "}
 toast-feedback-undo = Rückgängig
-
-## Unsecure wifi network detection
-wifi-unsecure-network-detected-msg = Unsicheres Netzwerk erkannt
-wifi-you-should-turn-on-msg = Du solltest Dein VPN einschalten.
-wifi-network-unsecure-msg = "{$wifiName}" ist nicht sicher.
 
 ## ViewLog window
 viewlog-save-button = Speichern

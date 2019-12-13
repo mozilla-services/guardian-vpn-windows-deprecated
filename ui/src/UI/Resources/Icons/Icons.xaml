@@ -23,6 +23,7 @@
     <system:String x:Key="languages">pack://application:,,,/UI/Resources/Icons/Generic/languages.svg</system:String>
     <system:String x:Key="list">pack://application:,,,/UI/Resources/Icons/Generic/list.svg</system:String>
     <system:String x:Key="no-signal">pack://application:,,,/UI/Resources/Icons/Generic/nosignal.svg</system:String>
+    <system:String x:Key="notifications">pack://application:,,,/UI/Resources/Icons/Generic/notifications.svg</system:String>
     <system:String x:Key="open-window-blue50">pack://application:,,,/UI/Resources/Icons/Generic/open-window-blue50.svg</system:String>
     <system:String x:Key="open-window-blue60">pack://application:,,,/UI/Resources/Icons/Generic/open-window-blue60.svg</system:String>
     <system:String x:Key="open-window">pack://application:,,,/UI/Resources/Icons/Generic/open-window.svg</system:String>
