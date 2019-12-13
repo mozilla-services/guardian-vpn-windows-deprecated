@@ -95,7 +95,7 @@
 			Merge modules
 		-->
 		<DirectoryRef Id="FirefoxPrivateNetworkVPNFolder">
-			<Merge Id="WintunMergeModule" Language="0" DiskId="1" SourceFile=".deps/wintun-$(var.WintunPlatform)-0.7.msm" />
+			<Merge Id="WintunMergeModule" Language="0" DiskId="1" SourceFile=".deps/wintun-$(var.WintunPlatform)-0.8.msm" />
 		</DirectoryRef>
 
 		<!--
