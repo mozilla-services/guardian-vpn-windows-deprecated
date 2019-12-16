@@ -19,7 +19,7 @@
                 <ResourceDictionary Source="UI/Components/Dev.xaml" />
                 <ResourceDictionary Source="UI/Resources/Localization/Translations.xaml" />
                 <ResourceDictionary Source="UI/Resources/Storyboards/FrameTransitions.xaml" />
-                <ResourceDictionary Source="Resources/Animations/Animations.xaml" />
+                <ResourceDictionary Source="UI/Resources/Animations/Animations.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <FontFamily x:Key="Inter">pack://application:,,,/UI/Resources/Fonts/Inter/#Inter</FontFamily>
