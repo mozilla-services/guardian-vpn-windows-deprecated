@@ -141,7 +141,27 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Number of seconds to wait before displaying another "insecure network detected" toast popup upon connecting to an unsecured WiFi network.
         /// </summary>
-        public static readonly int InsecureWiFiTimeout = 20;
+        public static readonly int UnsecureWiFiTimeout = 20;
+
+        /// <summary>
+        /// IP address housing the captive portal detection TXT file.
+        /// </summary>
+        public static readonly string CaptivePortalDetectionIP = "184.150.160.34";
+
+        /// <summary>
+        /// Hostname to use when contacting CaptivePortalDetectionIP for captive portal detection.
+        /// </summary>
+        public static readonly string CaptivePortalDetectionHost = "detectportal.firefox.com";
+
+        /// <summary>
+        /// Full URL to attempt to download during the captive portal detection process. %s will be replaced with CaptivePortalDetectionHost.
+        /// </summary>
+        public static readonly string CaptivePortalDetectionUrl = "http://%s/success.txt";
+
+        /// <summary>
+        /// Contents of the TXT file downloaded when checking against a captive portal being active.
+        /// </summary>
+        public static readonly string CaptivePortalDetectionValidReplyContents = "success";
 
         /// <summary>
         /// Gets or sets a value indicating whether developer mode is on. Developer mode is on when the default FxA base URL has been overridden.

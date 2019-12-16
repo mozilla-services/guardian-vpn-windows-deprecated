@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using FirefoxPrivateNetwork.WireGuard;
 
 namespace FirefoxPrivateNetwork.UIUpdaters
 {
@@ -154,6 +155,18 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             {
                 Manager.TrayIcon.SetDisconnected();
                 return;
+            }
+
+            // Make sure to try and detect captive portals if unstable/no signal
+            if (stability == Models.ConnectionStability.NoSignal || stability == Models.ConnectionStability.Unstable)
+            {
+                // Attempt to check for a captive portal if the settings option is enabled and captive portal has not already been detected for the current network address
+                if (Manager.Settings.Network.CaptivePortalAlert && !Manager.CaptivePortalDetector.CaptivePortalDetected)
+                {
+                    var ipcDetectCaptivePortalMsg = new IPCMessage(IPCCommand.IpcDetectCaptivePortal);
+                    var brokerIPC = Manager.Broker.GetBrokerIPC();
+                    brokerIPC.WriteToPipe(ipcDetectCaptivePortalMsg);
+                }
             }
 
             if (stability == Models.ConnectionStability.NoSignal)

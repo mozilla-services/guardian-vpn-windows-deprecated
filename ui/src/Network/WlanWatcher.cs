@@ -109,7 +109,7 @@ namespace FirefoxPrivateNetwork.Network
                         }
                         else
                         {
-                            if ((DateTime.UtcNow - accessPoints[bSsid].LastNotified).TotalSeconds < ProductConstants.InsecureWiFiTimeout)
+                            if ((DateTime.UtcNow - accessPoints[bSsid].LastNotified).TotalSeconds < ProductConstants.UnsecureWiFiTimeout)
                             {
                                 showNotification = false;
                             }

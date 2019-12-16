@@ -76,6 +76,10 @@ namespace FirefoxPrivateNetwork.WireGuard
                     ServiceQueueEvent.Set();
                     break;
 
+                case IPCCommand.IpcDetectCaptivePortal:
+                    HandleIPCDetectCaptivePortal(ipc);
+                    break;
+
                 case IPCCommand.IpcRequestPid:
                     HandleIPCPidRequest(ipc);
                     break;
@@ -86,6 +90,10 @@ namespace FirefoxPrivateNetwork.WireGuard
 
                 case IPCCommand.IpcConnectReply:
                     HandleIPCConnectReply(cmd);
+                    break;
+
+                case IPCCommand.IpcDetectCaptivePortalReply:
+                    HandleIPCDetectCaptivePortalReply(cmd);
                     break;
             }
         }
@@ -144,6 +152,30 @@ namespace FirefoxPrivateNetwork.WireGuard
             if (int.TryParse(pIdString, out int pId))
             {
                 Manager.Broker.SetRemoteBrokerPid(pId);
+            }
+        }
+
+        private static void HandleIPCDetectCaptivePortal(IPC ipc)
+        {
+            var captivePortalDetectionTask = Network.CaptivePortalDetection.IsCaptivePortalActiveTask();
+            captivePortalDetectionTask.ContinueWith(task =>
+            {
+                var captivePortalDetectionReply = new IPCMessage(IPCCommand.IpcDetectCaptivePortalReply);
+                captivePortalDetectionReply.AddAttribute("detected", task.Result == Network.CaptivePortalDetection.ConnectivityStatus.CaptivePortalDetected ? "true" : "false");
+                ipc.WriteToPipe(captivePortalDetectionReply);
+            });
+        }
+
+        private static void HandleIPCDetectCaptivePortalReply(IPCMessage cmd)
+        {
+            var captivePortalDetected = cmd["detected"].FirstOrDefault();
+            if (captivePortalDetected == "true")
+            {
+                Manager.CaptivePortalDetector.CaptivePortalDetected = true;
+            }
+            else
+            {
+                Manager.CaptivePortalDetector.CaptivePortalDetected = false;
             }
         }
 
