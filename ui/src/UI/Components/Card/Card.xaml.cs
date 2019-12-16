@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -137,14 +138,26 @@ namespace FirefoxPrivateNetwork.UI.Components
         {
             try
             {
-                rippleAnimation = new LottieAnimationView();
-                rippleAnimation.Name = "RippleAnimation";
-                rippleAnimation.DefaultCacheStrategy = LottieAnimationView.CacheStrategy.Strong;
-                rippleAnimation.Speed = 0.5;
-                rippleAnimation.FileName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Application.Current.Resources["ripple"].ToString());
-                rippleAnimation.AutoPlay = false;
-                rippleAnimation.VerticalAlignment = VerticalAlignment.Center;
-                rippleAnimation.HorizontalAlignment = HorizontalAlignment.Center;
+                var animationResourceKey = "ripple";
+                var animationFileName = Application.Current.Resources[animationResourceKey].ToString();
+                string animationJson;
+
+                using (var sr = new StreamReader(Application.GetResourceStream(new Uri(animationFileName)).Stream))
+                {
+                    animationJson = sr.ReadToEnd();
+                }
+
+                rippleAnimation = new LottieAnimationView
+                {
+                    Name = "RippleAnimation",
+                    DefaultCacheStrategy = LottieAnimationView.CacheStrategy.Strong,
+                    Speed = 0.5,
+                    AutoPlay = false,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                };
+
+                rippleAnimation.SetAnimationFromJsonAsync(animationJson, animationResourceKey);
             }
             catch (Exception)
             {

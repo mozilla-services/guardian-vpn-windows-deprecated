@@ -60,11 +60,7 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="$(var.PlatformProgramFilesFolder)">
 				<Directory Id="MozillaFolder" Name="Mozilla">
-					<Directory Id="FirefoxPrivateNetworkVPNFolder" Name="Firefox Private Network VPN">
-						<Directory Id="ResourcesFolder" Name="Resources">
-							<Directory Id="AnimationsFolder" Name="Animations" />
-						</Directory>
-					</Directory>
+					<Directory Id="FirefoxPrivateNetworkVPNFolder" Name="Firefox Private Network VPN" />
 				</Directory>
 			</Directory>
 			<Directory Id="ProgramMenuFolder" />
@@ -85,9 +81,6 @@
 				<File Source="../ui/bin/$(var.Platform)/Release/Resources/Graphics/icon_150x150.png" />
 
 				<ServiceControl Id="FirefoxPrivateNetworkVPNService" Remove="both" Name="WireGuardTunnel$FirefoxPrivateNetworkVPN" Stop="both" Wait="yes" />
-			</Component>
-			<Component Directory="AnimationsFolder" Id="Animations" Guid="8bb4c745-1b39-433e-bf48-c1b9f5381f06">
-				<File Source="../ui/bin/$(var.Platform)/Release/Resources/Animations/ripple.json" />
 			</Component>
 		</ComponentGroup>
 

@@ -528,6 +528,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UI\Resources\Animations\Animations.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Views\Settings\NotificationsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -561,10 +565,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\LogWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\Animations\Animations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -711,6 +711,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AdditionalFiles Include="stylecop.json" />
+    <Resource Include="UI\Resources\Animations\Lottie\ripple.json" />
     <Resource Include="UI\Resources\Localization\Translations\de.ftl" />
     <Resource Include="UI\Resources\Localization\Translations\en-us.ftl" />
   </ItemGroup>
@@ -816,9 +817,6 @@
     <Resource Include="UI\Resources\Icons\Generic\info-red.svg" />
     <Resource Include="UI\Resources\Icons\Generic\settings-white.svg" />
     <Resource Include="UI\Resources\Icons\Generic\close-small.svg" />
-    <Content Include="Resources\Animations\ripple.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Resources\MainIcon.ico" />
   </ItemGroup>
   <ItemGroup>
