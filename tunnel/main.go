@@ -28,16 +28,23 @@ import (
 	"golang.zx2c4.com/wireguard/windows/tunnel/firewall"
 )
 
+func marshalCSharpStringPointerToString(str16 *uint16) string {
+	return windows.UTF16ToString((*[(1 << 30) - 1]uint16)(unsafe.Pointer(str16))[:])
+}
+
 //export WireGuardTunnelService
 func WireGuardTunnelService(confFile16 *uint16) bool {
-	confFile := windows.UTF16ToString((*[(1 << 30) - 1]uint16)(unsafe.Pointer(confFile16))[:])
+	confFile := marshalCSharpStringPointerToString(confFile16)
 	tunnel.UseFixedGUIDInsteadOfDeterministic = true
 	firewall.ExemptBuiltinAdministrators = true
+
 	conf.PresetRootDirectory(filepath.Dir(confFile))
+
 	err := tunnel.Run(confFile)
 	if err != nil {
 		log.Printf("Tunnel service error: %v", err)
 	}
+
 	return err == nil
 }
 
@@ -45,10 +52,12 @@ func WireGuardTunnelService(confFile16 *uint16) bool {
 func WireGuardGenerateKeypair(publicKey *byte, privateKey *byte) {
 	publicKeyArray := (*[32]byte)(unsafe.Pointer(publicKey))
 	privateKeyArray := (*[32]byte)(unsafe.Pointer(privateKey))
+
 	n, err := rand.Read(privateKeyArray[:])
 	if err != nil || n != len(privateKeyArray) {
 		panic("Unable to generate random bytes")
 	}
+
 	privateKeyArray[0] &= 248
 	privateKeyArray[31] = (privateKeyArray[31] & 127) | 64
 
@@ -60,7 +69,9 @@ func findPhysicalDefaultRoute() (winipcfg.LUID, net.IP, error) {
 	if err != nil {
 		return 0, nil, err
 	}
+
 	lowestMetric := ^uint32(0)
+
 	var nextHop net.IP
 	var luid winipcfg.LUID
 	for i := range r {
@@ -77,45 +88,72 @@ func findPhysicalDefaultRoute() (winipcfg.LUID, net.IP, error) {
 			luid = r[i].InterfaceLUID
 		}
 	}
+
 	if len(nextHop) == 0 {
 		return 0, nil, errors.New("Unable to find default route")
 	}
+
 	return luid, nextHop, nil
 }
 
-//export TestConnectivity
-func TestConnectivity() int32 {
-	const (
-		exemptIP = "13.107.4.52"
-		host     = "www.msftconnecttest.com"
-		url      = "http://%s/connecttest.txt"
-	)
+//export TestOutsideConnectivity
+func TestOutsideConnectivity(ip16 *uint16, host16 *uint16, url16 *uint16, expectedTestResult16 *uint16) int32 {
+	ip := marshalCSharpStringPointerToString(ip16)
+	host := marshalCSharpStringPointerToString(host16)
+	url := marshalCSharpStringPointerToString(url16)
+	expectedTestResult := marshalCSharpStringPointerToString(expectedTestResult16)
 
+	// Attempt to locate a default route
 	luid, nextHop, err := findPhysicalDefaultRoute()
 	if err != nil {
 		return -1
 	}
-	destination := net.IPNet{IP: net.ParseIP(exemptIP), Mask: net.IPv4Mask(255, 255, 255, 255)}
+
+	destination := net.IPNet{IP: net.ParseIP(ip), Mask: net.IPv4Mask(255, 255, 255, 255)}
 	err = luid.AddRoute(destination, nextHop, 0)
-	if err != nil {
+
+	// Check for errors, and check if route already exists
+	if err != nil && err != windows.ERROR_OBJECT_ALREADY_EXISTS {
 		return -1
 	}
 	defer luid.DeleteRoute(destination, nextHop)
 
-	req, err := http.NewRequest("GET", fmt.Sprintf(url, exemptIP), nil)
+	// Attempt to setup a new GET request
+	req, err := http.NewRequest("GET", fmt.Sprintf(url, ip), nil)
 	if err != nil {
 		return -1
 	}
+
+	// Redirects should be treated as an assumption that a captive portal is available
+	redirected := false
+	client := &http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			redirected = true
+			return errors.New("Redirect detected.")
+		},
+	}
+
+	// Set the host header and try to retrieve the supplied URL
 	req.Host = host
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
+
+	if redirected {
+		// We were redirected!
+		return 0
+	}
+
 	if err != nil {
 		return -1
 	}
+
+	// Read response from the body
 	text, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return -1
 	}
-	if bytes.Equal(text, []byte("Microsoft Connect Test")) {
+
+	// Compare retrieved body contents to expected contents
+	if bytes.Equal(text, []byte(expectedTestResult)) {
 		return 1
 	} else {
 		return 0

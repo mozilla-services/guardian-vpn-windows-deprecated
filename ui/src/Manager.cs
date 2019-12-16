@@ -69,6 +69,11 @@ namespace FirefoxPrivateNetwork
         public static Network.WlanWatcher WlanWatcher { get; set; }
 
         /// <summary>
+        /// Gets or sets the captive portal detector.
+        /// </summary>
+        public static Network.CaptivePortalDetection CaptivePortalDetector { get; set; }
+
+        /// <summary>
         /// Gets or sets the network pinger.
         /// </summary>
         public static Network.Pinger PingManager { get; set; }
@@ -107,6 +112,7 @@ namespace FirefoxPrivateNetwork
             InitializeTranslationService();
             InitializeUIUpdaters();
             InitializeWlanWatcher();
+            InitializeCaptivePortalDetector();
         }
 
         /// <summary>
@@ -173,6 +179,14 @@ namespace FirefoxPrivateNetwork
         public static void InitializeWlanWatcher()
         {
             WlanWatcher = new Network.WlanWatcher();
+        }
+
+        /// <summary>
+        /// Initialize the captive portal detector.
+        /// </summary>
+        public static void InitializeCaptivePortalDetector()
+        {
+            CaptivePortalDetector = new Network.CaptivePortalDetection();
         }
 
         /// <summary>

@@ -34,6 +34,16 @@ namespace FirefoxPrivateNetwork.WireGuard
         public const string IpcDisconnect = "ipcdisconnect=1";
 
         /// <summary>
+        /// Captive portal detection request.
+        /// </summary>
+        public const string IpcDetectCaptivePortal = "ipcdetectcaptiveportal=1";
+
+        /// <summary>
+        /// Captive portal detection reply.
+        /// </summary>
+        public const string IpcDetectCaptivePortalReply = "ipcdetectcaptiveportalreply=1";
+
+        /// <summary>
         /// Process ID reply command.
         /// </summary>
         public const string IpcPidReply = "ipcpid=1";
