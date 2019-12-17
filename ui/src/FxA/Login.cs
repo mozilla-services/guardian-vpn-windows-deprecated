@@ -210,6 +210,8 @@ namespace FirefoxPrivateNetwork.FxA
                                 }
                             }
 
+                            ((UI.MainWindow)owner).Show();
+                            ((UI.MainWindow)owner).WindowState = WindowState.Normal;
                             ((UI.MainWindow)owner).Activate();
                         }
                     });
