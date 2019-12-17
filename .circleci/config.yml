@@ -89,7 +89,7 @@ jobs:
               .\bin\Release\RingloggerParser.exe C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin C:\Users\circleci\project\test\result\log.txt
             }
             # add comments to PR if there are any warnings or errors on committed files
-            If ([System.IO.File]::Exists("C:\Users\circleci\project\test\result\Output.log")) {
+            If ($env:CIRCLE_PULL_REQUEST -And [System.IO.File]::Exists("C:\Users\circleci\project\test\result\Output.log")) {
               cd C:\Users\circleci\project\test\comment
               npm i
               node index.js
