@@ -711,6 +711,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AdditionalFiles Include="stylecop.json" />
+    <Resource Include="UI\Resources\Animations\Lottie\globe.json" />
     <Resource Include="UI\Resources\Animations\Lottie\ripple.json" />
     <Resource Include="UI\Resources\Localization\Translations\de.ftl" />
     <Resource Include="UI\Resources\Localization\Translations\en-us.ftl" />

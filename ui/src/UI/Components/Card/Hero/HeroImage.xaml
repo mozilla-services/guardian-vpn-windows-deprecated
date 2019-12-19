@@ -16,34 +16,36 @@
                         <Grid>
                             <Image Name="OnImage" Source="{svgc:SvgImage Source={StaticResource illu-on}}" Visibility="Collapsed"/>
                             <Image Name="OffImage" Source="{svgc:SvgImage Source={StaticResource illu-off}}" Visibility="Collapsed"/>
-                            <Grid Name="LoadingImage" Visibility="Collapsed">
-                                <Image Source="{svgc:SvgImage Source={StaticResource illu-loading2}}" />
-                                <local:Spinner Width="16" Height="16" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="11" />
-                            </Grid>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroImage}}, Path=(extension:CardExtensions.VpnStatus)}" Value="0">
                                 <Setter TargetName="OffImage" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="OffImage" Property="Opacity" Value="1" />
                                 <Setter TargetName="OnImage" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="LoadingImage" Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
 
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroImage}}, Path=(extension:CardExtensions.VpnStatus)}" Value="1">
                                 <Setter TargetName="OnImage" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="OnImage" Property="Opacity" Value="1" />
                                 <Setter TargetName="OffImage" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="LoadingImage" Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
 
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroImage}}, Path=(extension:CardExtensions.VpnStatus)}" Value="2">
-                                <Setter TargetName="OnImage" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="OnImage" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="OnImage" Property="Opacity" Value="0.5" />
                                 <Setter TargetName="OffImage" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="LoadingImage" Property="Visibility" Value="Visible" />
                             </DataTrigger>
 
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroImage}}, Path=(extension:CardExtensions.VpnStatus)}" Value="3">
                                 <Setter TargetName="OnImage" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="OffImage" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="OffImage" Property="Opacity" Value="0.5" />
+                            </DataTrigger>
+
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroImage}}, Path=DataContext.IsServerSwitching}" Value="true">
+                                <Setter TargetName="OnImage" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="OnImage" Property="Opacity" Value="0.5" />
                                 <Setter TargetName="OffImage" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="LoadingImage" Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

@@ -28,7 +28,7 @@
 
                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroText}}, Path=(extension:CardExtensions.VpnStatus)}" Value="3">
                         <Setter Property="Text" Value="{Binding Path=[hero-text-disconnecting]}"/>
-                        <Setter Property="Foreground" Value="{StaticResource 'Grey/White'}"/>
+                        <Setter Property="Foreground" Value="{StaticResource 'Grey/Grey 50'}"/>
                     </DataTrigger>
 
                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroText}}, Path=DataContext.IsServerSwitching}" Value="true">
