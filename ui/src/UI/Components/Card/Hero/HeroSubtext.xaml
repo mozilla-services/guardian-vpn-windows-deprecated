@@ -152,7 +152,7 @@
                         <!-- Disconnecting... -->
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroSubText}}, Path=(extension:CardExtensions.VpnStatus)}" Value="3">
                             <Setter Property="Text" Value="{Binding Path=[hero-subtext-disconnected-shortly]}"/>
-                            <Setter Property="Foreground" Value="{StaticResource 'Grey/White 80'}"/>
+                            <Setter Property="Foreground" Value="{StaticResource 'Grey/Grey 40'}"/>
                         </DataTrigger>
 
                         <!-- Server switching... -->

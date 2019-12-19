@@ -25,8 +25,8 @@
 
         <Grid x:Name="MainCardGrid" Width="Auto" Height="334" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,8,0,0" Grid.Row="0" Grid.Column="0">
             <!-- Card background-->
-            <uc:Card x:Name="MainCard" IsHitTestVisible="False" Active="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnNotUnprotectedConverter}, UpdateSourceTrigger=PropertyChanged}" AnimateRipple="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnProtectedConverter}, UpdateSourceTrigger=PropertyChanged}" />
-            
+            <uc:Card x:Name="MainCard" IsHitTestVisible="False" Status="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" AnimateRipple="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, Converter={StaticResource VpnProtectedConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
             <!-- Card content -->
             <Grid Height="Auto" Width="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
@@ -78,9 +78,9 @@
                     </DockPanel>
                 </Grid>
 
-                <!-- VPN status image -->
+                <!-- VPN status animation -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
-                    <uc:HeroImage Width="80" Height="80" IsHitTestVisible="False" local:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <uc:HeroImage Width="80" Height="80" IsHitTestVisible="False" local:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>                
                 </Grid>
 
                 <!-- VPN status text -->
