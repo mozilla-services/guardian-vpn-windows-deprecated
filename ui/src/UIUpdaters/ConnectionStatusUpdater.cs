@@ -21,6 +21,11 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         private Thread updater = null;
         private CancellationTokenSource updaterCancellationTokenSource;
 
+        private Stopwatch connectionTransitionStopwatch = new Stopwatch();
+        private TimeSpan minConnectingTime = TimeSpan.FromSeconds(1);
+        private TimeSpan minDisconnectingTime = TimeSpan.FromSeconds(1);
+        private TimeSpan minSwitchingTime = TimeSpan.FromSeconds(1.5);
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectionStatusUpdater"/> class.
         /// </summary>
@@ -55,6 +60,15 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         public void StopThread()
         {
             updaterCancellationTokenSource.Cancel();
+        }
+
+        /// <summary>
+        /// Starts the connection transition stopwatch.
+        /// </summary>
+        public void StartConnectionTransitionStopwatch()
+        {
+            connectionTransitionStopwatch.Restart();
+            connectionTransitionStopwatch.Start();
         }
 
         private void PollConnectionStatus(CancellationToken cancellationToken)
@@ -108,6 +122,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
 
                 if (newStatus == Models.ConnectionState.Unprotected)
                 {
+                    EnforceMinTransitionTime(minDisconnectingTime);
                     viewModel.TunnelStatus = Models.ConnectionState.Unprotected;
                     Manager.TrayIcon.ShowNotification(Manager.TranslationService.GetString("windows-notification-vpn-off-title"), Manager.TranslationService.GetString("windows-notification-vpn-off-content"), NotificationArea.ToastIconType.Disconnected);
 
@@ -116,6 +131,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
                 }
                 else if (newStatus == Models.ConnectionState.Protected)
                 {
+                    EnforceMinTransitionTime(minConnectingTime);
                     viewModel.TunnelStatus = Models.ConnectionState.Protected;
                 }
             }
@@ -137,7 +153,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             if (Manager.MainWindowViewModel.IsServerSwitching && (newStatus == Models.ConnectionState.Protected || newStatus == Models.ConnectionState.Unprotected))
             {
                 // Virtual delay for server switching UI display time
-                Task.Delay(TimeSpan.FromSeconds(1.5)).Wait();
+                EnforceMinTransitionTime(minSwitchingTime);
 
                 Manager.MainWindowViewModel.IsServerSwitching = false;
 
@@ -258,6 +274,24 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             }
 
             return string.Format("{0:0.##}{1}", value, measurementUnit);
+        }
+
+        private void EnforceMinTransitionTime(TimeSpan minTransitionTime)
+        {
+            if (!connectionTransitionStopwatch.IsRunning)
+            {
+                return;
+            }
+
+            connectionTransitionStopwatch.Stop();
+
+            TimeSpan elapsedTime = connectionTransitionStopwatch.Elapsed;
+            TimeSpan remainingTransitionTime = minTransitionTime.Subtract(elapsedTime);
+
+            if (remainingTransitionTime > TimeSpan.FromSeconds(0))
+            {
+                Task.Delay(remainingTransitionTime).Wait();
+            }
         }
     }
 }
