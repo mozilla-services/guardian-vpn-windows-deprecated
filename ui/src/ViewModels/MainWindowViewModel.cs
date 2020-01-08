@@ -129,6 +129,7 @@ namespace FirefoxPrivateNetwork.ViewModels
                         }
                         else
                         {
+                            Manager.ConnectionStatusUpdater.StartConnectionTransitionStopwatch();
                             tunnelStatus = value;
                         }
 
@@ -141,6 +142,7 @@ namespace FirefoxPrivateNetwork.ViewModels
                         }
                         else
                         {
+                            Manager.ConnectionStatusUpdater.StartConnectionTransitionStopwatch();
                             tunnelStatus = value;
                         }
 
