@@ -169,8 +169,10 @@ windows-notification-vpn-turn-on-title = VPN anschalten?
 windows-notification-vpn-turn-on-content = Wir verbinden dich mit deinem letzten Standort: {$serverCity}
 windows-notification-unsecure-network-title = Unsicheres Netzwerk erkannt
 windows-notification-unsecure-network-content = "{$wifiName}" ist nicht sicher. Du solltest Dein VPN einschalten.
-windows-notification-captive-portal-title = Guest Wi-Fi portal blocked
-windows-notification-captive-portal-content = The guest Wi-Fi network you're connected to requires action. Turn off VPN to see portal.
+windows-notification-captive-portal-blocked-title = Guest Wi-Fi portal blocked
+windows-notification-captive-portal-blocked-content = The guest Wi-Fi network you're connected to requires action. Click to turn off VPN to see the portal.
+windows-notification-captive-portal-detected-title = Guest Wi-Fi portal detected
+windows-notification-captive-portal-detected-content = {$networkName} may not be secure. Click to turn on VPN to secure your device.
 
 ## In-app toasts
 toast-debug-export-error = Wir sind beim Export Ihrer Debug-Informationen auf einen Fehler gestoßen.

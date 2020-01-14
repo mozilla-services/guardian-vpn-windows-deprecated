@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 
 namespace FirefoxPrivateNetwork.WireGuard
 {
@@ -77,7 +78,7 @@ namespace FirefoxPrivateNetwork.WireGuard
                     break;
 
                 case IPCCommand.IpcDetectCaptivePortal:
-                    HandleIPCDetectCaptivePortal(ipc);
+                    HandleIPCDetectCaptivePortal(cmd, ipc);
                     break;
 
                 case IPCCommand.IpcRequestPid:
@@ -155,9 +156,10 @@ namespace FirefoxPrivateNetwork.WireGuard
             }
         }
 
-        private static void HandleIPCDetectCaptivePortal(IPC ipc)
+        private static void HandleIPCDetectCaptivePortal(IPCMessage cmd, IPC ipc)
         {
-            var captivePortalDetectionTask = Network.CaptivePortalDetection.IsCaptivePortalActiveTask();
+            var captivePortalDetectionTask = Network.CaptivePortalDetection.IsCaptivePortalActiveTask(cmd["ip"].FirstOrDefault());
+
             captivePortalDetectionTask.ContinueWith(task =>
             {
                 var captivePortalDetectionReply = new IPCMessage(IPCCommand.IpcDetectCaptivePortalReply);

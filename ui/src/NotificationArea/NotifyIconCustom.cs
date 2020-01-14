@@ -57,12 +57,32 @@ namespace FirefoxPrivateNetwork.NotificationArea
     }
 
     /// <summary>
+    /// Type of event handler for when a toast is clicked.
+    /// </summary>
+    public enum ToastClickEvent
+    {
+        /// <summary>
+        /// Do nothing when the toast is clicked.
+        /// </summary>
+        None = Windows.User32.WmApp + 1,
+
+        /// <summary>
+        /// Send connect command to the tunnel when the toast is clicked.
+        /// </summary>
+        Connect,
+
+        /// <summary>
+        /// Send disconnect command to the tunnel when the toast is clicked.
+        /// </summary>
+        Disconnect,
+    }
+
+    /// <summary>
     /// Custom TrayIcon class for handling the displaying and interaction of the application's tray icon.
     /// </summary>
     public class NotifyIconCustom : IDisposable
     {
         private readonly IntPtr hWnd;
-        private readonly IntPtr iconHandle;
         private readonly int uId = 1;
 
         private readonly Dictionary<IconType, Icon> icons;
@@ -173,13 +193,15 @@ namespace FirefoxPrivateNetwork.NotificationArea
         /// <param name="tipTitle">Title of the balloon/toast.</param>
         /// <param name="tipText">Contents of the balloon/toast.</param>
         /// <param name="icon">Icon accompanying the popup balloon/toast.</param>
-        public void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToastIconType icon)
+        /// <param name="clickEvent">Click event handler for the popup balloon/toast.</param>
+        public void ShowBalloonTip(int timeout, string tipTitle, string tipText, ToastIconType icon, ToastClickEvent clickEvent)
         {
             var nIconData = new Windows.Shell32Structures.NotifyIconData
             {
+                CallbackMessage = (int)clickEvent,
                 Handle = hWnd,
                 UId = uId,
-                Flags = (int)Shell32.NotifyIconFlags.NifInfo,
+                Flags = (int)Shell32.NotifyIconFlags.NifMessage | (int)Shell32.NotifyIconFlags.NifInfo,
                 Timeout = timeout,
                 InfoTitle = tipTitle,
                 Info = tipText,
@@ -196,10 +218,6 @@ namespace FirefoxPrivateNetwork.NotificationArea
         public void RemoveFromTray()
         {
             UpdateIcon(IconType.Disconnected, ProductConstants.DefaultSystemTrayTitle, false);
-            if (iconHandle != IntPtr.Zero)
-            {
-                Shell32.DestroyIcon(iconHandle);
-            }
         }
 
         /// <inheritdoc/>

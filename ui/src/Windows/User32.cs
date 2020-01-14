@@ -28,6 +28,11 @@ namespace FirefoxPrivateNetwork.Windows
         public const int WmUser = 0x0400;
 
         /// <summary>
+        /// WM_APP - Used to define private message for the application.
+        /// </summary>
+        public const int WmApp = 0x8000;
+
+        /// <summary>
         /// Message sent when the tray is clicked.
         /// </summary>
         public const int WmTrayMouseMessage = 0x800;

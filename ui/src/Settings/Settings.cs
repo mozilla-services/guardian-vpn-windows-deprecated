@@ -87,6 +87,7 @@ namespace FirefoxPrivateNetwork
             InputSettingsConfig(iniData, "Language", "PreferredLanguage", Language.PreferredLanguage);
             InputSettingsConfig(iniData, "Network", "UnsecureNetworkAlert", Network.UnsecureNetworkAlert.ToString());
             InputSettingsConfig(iniData, "Network", "CaptivePortalAlert", Network.CaptivePortalAlert.ToString());
+            InputSettingsConfig(iniData, "Network", "CaptivePortalDetectionIp", Network.CaptivePortalDetectionIp.ToString());
             InputSettingsConfig(iniData, "Network", "AllowLocalDeviceAccess", Network.AllowLocalDeviceAccess.ToString());
 
             return iniData.ToString();
@@ -184,6 +185,11 @@ namespace FirefoxPrivateNetwork
             if (ContainsSettingsConfig(data, "Network", "CaptivePortalAlert"))
             {
                 networkSettings.CaptivePortalAlert = bool.Parse(data["Network"]["CaptivePortalAlert"]);
+            }
+
+            if (ContainsSettingsConfig(data, "Network", "CaptivePortalDetectionIp"))
+            {
+                networkSettings.CaptivePortalDetectionIp = data["Network"]["CaptivePortalDetectionIp"];
             }
 
             if (ContainsSettingsConfig(data, "Network", "AllowLocalDeviceAccess"))
@@ -296,6 +302,12 @@ namespace FirefoxPrivateNetwork
                 get { return captivePortalAlert ?? true; }
                 set { captivePortalAlert = value; }
             }
+
+            /// <summary>
+            /// Gets or sets the captive portal detection ip that is resolved from the captive portal detection host.
+            /// </summary>
+            [DisplayName("CaptivePortalDetectionIp")]
+            public string CaptivePortalDetectionIp { get; set; }
 
             /// <summary>
             /// Gets or sets a value indicating whether the user's local device access is allowed or not.
