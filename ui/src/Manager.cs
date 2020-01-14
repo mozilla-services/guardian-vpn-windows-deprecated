@@ -110,9 +110,9 @@ namespace FirefoxPrivateNetwork
             InitializeAccount();
             InitializeViewModels();
             InitializeTranslationService();
-            InitializeUIUpdaters();
             InitializeWlanWatcher();
             InitializeCaptivePortalDetector();
+            InitializeUIUpdaters();
         }
 
         /// <summary>

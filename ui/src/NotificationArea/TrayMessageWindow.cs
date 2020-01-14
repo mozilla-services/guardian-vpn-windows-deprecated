@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using FirefoxPrivateNetwork.Windows;
 
@@ -88,6 +89,11 @@ namespace FirefoxPrivateNetwork.NotificationArea
         /// <returns>Null pointer or the result of the default window procedure which ensures every message is processed.</returns>
         private static IntPtr TrayWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
         {
+            if (lParam == new IntPtr(Windows.User32.NinBalloonUserClick))
+            {
+                Manager.TrayIcon.HandleNotificationClick(msg);
+            }
+
             switch (msg)
             {
                 case Windows.User32.WmDestroy:
@@ -105,7 +111,6 @@ namespace FirefoxPrivateNetwork.NotificationArea
                     }
 
                     return IntPtr.Zero;
-
                 default:
                     return User32.DefWindowProcW(hWnd, msg, wParam, lParam);
             }
@@ -117,20 +122,24 @@ namespace FirefoxPrivateNetwork.NotificationArea
         /// <param name="disposing">Indicates whether the method call comes from a Dispose method (true) or from a finalizer (false).</param>
         private void Dispose(bool disposing)
         {
-            if (!isDisposed)
+            if (isDisposed)
             {
-                if (disposing)
-                {
-                    // Dispose managed resources
-                }
-
-                // Dispose unmanaged resources
-                if (windowHandle != IntPtr.Zero)
-                {
-                    User32.DestroyWindow(windowHandle);
-                    windowHandle = IntPtr.Zero;
-                }
+                return;
             }
+
+            if (disposing)
+            {
+                // Dispose managed resources
+            }
+
+            // Dispose unmanaged resources
+            if (windowHandle != IntPtr.Zero)
+            {
+                User32.DestroyWindow(windowHandle);
+                windowHandle = IntPtr.Zero;
+            }
+
+            isDisposed = true;
         }
     }
 }
