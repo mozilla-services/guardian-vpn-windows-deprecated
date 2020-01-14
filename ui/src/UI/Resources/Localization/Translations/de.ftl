@@ -4,6 +4,18 @@ application-description =
    Ein schnelles, sicheres und praktisches VPN
    (Virtuelles Privates Netzwerk).
 
+## Navigation
+navigation-close = Close
+navigation-back = Back
+navigation-open-link
+navigation-open-contact-link
+navigation-open-support-link
+navigation-open-terms-of-service
+navigation-open-privacy-policy
+navigation-open-debug
+navigation-open-log
+
+
 ## Pages
 connection-page-title = Verbindungen
 devices-page-title = Meine Geräte
@@ -28,6 +40,13 @@ hero-text-vpn-on = VPN ist an
 hero-text-connecting = Verbinden...
 hero-text-disconnecting = Trennen...
 hero-text-switching = Wechselt...
+hero-image-vpn-status
+dev-mode-on
+toggle-vpn
+decoration-image
+shadow-image
+connection-navigation-button
+vpn-status-image
 
 hero-subtext-unstable = Instabil
 hero-subtext-no-signal = Kein Signal
@@ -99,6 +118,7 @@ devices-limit-reached-title = Gerätelimit erreicht
 devices-limit-reached-content = Limit erreicht. Um den VPN auf diesem Gerät zu installieren, entferne zunächst ein andere.
 devices-remove-popup-title = Gerät entfernen?
 devices-remove-popup-content = Bitte bestätige das Entfernen von {$deviceName}.
+devices-remove = Gerät entfernen
 
 ## Popup
 popup-cancel-button-text = Abbrechen
@@ -169,8 +189,10 @@ windows-notification-vpn-turn-on-title = VPN anschalten?
 windows-notification-vpn-turn-on-content = Wir verbinden dich mit deinem letzten Standort: {$serverCity}
 windows-notification-unsecure-network-title = Unsicheres Netzwerk erkannt
 windows-notification-unsecure-network-content = "{$wifiName}" ist nicht sicher. Du solltest Dein VPN einschalten.
-windows-notification-captive-portal-title = Guest Wi-Fi portal blocked
-windows-notification-captive-portal-content = The guest Wi-Fi network you're connected to requires action. Turn off VPN to see portal.
+windows-notification-captive-portal-blocked-title = Guest Wi-Fi portal blocked
+windows-notification-captive-portal-blocked-content = The guest Wi-Fi network you're connected to requires action. Click to turn off VPN to see the portal.
+windows-notification-captive-portal-detected-title = Guest Wi-Fi portal detected
+windows-notification-captive-portal-detected-content = {$networkName} may not be secure. Click to turn on VPN to secure your device.
 
 ## In-app toasts
 toast-debug-export-error = Wir sind beim Export Ihrer Debug-Informationen auf einen Fehler gestoßen.

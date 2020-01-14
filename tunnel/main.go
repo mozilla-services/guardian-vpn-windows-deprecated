@@ -6,7 +6,6 @@
 package main
 
 import (
-	"bytes"
 	"crypto/rand"
 	"errors"
 	"fmt"
@@ -15,6 +14,7 @@ import (
 	"net"
 	"net/http"
 	"path/filepath"
+	"strings"
 	"unsafe"
 
 	"C"
@@ -153,7 +153,8 @@ func TestOutsideConnectivity(ip16 *uint16, host16 *uint16, url16 *uint16, expect
 	}
 
 	// Compare retrieved body contents to expected contents
-	if bytes.Equal(text, []byte(expectedTestResult)) {
+	compareTestResult := strings.ReplaceAll(strings.ReplaceAll(string(text), "\n", ""), "\r", "")
+	if compareTestResult == expectedTestResult {
 		return 1
 	} else {
 		return 0

@@ -32,7 +32,6 @@
                             <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Grey/Grey 10'}" />
                         </MultiTrigger>
 
-                        <!--
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsFocused" Value="True"/>
@@ -41,7 +40,6 @@
                             <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Grey/Grey 40'}" />
                             <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Grey/Grey 10'}" />
                         </MultiTrigger>
-                        -->
 
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -66,7 +64,6 @@
                             <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Blue/Blue 70'}" />
                         </MultiTrigger>
 
-                        <!--
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsFocused" Value="True"/>
@@ -75,8 +72,7 @@
                             <Setter TargetName="RadioOuter" Property="BorderBrush" Value="{StaticResource 'Blue/Blue 70'}" />
                             <Setter TargetName="RadioMark" Property="Background" Value="{StaticResource 'Blue/Blue 70'}" />
                         </MultiTrigger>
-                        -->
-
+                        
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsPressed" Value="True"/>

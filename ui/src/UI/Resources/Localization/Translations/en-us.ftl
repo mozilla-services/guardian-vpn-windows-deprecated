@@ -4,6 +4,17 @@ application-description =
    A fast, secure and easy to use VPN 
    (Virtual Private Network).
 
+## Navigation
+navigation-close = Close
+navigation-back = Back
+navigation-open-link = Open link
+navigation-open-contact-link = Open Contact us link
+navigation-open-support-link = Open Help & Support link
+navigation-open-terms-of-service = Open Terms of Service link
+navigation-open-privacy-policy = Open Privacy Policy link
+navigation-open-debug = Open Debug link
+navigation-open-log = Open View log link
+
 ## Pages
 connection-page-title = Connection
 devices-page-title = My devices
@@ -28,6 +39,13 @@ hero-text-vpn-on = VPN is on
 hero-text-connecting = Connecting...
 hero-text-disconnecting = Disconnecting...
 hero-text-switching = Switching...
+hero-image-vpn-status = VPN status
+dev-mode-on = Dev mode on
+toggle-vpn = Toggle VPN
+decoration-image = Decoration
+shadow-image = Shadow
+connection-navigation-button = Connection navigation
+vpn-status-image = VPN status
 
 hero-subtext-unstable = Unstable
 hero-subtext-no-signal = No signal
@@ -43,7 +61,7 @@ hero-subtext-server-switch-to = to
 ## Avatar Menu
 avatar-menu-settings = {settings-page-title}
 avatar-menu-manage-account = Manage account
-avatar-menu-view-log = View log
+avatar-menu-view-log = View Log
 avatar-menu-feedback = Give feedback
 avatar-menu-debug = Debug
 avatar-menu-sign-out = Sign out
@@ -99,6 +117,7 @@ devices-limit-reached-title = Remove a device
 devices-limit-reached-content = You've reached your limit. To install the VPN on this device, you'll need to remove one.
 devices-remove-popup-title = Remove device?
 devices-remove-popup-content = Please confirm you would like to remove {$deviceName}.
+devices-remove = Remove device
 
 ## Popup
 popup-cancel-button-text = Cancel
@@ -169,8 +188,10 @@ windows-notification-vpn-turn-on-title = Turn on VPN?
 windows-notification-vpn-turn-on-content = Connect to your last location: {$serverCity}.
 windows-notification-unsecure-network-title = Unsecured Wi-Fi network detected
 windows-notification-unsecure-network-content = "{$wifiName}" is not secure. Turn on VPN to secure your device.
-windows-notification-captive-portal-title = Guest Wi-Fi portal blocked
-windows-notification-captive-portal-content = The guest Wi-Fi network you're connected to requires action. Turn off VPN to see portal.
+windows-notification-captive-portal-blocked-title = Guest Wi-Fi portal blocked
+windows-notification-captive-portal-blocked-content = The guest Wi-Fi network you're connected to requires action. Click to turn off VPN to see the portal.
+windows-notification-captive-portal-detected-title = Guest Wi-Fi portal detected
+windows-notification-captive-portal-detected-content = "{$wifiName}" may not be secure. Click to turn on VPN to secure your device.
 
 ## In-app toasts
 toast-debug-export-error = We ran into an error while exporting your debug information.

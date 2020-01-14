@@ -44,12 +44,12 @@
                     <DockPanel VerticalAlignment="Center" Width="328">
                         <!-- Dev mode badge -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                            <Image Style="{StaticResource DevMode}" Source="{Binding Source={StaticResource 'dev'}}" Width="44" Height="18" Margin="16,0" />
+                            <Image AutomationProperties.Name="{Binding Path=[dev-mode-on]}" Style="{StaticResource DevMode}" Source="{Binding Source={StaticResource 'dev'}}" Width="44" Height="18" Margin="16,0" />
                         </StackPanel>
 
                         <!-- Navigate settings button -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Width="40" Height="40" Margin="8,0" local:ButtonExtensions.IconUri="{StaticResource 'settings'}" Click="NavigateSettings">
+                            <Button AutomationProperties.Name="{Binding Path=[settings-page-title]}" Width="40" Height="40" Margin="8,0" local:ButtonExtensions.IconUri="{StaticResource 'settings'}" Click="NavigateSettings">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
                                         <Setter Property="Visibility" Value="Collapsed" />
@@ -62,7 +62,7 @@
                                 </Button.Style>
                             </Button>
 
-                            <Button Width="40" Height="40" Margin="8,0" local:ButtonExtensions.IconUri="{StaticResource 'settings-white'}" local:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" local:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="NavigateSettings">
+                            <Button AutomationProperties.Name="{Binding Path=[settings-page-title]}" Width="40" Height="40" Margin="8,0" local:ButtonExtensions.IconUri="{StaticResource 'settings-white'}" local:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" local:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="NavigateSettings">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
                                         <Setter Property="Visibility" Value="Visible" />
@@ -80,7 +80,7 @@
 
                 <!-- VPN status animation -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
-                    <uc:HeroImage Width="80" Height="80" IsHitTestVisible="False" local:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>                
+                    <uc:HeroImage AutomationProperties.Name="{Binding Path=[vpn-status-image]}"  Width="80" Height="80" IsHitTestVisible="False" local:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
                 </Grid>
 
                 <!-- VPN status text -->
@@ -95,14 +95,14 @@
 
                 <!-- VPN toggle -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" Grid.Column="0">
-                    <uc:VPNToggle x:Name="Toggle" Margin="0,24,0,0" EnableWhiteSwitchBorder="True" Status="{Binding TunnelStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}" TargetUpdated="Toggle_TargetUpdated"/>
+                    <uc:VPNToggle x:Name="Toggle" AutomationProperties.Name="{Binding Path=[toggle-vpn]}" Margin="0,24,0,0" EnableWhiteSwitchBorder="True" Status="{Binding TunnelStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}" TargetUpdated="Toggle_TargetUpdated"/>
                 </Grid>
             </Grid>
         </Grid>
 
         <!-- Connection view navigation button -->
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,8,0,0" Grid.Row="1" Grid.Column="0">
-            <uc:PageNavigation x:Name="ConnectionNavButton" Title="{Binding Path=[connection-page-title]}" TitleIconUrl="{StaticResource 'connection'}" SubtitleColor="{StaticResource 'Grey/Grey 40'}" Margin="8,4" Click="NavigateConnection"/>
+            <uc:PageNavigation AutomationProperties.Name="{Binding Path=[connection-navigation-button]}" x:Name="ConnectionNavButton" Title="{Binding Path=[connection-page-title]}" TitleIconUrl="{StaticResource 'connection'}" SubtitleColor="{StaticResource 'Grey/Grey 40'}" Margin="8,4" Click="NavigateConnection"/>
         </Grid>
 
         <!-- Devices view navigation button -->

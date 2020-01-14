@@ -195,9 +195,42 @@ namespace FirefoxPrivateNetwork.NotificationArea
         /// <param name="notificationText">Text to show inside the balloon.</param>
         /// <param name="icon">Type of the icon to show.</param>
         /// <param name="timeoutMiliseconds">Timeout in miliseconds after which the balloon will be hidden.</param>
-        public void ShowNotification(string notificationTitle, string notificationText, ToastIconType icon, int timeoutMiliseconds = DefaultBalloonTipTimeout)
+        /// <param name="clickEvent">Click event handler type when the balloon is clicked.</param>
+        public void ShowNotification(string notificationTitle, string notificationText, ToastIconType icon, int timeoutMiliseconds = DefaultBalloonTipTimeout, ToastClickEvent clickEvent = ToastClickEvent.None)
         {
-            notifyIcon.ShowBalloonTip(timeoutMiliseconds, notificationTitle, notificationText, icon);
+            notifyIcon.ShowBalloonTip(timeoutMiliseconds, notificationTitle, notificationText, icon, clickEvent);
+        }
+
+        /// <summary>
+        /// Handle a balloon notification popup click.
+        /// </summary>
+        /// <param name="msg">Message ID received.</param>
+        public void HandleNotificationClick(uint msg)
+        {
+            ToastClickEvent clickEvent;
+
+            try
+            {
+                clickEvent = (ToastClickEvent)msg;
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            switch (clickEvent)
+            {
+                case ToastClickEvent.Connect:
+                    ShowMainWindow();
+                    WireGuard.Connector.Connect();
+                    break;
+                case ToastClickEvent.Disconnect:
+                    WireGuard.Connector.Disconnect();
+                    break;
+                default:
+                    ShowMainWindow();
+                    break;
+            }
         }
 
         /// <summary>

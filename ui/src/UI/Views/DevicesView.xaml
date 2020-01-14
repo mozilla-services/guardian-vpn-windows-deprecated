@@ -25,7 +25,7 @@
                 <DockPanel VerticalAlignment="Center">
                     <!-- Navigate back button -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Button Style="{StaticResource 'Icon'}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'back'}" Click="NavigateMain"/>
+                        <Button AutomationProperties.Name="{Binding Path=[navigation-back]}" Style="{StaticResource 'Icon'}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'back'}" Click="NavigateMain"/>
                         <TextBlock Style="{StaticResource 'Header 20'}" VerticalAlignment="Center" Margin="0,17,0,16" Text="{Binding Path=[devices-page-title]}"/>
                     </StackPanel>
 
@@ -95,7 +95,7 @@
                     </TextBlock>
 
                     <!-- Devices list -->
-                    <ListView x:Name="DeviceList" ItemsSource="{Binding DeviceList, UpdateSourceTrigger=Explicit}" VerticalAlignment="Top" BorderThickness="0" Padding="-1">
+                    <ListView x:Name="DeviceList" ItemsSource="{Binding DeviceList, UpdateSourceTrigger=Explicit}" VerticalAlignment="Top" BorderThickness="0" Padding="-1" Focusable="False" KeyboardNavigation.TabNavigation="Continue">
                         <ListView.Template>
                             <ControlTemplate>
                                 <ItemsPresenter />
@@ -177,7 +177,7 @@
 
                                     <!-- Delete device button -->
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                        <Button x:Name="DeleteButton" Width="40" Height="40" Margin="8,5,8,26" local:ButtonExtensions.HoverBackground="{StaticResource 'Red/Red 5'}"  local:ButtonExtensions.PressedBackground="{StaticResource 'Red/Red 10'}" local:ButtonExtensions.IconUri="{StaticResource 'delete'}" local:ButtonExtensions.HoverIconUri="{StaticResource 'delete2'}" local:ButtonExtensions.MarkForDeletion="False" Click="DeleteDevice_Click">
+                                        <Button x:Name="DeleteButton" AutomationProperties.Name="{Binding Path=DataContext[devices-remove], ElementName=DeviceList}" Width="40" Height="40" Margin="8,5,8,26" local:ButtonExtensions.HoverBackground="{StaticResource 'Red/Red 5'}"  local:ButtonExtensions.PressedBackground="{StaticResource 'Red/Red 10'}" local:ButtonExtensions.IconUri="{StaticResource 'delete'}" local:ButtonExtensions.HoverIconUri="{StaticResource 'delete2'}" local:ButtonExtensions.MarkForDeletion="False" Click="DeleteDevice_Click">
                                             <Button.Style>
                                                 <Style TargetType="Button" BasedOn="{StaticResource 'Icon'}">
                                                     <Style.Triggers>
