@@ -104,6 +104,78 @@ jobs:
           path: test/result
       - store_artifacts:
           path: test/result
+      - persist_to_workspace:
+          root: ~/project/test
+          paths: .
+  smoke-test:
+    executor:
+      name: win/vs2019
+      shell: powershell.exe
+    environment:
+      GO111MODULE: "on"
+    steps:
+      - attach_workspace:
+          at: ~/project/test
+      - run: 
+          name: Install AWSTool
+          command: |
+            Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+            Install-Module -Name AWS.Tools.S3,AWS.Tools.CloudFormation,AWS.Tools.EC2 -Scope AllUsers -Force
+      - run:
+          name: Upload To S3
+          command: |
+            $ProgressPreference = "SilentlyContinue"
+            Write-S3Object -BucketName $env:S3_BUCKET -File test/result/FirefoxPrivateNetworkVPN.msi -Key msi/$env:CIRCLE_BUILD_NUM/FirefoxPrivateNetworkVPN.msi
+      - run: 
+          name: Launch EC2 Win10
+          command: |
+            ./test/smoke/aws/create_ec2.ps1
+      - run: 
+          name: Wait for Smoke Test result
+          command: |
+            New-Item -Path ./test/result/ -Name "smoketest" -ItemType "directory"
+            $timeout = new-timespan -Minutes 20
+            $sw = [diagnostics.stopwatch]::StartNew()
+            while ($sw.elapsed -lt $timeout){
+              If(Test-S3Bucket -BucketName $env:S3_BUCKET) {
+                If(Get-S3Object -BucketName $env:S3_BUCKET -Key smoke/$env:CIRCLE_BUILD_NUM/smoke_test_result.txt) { ## verify if exist
+                  $ProgressPreference = "SilentlyContinue"
+                  Read-S3Object -BucketName $env:S3_BUCKET -Key smoke/$env:CIRCLE_BUILD_NUM/smoke_test_result.txt -File test/result/smoketest/smoke_test_result.txt
+                  If ([System.IO.File]::Exists("C:\Users\circleci\project\test\result\smoketest\smoke_test_result.txt")) {
+                    break
+                  }
+                }
+                Else {
+                  Write-Host "The smoke test result is not available!"
+                } 
+              } 
+              Else {
+                Write-Host "The bucket $env:S3_BUCKET does not exist."
+                Exit 1
+              }
+              start-sleep -seconds 10
+            }
+            If (![System.IO.File]::Exists("C:\Users\circleci\project\test\result\smoketest\smoke_test_result.txt")) {
+              Write-Host "Could not find smoke test result!"
+              Exit 1
+            } Else {
+              $log = Get-Content -Path C:\Users\circleci\project\test\result\smoketest\smoke_test_result.txt
+              $log
+              $failed = $log -match 'Failed:\s{1}\d{1}'
+              If($failed) {
+                Write-Host 'Smoke Tests Failed!'
+                exit 1
+              }
+            }
+      - run:
+          name: Clean Up
+          command: |
+            ./test/smoke/aws/terminate_ec2.ps1
+          when: always
+      - store_test_results:
+          path: test/result
+      - store_artifacts:
+          path: test/result
 workflows:
   nightly:
     triggers:
@@ -118,4 +190,17 @@ workflows:
   workflow:
     jobs:
       - build
+  smoke-test:
+    triggers:
+      - schedule:
+          cron: "0 0,12 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - build
+      - smoke-test:
+          requires:
+            - build
 
