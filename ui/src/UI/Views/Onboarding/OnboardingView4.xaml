@@ -25,7 +25,7 @@
             <!-- Navigation header bar -->
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">
                 <DockPanel VerticalAlignment="Center">
-                    <Button Style="{StaticResource 'Icon'}" HorizontalAlignment="Left" Width="40" Height="40" Margin="8" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="ExitOnboarding"/>
+                    <Button AutomationProperties.Name="{Binding Path=[navigation-close]}" Style="{StaticResource 'Icon'}" HorizontalAlignment="Left" Width="40" Height="40" Margin="8" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="ExitOnboarding"/>
                 </DockPanel>
             </Grid>
 

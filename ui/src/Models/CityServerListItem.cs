@@ -25,5 +25,16 @@ namespace FirefoxPrivateNetwork.Models
         /// Gets or sets the server list.
         /// </summary>
         public List<ServerListItem> Servers { get; set; }
+
+        /// <summary>
+        /// Gets the name of the country.
+        /// </summary>
+        /// <returns>
+        /// Returns the name of the country.
+        /// </returns>
+        public override string ToString()
+        {
+            return this.Country;
+        }
     }
 }

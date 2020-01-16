@@ -45,8 +45,8 @@
         
         <!-- Left window decoration -->
         <Grid Grid.Row="1" Grid.Column="0">
-            <Image Style="{StaticResource WindowDecorations}" x:Name="WindowLeftDecoration" Source="{Binding Source={StaticResource 'illu-window-left-decoration'}}" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
-            <Image Style="{StaticResource WindowDecorations}" x:Name="WindowLeftShadow" Source="{Binding Source={StaticResource 'illu-window-left-shadow'}}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+            <Image AutomationProperties.Name="{Binding Path=[decoration-image]}" Style="{StaticResource WindowDecorations}" x:Name="WindowLeftDecoration" Source="{Binding Source={StaticResource 'illu-window-left-decoration'}}" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            <Image AutomationProperties.Name="{Binding Path=[shadow-image]}" Style="{StaticResource WindowDecorations}" x:Name="WindowLeftShadow" Source="{Binding Source={StaticResource 'illu-window-left-shadow'}}" HorizontalAlignment="Right" VerticalAlignment="Top"/>
         </Grid>
 
         <!-- Page view frame -->
@@ -55,14 +55,14 @@
                 <Grid.RenderTransform>
                     <TranslateTransform />
                 </Grid.RenderTransform>
-                <Frame x:Name="ViewFrame" NavigationUIVisibility="Hidden" ContentRendered="ViewFrame_ContentRendered" />
+                <Frame x:Name="ViewFrame" Focusable="False" NavigationUIVisibility="Hidden" ContentRendered="ViewFrame_ContentRendered" />
             </Grid>
         </Grid>
 
         <!-- Right window decoration -->
         <Grid Grid.Row="1" Grid.Column="2">
-            <Image Style="{StaticResource WindowDecorations}" x:Name="WindowRightShadow" Source="{Binding Source={StaticResource 'illu-window-right-shadow'}}" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <Image Style="{StaticResource WindowDecorations}" x:Name="WindowRightDecoration" Source="{Binding Source={StaticResource 'illu-window-right-decoration'}}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            <Image AutomationProperties.Name="{Binding Path=[shadow-image]}" Style="{StaticResource WindowDecorations}" x:Name="WindowRightShadow" Source="{Binding Source={StaticResource 'illu-window-right-shadow'}}" Stretch="Uniform" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Image AutomationProperties.Name="{Binding Path=[decoration-image]}" Style="{StaticResource WindowDecorations}" x:Name="WindowRightDecoration" Source="{Binding Source={StaticResource 'illu-window-right-decoration'}}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
         </Grid>
     </Grid>
 </Window>

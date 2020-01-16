@@ -30,9 +30,9 @@
 
             <!-- Retry signin link -->
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0">
-                <TextBlock Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextDecorations="{x:Null}" Margin="32">
-                        <Hyperlink Click="TryAgain_Click" TextDecorations="{x:Null}">
-                            <TextBlock Text="{Binding Path=[verify-account-try-again]}"/>
+                <TextBlock AutomationProperties.Name="{Binding ElementName=TryAgainLabel, Path=Text}" Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextDecorations="{x:Null}" Margin="32">
+                        <Hyperlink AutomationProperties.Name="{Binding ElementName=TryAgainLabel, Path=Text}" Click="TryAgain_Click" TextDecorations="{x:Null}">
+                            <TextBlock Name="TryAgainLabel" Text="{Binding Path=[verify-account-try-again]}"/>
                         </Hyperlink>
                 </TextBlock>
             </Grid>
