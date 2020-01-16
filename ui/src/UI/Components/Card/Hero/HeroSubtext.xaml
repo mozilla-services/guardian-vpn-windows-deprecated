@@ -68,17 +68,20 @@
         <TextBlock>
             <TextBlock.Style>
                 <Style BasedOn="{StaticResource 'Body 10'}" TargetType="{x:Type TextBlock}">
+                    <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
-                        <!-- Connection unsable -->
+                        <!-- Connection unstable -->
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroSubText}}, Path=(extension:CardExtensions.VpnStability)}" Value="1">
                             <Setter Property="Text" Value="{Binding Path=[hero-subtext-unstable]}"/>
                             <Setter Property="Foreground" Value="{StaticResource 'Yellow/Yellow 50'}"/>
+                            <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
 
                         <!-- No signal -->
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:HeroSubText}}, Path=(extension:CardExtensions.VpnStability)}" Value="2">
                             <Setter Property="Text" Value="{Binding Path=[hero-subtext-no-signal]}"/>
                             <Setter Property="Foreground" Value="{StaticResource 'Red/Red 50'}"/>
+                            <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
 
                         <!-- Disconnecting or Connecting -->

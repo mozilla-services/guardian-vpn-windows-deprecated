@@ -40,9 +40,9 @@
 
             <!-- Learn more link -->
             <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
-                <TextBlock Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextDecorations="{x:Null}" Margin="0,0,0,32">
-                        <Hyperlink Click="NavigateOnboarding1" TextDecorations="{x:Null}">
-                            <TextBlock Text="{Binding Path=[nux-learn-more]}"/>
+                <TextBlock AutomationProperties.LabeledBy="{Binding ElementName=LearnMoreLabel}" Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextDecorations="{x:Null}" Margin="0,0,0,32">
+                        <Hyperlink AutomationProperties.Name="{Binding ElementName=LearnMoreLabel, Path=Text}" Click="NavigateOnboarding1" TextDecorations="{x:Null}">
+                            <TextBlock Name="LearnMoreLabel" Text="{Binding Path=[nux-learn-more]}"/>
                         </Hyperlink>
                 </TextBlock>
             </Grid>

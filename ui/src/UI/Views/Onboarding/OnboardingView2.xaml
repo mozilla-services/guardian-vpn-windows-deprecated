@@ -25,10 +25,10 @@
             <!-- Navigation header bar -->
             <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">
                 <DockPanel VerticalAlignment="Center">
-                    <Button Style="{StaticResource 'Icon'}" Width="40" Height="40" Margin="8,0" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="ExitOnboarding"/>
-                    <TextBlock Style="{StaticResource 'Header 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextAlignment="Right" TextDecorations="{x:Null}" Margin="16,17,16,16">
-                        <Hyperlink Click="SkipOnboarding" TextDecorations="{x:Null}">
-                            <TextBlock Text="{Binding Path=[nux-skip]}"/>
+                    <Button AutomationProperties.Name="{Binding Path=[navigation-close]}" Style="{StaticResource 'Icon'}" Width="40" Height="40" Margin="8,0" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="ExitOnboarding"/>
+                    <TextBlock AutomationProperties.LabeledBy="{Binding ElementName=SkipLabel}" Style="{StaticResource 'Header 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextAlignment="Right" TextDecorations="{x:Null}" Margin="16,17,16,16">
+                        <Hyperlink AutomationProperties.Name="{Binding ElementName=SkipLabel, Path=Text}" Click="SkipOnboarding" TextDecorations="{x:Null}">
+                            <TextBlock Name="SkipLabel" Text="{Binding Path=[nux-skip]}"/>
                         </Hyperlink>
                     </TextBlock>
                 </DockPanel>

@@ -72,7 +72,7 @@
             <ColorAnimation Storyboard.TargetName="SwitchBorder" Storyboard.TargetProperty="Background.Color" From="{StaticResource 'Grey/Grey 20 Solid'}" To="{StaticResource 'Grey/Grey 30 Solid'}" Duration="0" />
         </Storyboard>
     </UserControl.Resources>
-    <Button Click="Button_Click" PreviewMouseDown="Button_MouseDown" Style="{StaticResource ButtonNoBackgroundStyle}" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Focusable="True" FocusVisualStyle="{x:Null}">
+    <Button AutomationProperties.Name="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:VPNToggle}}, Path=Name}" Click="Button_Click" PreviewMouseDown="Button_MouseDown" Style="{StaticResource ButtonNoBackgroundStyle}" Background="Transparent" BorderBrush="Transparent" BorderThickness="0" Focusable="True" FocusVisualStyle="{x:Null}">
         <Button.Triggers>
             <EventTrigger RoutedEvent="Border.MouseEnter">
                 <BeginStoryboard Storyboard="{StaticResource ShowBorder}" />

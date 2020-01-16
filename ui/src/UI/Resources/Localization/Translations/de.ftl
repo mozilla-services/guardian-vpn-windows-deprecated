@@ -4,6 +4,17 @@ application-description =
    Ein schnelles, sicheres und praktisches VPN
    (Virtuelles Privates Netzwerk).
 
+## Navigation
+navigation-close = Close
+navigation-back = Back
+navigation-open-link
+navigation-open-contact-link
+navigation-open-support-link
+navigation-open-terms-of-service
+navigation-open-privacy-policy
+navigation-open-debug
+navigation-open-log
+
 ## Pages
 connection-page-title = Verbindungen
 devices-page-title = Meine Geräte
@@ -28,6 +39,13 @@ hero-text-vpn-on = VPN ist an
 hero-text-connecting = Verbinden...
 hero-text-disconnecting = Trennen...
 hero-text-switching = Wechselt...
+hero-image-vpn-status
+dev-mode-on
+toggle-vpn
+decoration-image
+shadow-image
+connection-navigation-button
+vpn-status-image
 
 hero-subtext-unstable = Instabil
 hero-subtext-no-signal = Kein Signal
@@ -99,6 +117,7 @@ devices-limit-reached-title = Gerätelimit erreicht
 devices-limit-reached-content = Limit erreicht. Um den VPN auf diesem Gerät zu installieren, entferne zunächst ein andere.
 devices-remove-popup-title = Gerät entfernen?
 devices-remove-popup-content = Bitte bestätige das Entfernen von {$deviceName}.
+devices-remove = Gerät entfernen
 
 ## Popup
 popup-cancel-button-text = Abbrechen

@@ -24,7 +24,7 @@
             <Border BorderThickness="0 0 0 1" BorderBrush="{StaticResource 'Grey/Grey 10'}" Height="57">
                 <DockPanel VerticalAlignment="Center" Width="360">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                        <Button Style="{StaticResource 'Icon'}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="NavigateBack"/>
+                        <Button AutomationProperties.Name="{Binding Path=[navigation-back]}" Style="{StaticResource 'Icon'}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" local:ButtonExtensions.IconUri="{StaticResource 'close-small'}" Click="NavigateBack"/>
                         <TextBlock Style="{StaticResource 'Header 20'}" VerticalAlignment="Center" Margin="0,17,0,16" Text="{Binding Path=[settings-page-title]}"/>
                     </StackPanel>
                 </DockPanel>
@@ -180,7 +180,7 @@
                             <TextBlock Style="{StaticResource 'Header 20'}" VerticalAlignment="Center" Margin="8,2,8,0" Foreground="{StaticResource 'Grey/Grey 50'}" Text="{Binding Path=[avatar-menu-feedback]}" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                            <Button Style="{StaticResource 'Icon'}" Width="40" Height="40" local:ButtonExtensions.IconUri="{StaticResource 'open-window-blue50'}" local:ButtonExtensions.HoverIconUri="{StaticResource 'open-window-blue60'}" local:ButtonExtensions.HoverBackground="{StaticResource 'Blue/Blue 50.15'}" local:ButtonExtensions.PressedBackground="{StaticResource 'Blue/Blue 50.30'}" Click="Feedback_Click" />
+                            <Button AutomationProperties.Name="{Binding Path=[navigation-open-link]}" Style="{StaticResource 'Icon'}" Width="40" Height="40" local:ButtonExtensions.IconUri="{StaticResource 'open-window-blue50'}" local:ButtonExtensions.HoverIconUri="{StaticResource 'open-window-blue60'}" local:ButtonExtensions.HoverBackground="{StaticResource 'Blue/Blue 50.15'}" local:ButtonExtensions.PressedBackground="{StaticResource 'Blue/Blue 50.30'}" Click="Feedback_Click" />
                         </StackPanel>
                     </DockPanel>
                 </Grid>
