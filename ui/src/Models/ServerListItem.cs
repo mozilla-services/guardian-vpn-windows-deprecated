@@ -35,5 +35,16 @@ namespace FirefoxPrivateNetwork.Models
         /// Gets or sets the endpoint IP address.
         /// </summary>
         public string Endpoint { get; set; }
+
+        /// <summary>
+        /// Gets the name of the server.
+        /// </summary>
+        /// <returns>
+        /// Returns the name of the server.
+        /// </returns>
+        public override string ToString()
+        {
+            return this.Name;
+        }
     }
 }

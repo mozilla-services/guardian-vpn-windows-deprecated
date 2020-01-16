@@ -33,5 +33,21 @@ namespace FirefoxPrivateNetwork.Models
         /// Gets or sets a value indicating whether the device is the user's current device.
         /// </summary>
         public bool CurrentDevice { get; set; }
+
+        /// <summary>
+        /// Returns the name of the device.
+        /// </summary>
+        /// <returns>Device name.</returns>
+        public override string ToString()
+        {
+            if (this.CurrentDevice)
+            {
+                return this.Name + ", Current device";
+            }
+            else
+            {
+                return this.Name;
+            }
+        }
     }
 }
