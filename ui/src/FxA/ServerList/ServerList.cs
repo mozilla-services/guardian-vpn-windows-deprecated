@@ -84,7 +84,18 @@ namespace FirefoxPrivateNetwork.FxA
         /// <returns>Index of the VPN server in the server list.</returns>
         public int GetServerIndexByIP(string value)
         {
-            return vpnServers.FirstOrDefault(x => x.Value.Endpoint == value).Key;
+            var serverIndex = 0;
+
+            if (string.IsNullOrEmpty(value))
+            {
+                serverIndex = vpnServers.FirstOrDefault(x => x.Value.Country == "USA").Key;
+            }
+            else
+            {
+                serverIndex = vpnServers.FirstOrDefault(x => x.Value.Endpoint == value).Key;
+            }
+
+            return serverIndex;
         }
 
         /// <summary>
