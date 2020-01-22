@@ -69,6 +69,9 @@ namespace FirefoxPrivateNetwork.FxA
             // Initialize a new login session configuration
             Manager.Account.Config = new FxA.Config(fxaJson);
 
+            // Sets a value that a user has just logged in
+            Manager.MainWindowViewModel.NewUserSignIn = true;
+
             // Generate a new WireGuard keypair in preparation for adding a new Account device
             var keys = WireGuard.Keypair.Generate();
             Manager.Account.Config.FxALogin.PublicKey = keys.Public;
