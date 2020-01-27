@@ -79,3 +79,7 @@ test/logger/packages
 
 #comment
 test/comment/node_modules
+
+#smoke test
+test/smoke/FirefoxPrivateVPNUITest/packages
+test/smoke/FirefoxPrivateVPNUITest/TestResult
