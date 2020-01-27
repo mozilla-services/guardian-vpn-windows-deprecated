@@ -58,6 +58,18 @@
     "KeyValue": {
       "Description" : "key value",
       "Type": "String"
+    },
+    "StageUrl": {
+      "Description" : "stage url",
+      "Type": "String"
+    },
+    "TestExistedUserName": {
+      "Description" : "existed user name for testing",
+      "Type": "String"
+    },
+    "TestExistedPassword": {
+      "Description" : "existed user password for testing",
+      "Type": "String"
     }
   },
 
@@ -94,6 +106,16 @@
                 "[Environment]::SetEnvironmentVariable('S3_BUCKET', '",
                 {
                   "Ref": "S3BucketName"
+                },
+                "', [EnvironmentVariableTarget]::Machine) \n",
+                "[Environment]::SetEnvironmentVariable('EXISTED_USER_NAME', '",
+                {
+                  "Ref": "TestExistedUserName"
+                },
+                "', [EnvironmentVariableTarget]::Machine) \n",
+                "[Environment]::SetEnvironmentVariable('EXISTED_USER_PASSWORD', '",
+                {
+                  "Ref": "TestExistedPassword"
                 },
                 "', [EnvironmentVariableTarget]::Machine) \n",
 
@@ -149,7 +171,17 @@
                 "Install-Module -Name AWS.Tools.S3,AWS.Tools.EC2 -Scope AllUsers -Force \n",
                 "Read-S3Object -BucketName $env:S3_BUCKET -Key msi/$env:BUILD_NUMBER/FirefoxPrivateNetworkVPN.msi -File FirefoxPrivateNetworkVPN.msi \n",
                 "Start-Process msiexec.exe -Wait -ArgumentList '/I FirefoxPrivateNetworkVPN.msi /quiet' -Verb RunAs \n",  
-                "Write-Host 'Complete.' \n",           
+                "Write-Host 'Complete.' \n",      
+
+                "Write-Host 'Update Config file' \n",
+                "$env:Settings = \"[FxA] \n",
+                "BaseURL = ",
+                {
+                  "Ref": "StageUrl"
+                },
+                "\" \n",
+                "New-Item -Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\FirefoxPrivateNetworkVPN -Name \"settings.conf\" -Value $env:Settings \n",
+                "Write-Host 'Complete.' \n", 
 
                 "Write-Host 'Build Smoke Test App' \n",
                 "cd C:\\Users\\Administrator\\guardian-vpn-windows\\test\\smoke\\FirefoxPrivateVPNUITest \n",
@@ -169,7 +201,7 @@
                 "Set-ItemProperty $RegPath \"AutoAdminLogon\" -Value \"1\" -type String \n",
                 "Set-ItemProperty $RegPath \"DefaultUsername\" -Value \"administrator\" -type String \n",
                 "Set-ItemProperty $RegPath \"DefaultPassword\" -Value \"$env:DEFAULT_PASSWORD\" -type String \n",
-                "Write-Host \"Restarting Computer.\" -force -ForegroundColor Yellow \n",
+                "Write-Host \"Restarting Computer.\" \n",
                 "Restart-Computer -Force \n",
                 "</powershell>"
               ]
