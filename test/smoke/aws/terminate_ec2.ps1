@@ -1,5 +1,6 @@
 Set-DefaultAWSRegion -Region us-east-1
+$stack = "guardian-stack-$env:CIRCLE_BUILD_NUM"
 # remove the stack
-Remove-CFNStack -StackName guardian-stack-$env:CIRCLE_BUILD_NUM
+Remove-CFNStack -StackName $stack
 # wait stack to delete completely
-Wait-CFNStack -StackName guardian-stack-$env:CIRCLE_BUILD_NUM -Status DELETE_COMPLETE
+Wait-CFNStack -StackName $stack -Status DELETE_COMPLETE

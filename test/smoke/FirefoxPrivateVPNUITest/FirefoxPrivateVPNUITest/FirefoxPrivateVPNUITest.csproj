@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>SA0001</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -66,16 +67,39 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BrowserSession.cs" />
-    <Compile Include="FirefoxPrivateVPNSession.cs" />
-    <Compile Include="LandingScreen.cs" />
-    <Compile Include="LayoutScreen.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Screens\MainScreen.cs" />
+    <Compile Include="Screens\PasswordInputPage.cs" />
+    <Compile Include="Screens\QuickAccessScreen.cs" />
+    <Compile Include="Screens\RegisterPage.cs" />
+    <Compile Include="Screens\EmailInputPage.cs" />
+    <Compile Include="Screens\LandingScreen.cs" />
+    <Compile Include="Screens\SettingScreen.cs" />
+    <Compile Include="Sessions\BrowserSession.cs" />
+    <Compile Include="Sessions\FirefoxPrivateVPNSession.cs" />
+    <Compile Include="Tests\ExistedUserSignInTest.cs" />
+    <Compile Include="Tests\LandingScreenTest.cs" />
+    <Compile Include="Tests\LayoutScreenTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignInScreen.cs" />
+    <Compile Include="Tests\NewUserSignInTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.2.0.113\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.Unstable.1.2.0.113\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
