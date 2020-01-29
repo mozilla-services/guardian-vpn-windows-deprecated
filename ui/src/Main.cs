@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.ServiceProcess;
 using System.Threading;
 using FirefoxPrivateNetwork.WCF;
 using FirefoxPrivateNetwork.Windows;
@@ -30,32 +31,29 @@ namespace FirefoxPrivateNetwork
         {
             bool ranOnStartup = false;
 
-            // Run the broker child process, skip the UI
-            if (args.Count() == 4)
+            if (args.Count() == 1)
             {
+                // Run the broker child process, skip the UI
                 if (args.First().ToLower() == "broker")
                 {
-                    RunBroker(args);
+                    RunBroker();
                     return;
+                }
+
+                // Run the UI minimized
+                if (args.First().ToLower() == "-s")
+                {
+                    ranOnStartup = true;
                 }
             }
 
-            // Run the tunnel service, skip the UI
             if (args.Count() == 2)
             {
+                // Run the tunnel service, skip the UI
                 if (args.First().ToLower() == "tunnel")
                 {
                     RunTunnelService(args);
                     return;
-                }
-            }
-
-            // Run the UI minimized
-            if (args.Count() == 1)
-            {
-                if (args.First().ToLower() == "-s")
-                {
-                    ranOnStartup = true;
                 }
             }
 
@@ -102,26 +100,15 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Starts the broker child process.
         /// </summary>
-        /// <param name="args">
-        /// Argument 0: "broker" keyword
-        /// Argument 1: Parent process ID.
-        /// Argument 2: Read pipe handle ID.
-        /// Argument 3: Write pipe handle ID.
-        /// </param>
-        private static void RunBroker(string[] args)
+        private static void RunBroker()
         {
-            var parentPIDArg = args[1];
-            var readPipeHandleArg = args[2];
-            var writePipeHandleArg = args[3];
-
             try
             {
-                var parentPID = int.Parse(parentPIDArg);
-                var error = FirefoxPrivateNetwork.WireGuard.Broker.ChildProcess(parentPID, readPipeHandleArg, writePipeHandleArg);
-                Environment.Exit(error ? 1 : 0);
+                ServiceBase.Run(new BrokerService());
             }
-            catch (FormatException)
+            catch (Exception e)
             {
+                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
                 Environment.Exit(1);
             }
         }
@@ -139,14 +126,12 @@ namespace FirefoxPrivateNetwork
 
             try
             {
-                // Initialize interfaces
-                Manager.InitializeTunnel();
-
-                var error = FirefoxPrivateNetwork.Manager.Tunnel.TunnelService(configFilePath);
+                var error = Tunnel.TunnelService(configFilePath);
                 Environment.Exit(0);
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
                 Environment.Exit(1);
             }
         }

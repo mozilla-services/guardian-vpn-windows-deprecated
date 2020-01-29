@@ -54,6 +54,7 @@ jobs:
             netsh http add urlacl url=http://+:8000/ user=Everyone
             Get-Process FirefoxPrivateNetworkVPN -ErrorAction SilentlyContinue | Stop-Process -Force
             Start-Process -FilePath ".\ui\src\bin\x64\Debug_QA\FirefoxPrivateNetworkVPN.exe"
+            Start-Service -Name "FirefoxPrivateNetworkVPNBroker"
       - run: 
           name: Run Integration Tests
           command: |

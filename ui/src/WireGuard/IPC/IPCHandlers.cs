@@ -4,10 +4,9 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
+using System.IO.Pipes;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 
 namespace FirefoxPrivateNetwork.WireGuard
 {
@@ -22,17 +21,17 @@ namespace FirefoxPrivateNetwork.WireGuard
         {
             try
             {
-                while (ServiceQueueEvent.WaitOne())
+                while (!BrokerService.BrokerServiceTokenSource.Token.IsCancellationRequested && ServiceQueueEvent.WaitOne())
                 {
                     while (ServiceQueue.TryDequeue(out ServiceQueueMessage m))
                     {
                         if (m.Ipc == null)
                         {
-                            HandleDisconnect();
+                            BrokerHandleDisconnect();
                         }
                         else
                         {
-                            HandleConnect(m.Message, m.Ipc);
+                            BrokerHandleConnect(m.Message, m.Ipc);
                         }
                     }
                 }
@@ -67,6 +66,10 @@ namespace FirefoxPrivateNetwork.WireGuard
                     ServiceQueueEvent.Set();
                     break;
 
+                case IPCCommand.IpcConnectReply:
+                    ClientHandleIPCConnectReply(cmd);
+                    break;
+
                 case IPCCommand.IpcDisconnect:
                     if (ServiceQueueRunner.ThreadState == System.Threading.ThreadState.Unstarted)
                     {
@@ -77,26 +80,30 @@ namespace FirefoxPrivateNetwork.WireGuard
                     ServiceQueueEvent.Set();
                     break;
 
+                case IPCCommand.IpcConnectionStatus:
+                    BrokerHandleConnectionStatus(ipc);
+                    break;
+
+                case IPCCommand.IpcConnectionStatusReply:
+                    ClientHandleConnectionStatusReply(cmd);
+                    break;
+
                 case IPCCommand.IpcDetectCaptivePortal:
-                    HandleIPCDetectCaptivePortal(cmd, ipc);
-                    break;
-
-                case IPCCommand.IpcRequestPid:
-                    HandleIPCPidRequest(ipc);
-                    break;
-
-                case IPCCommand.IpcPidReply:
-                    HandleIPCPidReply(cmd);
-                    break;
-
-                case IPCCommand.IpcConnectReply:
-                    HandleIPCConnectReply(cmd);
+                    BrokerHandleIPCDetectCaptivePortal(cmd, ipc);
                     break;
 
                 case IPCCommand.IpcDetectCaptivePortalReply:
-                    HandleIPCDetectCaptivePortalReply(cmd);
+                    ClientHandleIPCDetectCaptivePortalReply(cmd);
                     break;
             }
+        }
+
+        /// <summary>
+        /// Set the service queue event so that the WaitOne() is unblocked within the service queue runner.
+        /// </summary>
+        public static void SignalServiceQueue()
+        {
+            ServiceQueueEvent.Set();
         }
 
         /// <summary>
@@ -104,7 +111,7 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// </summary>
         /// <param name="cmd">IPCMessage object containing commands and parameters.</param>
         /// <param name="ipc">IPC object containing an instance which lets us reply.</param>
-        private static void HandleConnect(IPCMessage cmd, IPC ipc)
+        private static void BrokerHandleConnect(IPCMessage cmd, IPC ipc)
         {
             // Install service
             try
@@ -122,7 +129,7 @@ namespace FirefoxPrivateNetwork.WireGuard
                 }
 
                 var errorReply = new IPCMessage(IPCCommand.IpcConnectReply);
-                errorReply.AddAttribute("error_code", serviceStartResult.ErrorCode.ToString());
+                errorReply.AddAttribute("error_code", "-1");
                 errorReply.AddAttribute("error_description", ((WireGuardTunnelExitCodes)serviceStartResult.ErrorCode).ToString());
                 ipc.WriteToPipe(errorReply);
             }
@@ -132,56 +139,7 @@ namespace FirefoxPrivateNetwork.WireGuard
             }
         }
 
-        /// <summary>
-        /// Stops the tunnel service and deletes it.
-        /// </summary>
-        private static void HandleDisconnect()
-        {
-            Service.StopAndDelete();
-        }
-
-        private static void HandleIPCPidRequest(IPC ipc)
-        {
-            var pidReply = new IPCMessage(IPCCommand.IpcPidReply);
-            pidReply.AddAttribute("pid", Process.GetCurrentProcess().Id.ToString());
-            ipc.WriteToPipe(pidReply);
-        }
-
-        private static void HandleIPCPidReply(IPCMessage cmd)
-        {
-            var pIdString = cmd["pid"].FirstOrDefault();
-            if (int.TryParse(pIdString, out int pId))
-            {
-                Manager.Broker.SetRemoteBrokerPid(pId);
-            }
-        }
-
-        private static void HandleIPCDetectCaptivePortal(IPCMessage cmd, IPC ipc)
-        {
-            var captivePortalDetectionTask = Network.CaptivePortalDetection.IsCaptivePortalActiveTask(cmd["ip"].FirstOrDefault());
-
-            captivePortalDetectionTask.ContinueWith(task =>
-            {
-                var captivePortalDetectionReply = new IPCMessage(IPCCommand.IpcDetectCaptivePortalReply);
-                captivePortalDetectionReply.AddAttribute("detected", task.Result == Network.CaptivePortalDetection.ConnectivityStatus.CaptivePortalDetected ? "true" : "false");
-                ipc.WriteToPipe(captivePortalDetectionReply);
-            });
-        }
-
-        private static void HandleIPCDetectCaptivePortalReply(IPCMessage cmd)
-        {
-            var captivePortalDetected = cmd["detected"].FirstOrDefault();
-            if (captivePortalDetected == "true")
-            {
-                Manager.CaptivePortalDetector.CaptivePortalDetected = true;
-            }
-            else
-            {
-                Manager.CaptivePortalDetector.CaptivePortalDetected = false;
-            }
-        }
-
-        private static void HandleIPCConnectReply(IPCMessage cmd)
+        private static void ClientHandleIPCConnectReply(IPCMessage cmd)
         {
             var errorCodeString = cmd["error_code"].FirstOrDefault();
             if (errorCodeString == null)
@@ -195,7 +153,116 @@ namespace FirefoxPrivateNetwork.WireGuard
             }
 
             Connector.HandleTunnelFailure((WireGuardTunnelExitCodes)errorCode);
-            Manager.Tunnel.Disconnect(false);
+            Manager.Tunnel.Disconnect();
+        }
+
+        /// <summary>
+        /// Stops the tunnel service and deletes it.
+        /// </summary>
+        private static void BrokerHandleDisconnect()
+        {
+            Service.StopAndDelete();
+        }
+
+        private static void BrokerHandleConnectionStatus(IPC ipc)
+        {
+            var connectionStatus = BrokerQueryConnectionStatisticsFromTunnel();
+            var connectionStatusReply = new IPCMessage(IPCCommand.IpcConnectionStatusReply);
+
+            if (connectionStatus == null)
+            {
+                connectionStatusReply.AddAttribute("broker_error_code", Broker.IPCConnectionStatusError.ToString());
+            }
+            else
+            {
+                connectionStatusReply.AddRange(connectionStatus);
+            }
+
+            ipc.WriteToPipe(connectionStatusReply);
+        }
+
+        private static void ClientHandleConnectionStatusReply(IPCMessage cmd)
+        {
+            var connectionStatus = Manager.Tunnel.ParseStatusResponse(cmd);
+            Manager.ConnectionStatusUpdater.UpdateConnectionStatus(connectionStatus);
+            Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.SetResult(true);
+        }
+
+        private static void BrokerHandleIPCDetectCaptivePortal(IPCMessage cmd, IPC ipc)
+        {
+            var captivePortalDetectionTask = Network.CaptivePortalDetection.IsCaptivePortalActiveTask(cmd["ip"].FirstOrDefault());
+
+            captivePortalDetectionTask.ContinueWith(task =>
+            {
+                var captivePortalDetectionReply = new IPCMessage(IPCCommand.IpcDetectCaptivePortalReply);
+                captivePortalDetectionReply.AddAttribute("detected", task.Result == Network.CaptivePortalDetection.ConnectivityStatus.CaptivePortalDetected ? "true" : "false");
+                ipc.WriteToPipe(captivePortalDetectionReply);
+            });
+        }
+
+        private static void ClientHandleIPCDetectCaptivePortalReply(IPCMessage cmd)
+        {
+            var captivePortalDetected = cmd["detected"].FirstOrDefault();
+            if (captivePortalDetected == "true")
+            {
+                Manager.CaptivePortalDetector.CaptivePortalDetected = true;
+            }
+            else
+            {
+                Manager.CaptivePortalDetector.CaptivePortalDetected = false;
+            }
+        }
+
+        /// <summary>
+        /// Send a request for connection statistics from the tunnel service via named pipe.
+        /// </summary>
+        /// <returns>Connection status received from the tunnel named pipe.</returns>
+        private static IPCMessage BrokerQueryConnectionStatisticsFromTunnel()
+        {
+            NamedPipeClientStream tunnelPipe = null;
+            try
+            {
+                tunnelPipe = BrokerConnectWGTunnelNamedPipe();
+                if (tunnelPipe != null)
+                {
+                    IPC.WriteToPipe(tunnelPipe, new IPCMessage(IPCCommand.WgGet));
+                    var ret = IPC.ReadFromPipe(tunnelPipe);
+                    tunnelPipe.Close();
+                    return ret;
+                }
+            }
+            catch (Exception e)
+            {
+                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Debug);
+            }
+            finally
+            {
+                if (tunnelPipe != null && tunnelPipe.IsConnected)
+                {
+                    tunnelPipe.Close();
+                }
+            }
+
+            return null;
+        }
+
+        private static NamedPipeClientStream BrokerConnectWGTunnelNamedPipe()
+        {
+            try
+            {
+                var tunnelPipe = new NamedPipeClientStream(ProductConstants.TunnelPipeName);
+                tunnelPipe.Connect(1000);
+                return tunnelPipe;
+            }
+            catch (System.TimeoutException)
+            {
+                if (Manager.MainWindowViewModel.Status == Models.ConnectionState.Protected)
+                {
+                    ErrorHandling.ErrorHandler.Handle("Named pipe not available", ErrorHandling.LogLevel.Debug);
+                }
+
+                return null;
+            }
         }
 
         private class ServiceQueueMessage

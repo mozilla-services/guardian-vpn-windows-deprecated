@@ -3,10 +3,17 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Pipes;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
+using System.ServiceProcess;
 using System.Threading;
-using System.Windows.Forms;
+using System.Threading.Tasks;
+using System.Windows;
 using FirefoxPrivateNetwork.Windows;
 
 namespace FirefoxPrivateNetwork.WireGuard
@@ -17,367 +24,118 @@ namespace FirefoxPrivateNetwork.WireGuard
     /// </summary>
     internal class Broker
     {
-        private const int ChildProcessTimeoutSeconds = 5;
-        private static Process brokerProcess;
+        /// <summary>
+        /// Unspecified error when requesting the connection status from the tunnel.
+        /// </summary>
+        public const int IPCConnectionStatusError = -1;
 
-        private IntPtr masterReadPipe = IntPtr.Zero;
-        private IntPtr masterWritePipe = IntPtr.Zero;
-
-        private WireGuard.IPC brokerIPC;
-
-        private bool isPipeActive;
-        private int remoteBrokerPid;
-        private DateTime lastReceivedHeartBeat = DateTime.MinValue;
+        private static readonly TimeSpan BrokerServiceTimeout = TimeSpan.FromSeconds(30);
+        private static readonly List<Task> ChildProcessList = new List<Task>();
 
         /// <summary>
-        /// Runs and elevates a process with a UAC popup.
+        /// Starts the child process in a separate long running task.
         /// </summary>
-        /// <param name="program">Binary to execute.</param>
-        /// <param name="arguments">Command line arguments for execution.</param>
-        /// <returns>True on success.</returns>
-        public static bool UACShellExecute(string program, string arguments)
+        public static void StartChildProcess()
         {
-            brokerProcess = new Process()
-            {
-                StartInfo =
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = true,
-                    Verb = "runas",
-                    FileName = program,
-                    Arguments = arguments,
-                },
-            };
+            var newChildProcess = Task.Factory.StartNew(() => ChildProcess(), BrokerService.BrokerServiceTokenSource.Token, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+            ChildProcessList.Add(newChildProcess);
+        }
 
-            return brokerProcess.Start();
+        /// <summary>
+        /// Stops all spawned child processes and exits the broker service.
+        /// </summary>
+        public static void StopAllChildProcesses()
+        {
+            BrokerService.BrokerServiceTokenSource.Cancel();
+            IPCHandlers.SignalServiceQueue();
+
+            // Wait until all child processes have quit, but honor the broker service timeout
+            Task.WaitAll(ChildProcessList.ToArray(), BrokerServiceTimeout);
+        }
+
+        /// <summary>
+        /// Shows a toast offering the user the chance to start the Broker service.
+        /// </summary>
+        public static void PromptRestartBrokerService()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var toast = new UI.Components.Toast.Toast(UI.Components.Toast.Style.Error, new ErrorHandling.UserFacingMessage("toast-service-communication-error"), priority: UI.Components.Toast.Priority.Important)
+                {
+                    ClickEventHandler = (sender, e) =>
+                    {
+                        Task.Run(() =>
+                        {
+                            // Get the broker service from the service controller
+                            var brokerService = ServiceController.GetServices().Where(s => s.ServiceName == ProductConstants.BrokerServiceName).FirstOrDefault();
+
+                            // Start a net process to restart the broker service
+                            if (brokerService.Status == ServiceControllerStatus.Stopped)
+                            {
+                                ProcessStartInfo info = new ProcessStartInfo
+                                {
+                                    UseShellExecute = true,
+                                    WindowStyle = ProcessWindowStyle.Hidden,
+                                    Verb = "runas",
+                                    FileName = "net",
+                                    Arguments = string.Join(" ", new string[] { "start", ProductConstants.BrokerServiceName }),
+                                };
+
+                                try
+                                {
+                                    Process.Start(info);
+                                }
+                                catch (Exception)
+                                {
+                                    Application.Current.Dispatcher.Invoke(() =>
+                                    {
+                                        Manager.ToastManager.Show(new UI.Components.Toast.Toast(UI.Components.Toast.Style.Error, new ErrorHandling.UserFacingMessage("toast-service-restart-error"), duration: TimeSpan.FromSeconds(5), priority: UI.Components.Toast.Priority.Important));
+                                    });
+                                }
+                            }
+
+                            // Wait for the broker service to run
+                            brokerService.WaitForStatus(ServiceControllerStatus.Running, BrokerServiceTimeout);
+
+                            if (brokerService.Status == ServiceControllerStatus.Running)
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    Manager.ToastManager.Show(new UI.Components.Toast.Toast(UI.Components.Toast.Style.Success, new ErrorHandling.UserFacingMessage("toast-service-restart-success"), duration: TimeSpan.FromSeconds(5), priority: UI.Components.Toast.Priority.Important));
+                                });
+                            }
+                            else
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    Manager.ToastManager.Show(new UI.Components.Toast.Toast(UI.Components.Toast.Style.Error, new ErrorHandling.UserFacingMessage("toast-service-restart-error"), duration: TimeSpan.FromSeconds(5), priority: UI.Components.Toast.Priority.Important));
+                                });
+                            }
+                        });
+                    },
+                };
+
+                Manager.ToastManager.Show(toast);
+            });
         }
 
         /// <summary>
         /// Child process thread which will be executed upon calling the FirefoxPrivateNetwork.exe with the "broker" switch.
         /// </summary>
-        /// <param name="parentPID">Parent process ID.</param>
-        /// <param name="readPipeHandle">hWnd of the read pipe.</param>
-        /// <param name="writePipeHandle">hWnd of the write pipe.</param>
-        /// <returns>Process success result.</returns>
-        public static bool ChildProcess(int parentPID, string readPipeHandle, string writePipeHandle)
+        private static void ChildProcess()
         {
-            // Grab the main app (parent) process based on the provided process ID
-            Process parentProcess;
-            try
-            {
-                parentProcess = Process.GetProcessById(parentPID);
-
-                // Make sure we check if the process is active and responding
-                if (!parentProcess.Responding)
-                {
-                    ErrorHandling.ErrorHandler.Handle("Parent process not responding", ErrorHandling.LogLevel.Error);
-                    return false;
-                }
-            }
-            catch (ArgumentException e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-                return false;
-            }
-
-            // Duplicate the read and write pipe handles from the main app (parent) so that this process (child) owns it
-            IntPtr parentProcessHandle = parentProcess.Handle;
-
-            var handleStatusRead = Kernel32.DuplicateHandle(parentProcessHandle, new IntPtr(long.Parse(readPipeHandle)), Process.GetCurrentProcess().Handle, out IntPtr brokerReadPipe, 0, false, (uint)DuplicateOptions.DUPLICATE_SAME_ACCESS | (uint)DuplicateOptions.DUPLICATE_CLOSE_SOURCE);
-            var handleStatusWrite = Kernel32.DuplicateHandle(parentProcessHandle, new IntPtr(long.Parse(writePipeHandle)), Process.GetCurrentProcess().Handle, out IntPtr brokerWritePipe, 0, false, (uint)DuplicateOptions.DUPLICATE_SAME_ACCESS | (uint)DuplicateOptions.DUPLICATE_CLOSE_SOURCE);
-
-            // Check if the duplication was successful
-            if (!handleStatusRead || !handleStatusWrite)
-            {
-                ErrorHandling.ErrorHandler.Handle("Failure in creating read/write pipes", ErrorHandling.LogLevel.Error);
-                return false;
-            }
+            // Configure pipe security for the broker pipe
+            PipeSecurity ps = new PipeSecurity();
+            SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+            ps.AddAccessRule(new PipeAccessRule(account, PipeAccessRights.ReadWrite, AccessControlType.Allow));
+            ps.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().Owner, PipeAccessRights.FullControl, AccessControlType.Allow));
 
             // Main child process loop - start the listener thread and listen for commands
-            var ipc = new WireGuard.IPC(brokerReadPipe, brokerWritePipe);
-            ipc.StartListenerThread();
-
-            // If the listener is not active, sleep for 1 second and wait until it does become active
-            while (ipc.IsListenerActive())
+            using (var brokerPipe = new NamedPipeServerStream(ProductConstants.InternalAppName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous, 512, 512, ps))
             {
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                new IPC(brokerPipe).BrokerListenerThread();
             }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Launches the broker process in an elevated form (with a UAC popup).
-        /// </summary>
-        /// <returns>True on successful broker launch, false otherwise.</returns>
-        public bool LaunchChildProcess()
-        {
-            ErrorHandling.DebugLogger.LogDebugMsg("Broker process launch initiated");
-
-            // If the broker child process read/write pipes are already active, don't launch
-            if ((masterReadPipe != IntPtr.Zero || masterWritePipe != IntPtr.Zero) && IsActive())
-            {
-                ErrorHandling.DebugLogger.LogDebugMsg("Broker is already active, not launching a new one");
-                return false;
-            }
-
-            IntPtr brokerReadPipe, brokerWritePipe;
-
-            // No pipes are currently active, proceed to initiate pipes
-            try
-            {
-                // Destroy any existing pipes
-                DestroyPipes();
-                Kernel32.CreatePipe(out masterReadPipe, out brokerWritePipe, null, 0);
-                Kernel32.CreatePipe(out brokerReadPipe, out masterWritePipe, null, 0);
-            }
-            catch (Exception e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-                return false;
-            }
-
-            try
-            {
-                ErrorHandling.DebugLogger.LogDebugMsg("Broker process elevating");
-
-                // Run this exe with the "broker" option, with the current process ID and the read/write pipe handles
-                // This runs the broker process
-                bool runSuccess = false;
-                try
-                {
-                    if (UACShellExecute(Application.ExecutablePath, string.Format("broker {0} {1} {2}", Process.GetCurrentProcess().Id, brokerReadPipe, brokerWritePipe)))
-                    {
-                        // Successfully launched broker
-                        runSuccess = true;
-                    }
-                    else
-                    {
-                        ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-vpn-start-error"), ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.UserFacingSeverity.ShowError, ErrorHandling.LogLevel.Error);
-                    }
-                }
-                catch (System.ComponentModel.Win32Exception)
-                {
-                    ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-user-acess-control-error"), ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.UserFacingSeverity.ShowNotice, ErrorHandling.LogLevel.Info);
-                }
-                catch (Exception)
-                {
-                    ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-vpn-start-error"), ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.UserFacingSeverity.ShowError, ErrorHandling.LogLevel.Error);
-                }
-
-                // Failure to run elevated broker process, destroy pipes and exit
-                if (!runSuccess)
-                {
-                    DestroyPipes();
-                    return false;
-                }
-
-                // Start the pipe listener thread
-                brokerIPC = new WireGuard.IPC(masterReadPipe, masterWritePipe);
-                brokerIPC.StartListenerThread();
-
-                // Process has been successfully started, but we need to wait until it becomes active
-                var waitCounter = 0;
-
-                while (!IsActive(false) && waitCounter++ < ChildProcessTimeoutSeconds * 10)
-                {
-                    if (waitCounter % 10 == 0)
-                    {
-                        ErrorHandling.DebugLogger.LogDebugMsg("Waiting on broker to send heartbeat");
-                    }
-
-                    Thread.Sleep(100);
-                }
-
-                if (!IsActive(false))
-                {
-                    ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-vpn-launch-error"), ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.UserFacingSeverity.ShowError, ErrorHandling.LogLevel.Error);
-                    Manager.MainWindowViewModel.Status = Models.ConnectionState.Unprotected;
-                    return false;
-                }
-                else
-                {
-                    // Start the broker <-> main app checker thread
-                    var pipeStatusCheckProcess = new Thread(BrokerStatusCheckThread)
-                    {
-                        IsBackground = true,
-                    };
-
-                    ReportHeartbeat();
-                    pipeStatusCheckProcess.Start();
-                }
-
-                ErrorHandling.DebugLogger.LogDebugMsg("Broker process launched");
-            }
-            catch (Exception e)
-            {
-                DestroyPipes();
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Checks whether the Broker process is running or not.
-        /// </summary>
-        /// <param name="checkBrokerPipe">Try to detect whether the broker pipe is active before returning.</param>
-        /// <returns>True if process is running.</returns>
-        public bool IsActive(bool checkBrokerPipe = true)
-        {
-            try
-            {
-                if (brokerIPC == null)
-                {
-                    return false;
-                }
-
-                if (checkBrokerPipe && !isPipeActive)
-                {
-                    return false;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Thread for waiting on the broker to send a PID and then checking whether the the broker is still active.
-        /// </summary>
-        public void BrokerStatusCheckThread()
-        {
-            int strikes = 0;
-            var pidRequestMessage = new IPCMessage(IPCCommand.IpcRequestPid);
-
-            isPipeActive = true;
-            remoteBrokerPid = 0;
-
-            while (true)
-            {
-                Thread.Sleep(1000);
-
-                // Do we have a broker process ID? If so, break and wait
-                if (remoteBrokerPid > 0)
-                {
-                    isPipeActive = true;
-                    break;
-                }
-
-                // Did we even attempt to initialize the broker?
-                if (brokerIPC == null)
-                {
-                    isPipeActive = false;
-                    continue;
-                }
-
-                // Try to send a PID request message
-                if (!brokerIPC.WriteToPipe(pidRequestMessage))
-                {
-                    isPipeActive = false;
-                    continue;
-                }
-
-                // Check for any previously received PIDs
-                if ((DateTime.Now - lastReceivedHeartBeat).TotalSeconds > ProductConstants.BrokerToubleGracePeriod)
-                {
-                    // No heartbeat received for at least ProductConstants.BrokerToubleGracePeriod seconds, try to recover
-                    if (++strikes >= 3)
-                    {
-                        ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-vpn-start-error"), ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.LogLevel.Error);
-                        ErrorHandling.ErrorHandler.Handle(string.Format("Broker timed out, no heartbeat received for {0} seconds.", ProductConstants.BrokerToubleGracePeriod), ErrorHandling.LogLevel.Error);
-                        break;
-                    }
-
-                    continue;
-                }
-            }
-
-            // If the broker is running, wait on exit
-            if (remoteBrokerPid > 0)
-            {
-                ErrorHandling.ErrorHandler.WriteToLog("Broker is running. Waiting on exit.", ErrorHandling.LogLevel.Info);
-
-                var remoteBrokerProcess = Process.GetProcessById(remoteBrokerPid);
-                remoteBrokerProcess.WaitForExit();
-                remoteBrokerPid = 0;
-
-                ErrorHandling.ErrorHandler.WriteToLog("Broker has exited.", ErrorHandling.LogLevel.Info);
-            }
-
-            // Nothing seems to be running, destroy pipes and move on
-            DestroyPipes();
-            brokerIPC = null;
-        }
-
-        /// <summary>
-        /// Fetches the broker IPC listener instance.
-        /// </summary>
-        /// <returns>IPC instance.</returns>
-        public WireGuard.IPC GetBrokerIPC()
-        {
-            return brokerIPC;
-        }
-
-        /// <summary>
-        /// Sets the last received heartbeat time to DateTime.Now.
-        /// </summary>
-        public void ReportHeartbeat()
-        {
-            lastReceivedHeartBeat = DateTime.Now;
-        }
-
-        /// <summary>
-        /// Sets the instantiated broker process ID so we can monitor it.
-        /// </summary>
-        /// <param name="pid">Process ID of the running broker.</param>
-        public void SetRemoteBrokerPid(int pid)
-        {
-            remoteBrokerPid = pid;
-        }
-
-        /// <summary>
-        /// Resets the last received heartbeat time to a minimum value.
-        /// </summary>
-        public void ClearHeartbeat()
-        {
-            lastReceivedHeartBeat = DateTime.MinValue;
-        }
-
-        /// <summary>
-        /// Shut down the broker.
-        /// </summary>
-        public void ShutDown()
-        {
-            if (brokerProcess != null)
-            {
-                brokerProcess.Kill();
-                brokerProcess.WaitForExit();
-            }
-        }
-
-        /// <summary>
-        /// Closes and disposes the read and write pipe.
-        /// </summary>
-        private void DestroyPipes()
-        {
-            if (masterReadPipe != IntPtr.Zero)
-            {
-                Kernel32.CloseHandle(masterReadPipe);
-                masterReadPipe = IntPtr.Zero;
-            }
-
-            if (masterWritePipe != IntPtr.Zero)
-            {
-                Kernel32.CloseHandle(masterWritePipe);
-                masterWritePipe = IntPtr.Zero;
-            }
-
-            isPipeActive = false;
         }
     }
 }

@@ -38,6 +38,11 @@ namespace FirefoxPrivateNetwork
         public const string InternalAppName = "FirefoxPrivateNetworkVPN";
 
         /// <summary>
+        /// Name of the broker service.
+        /// </summary>
+        public const string BrokerServiceName = "FirefoxPrivateNetworkVPNBroker";
+
+        /// <summary>
         /// Tunnel service unique name. Must be prefixed with "WireGuard$".
         /// </summary>
         public const string TunnelServiceInternalName = "WireGuardTunnel$FirefoxPrivateNetworkVPN";

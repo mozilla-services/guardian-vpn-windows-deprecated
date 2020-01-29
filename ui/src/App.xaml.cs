@@ -14,7 +14,7 @@ namespace FirefoxPrivateNetwork
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             // Ensure tunnel disconnect prior to exiting from the application.
-            Manager.Tunnel.Disconnect(false);
+            Manager.Tunnel.Disconnect();
 
             // Remove icon from the system tray.
             Manager.TrayIcon.Remove();

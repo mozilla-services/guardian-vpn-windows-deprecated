@@ -383,6 +383,9 @@
     <Compile Include="WCF\VersionRequest.cs" />
     <Compile Include="Windows\WlanApi.cs" />
     <Compile Include="Windows\WlanApiStructures\WlanApiAdditionalStructures.cs" />
+    <Compile Include="WireGuard\BrokerService.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WireGuard\WireGuardTunnelExitCodes.cs" />
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>

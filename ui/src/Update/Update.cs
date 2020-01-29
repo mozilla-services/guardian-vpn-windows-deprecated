@@ -202,9 +202,6 @@ namespace FirefoxPrivateNetwork.Update
                         return UpdateResult.DisconnectTimeout;
                     }
 
-                    // Shut down broker before updating
-                    Manager.Broker.ShutDown();
-
                     ErrorHandling.ErrorHandler.WriteToLog("Running MSI update...", ErrorHandling.LogLevel.Info);
 
                     var msiUpdateLaunch = LaunchUpdatedApplication(fileName);

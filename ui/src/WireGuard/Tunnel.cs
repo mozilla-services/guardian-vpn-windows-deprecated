@@ -14,7 +14,7 @@ namespace FirefoxPrivateNetwork.WireGuard
     /// </summary>
     internal class Tunnel
     {
-        private WireGuard.IPC brokerIPC;
+        private readonly IPC brokerIPC;
 
         private long previousTxQueryTime;
         private long previousTxBytes;
@@ -24,16 +24,11 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// <summary>
         /// Initializes a new instance of the <see cref="Tunnel"/> class.
         /// </summary>
-        /// <param name="broker">Instantiated broker object.</param>
-        public Tunnel(Broker broker)
+        public Tunnel()
         {
-            Broker = broker;
+            brokerIPC = new IPC(new NamedPipeClientStream(".", ProductConstants.InternalAppName, direction: PipeDirection.InOut, options: PipeOptions.Asynchronous));
+            brokerIPC.StartClientListenerThread();
         }
-
-        /// <summary>
-        /// Gets the currently used Broker instance.
-        /// </summary>
-        public WireGuard.Broker Broker { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether we are connecting or not.
@@ -59,7 +54,7 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// </summary>
         /// <param name="confFilePath">Path to the WireGuard config file to use, containing keys, IPs and everything else.</param>
         /// <returns>True on successful startup of the tunnel service, false otherwise.</returns>
-        public bool TunnelService(string confFilePath)
+        public static bool TunnelService(string confFilePath)
         {
             try
             {
@@ -80,53 +75,36 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// <returns>True if successfully sent connection command.</returns>
         public bool Connect()
         {
-            uptimeStart = DateTime.MinValue;
-            SetConnecting();
-            Manager.Broker.ReportHeartbeat();
-
-            ErrorHandling.DebugLogger.LogDebugMsg("Starting broker");
-            if (!InitiateBroker())
-            {
-                IsConnecting = false;
-                IsDisconnecting = false;
-                return false;
-            }
-
             var configFilePath = ProductConstants.FirefoxPrivateNetworkConfFile;
             var connectMessage = new IPCMessage(IPCCommand.IpcConnect);
             connectMessage.AddAttribute("config", configFilePath);
-            brokerIPC.WriteToPipe(connectMessage);
 
-            return true;
+            var writeToPipeResult = brokerIPC.WriteToPipe(connectMessage);
+            if (writeToPipeResult)
+            {
+                uptimeStart = DateTime.MinValue;
+                SetConnecting();
+            }
+
+            return writeToPipeResult;
         }
 
         /// <summary>
         /// Sends a disconnect command to the Broker.
         /// </summary>
-        /// <param name="runBroker">Creates a new broker instance if there isn't one already available.</param>
         /// <returns>True if successfully sent disconnection command.</returns>
-        public bool Disconnect(bool runBroker = true)
+        public bool Disconnect()
         {
-            uptimeStart = DateTime.MinValue;
-            SetDisconnecting();
-            Manager.Broker.ReportHeartbeat();
+            var disconnectMessage = new IPCMessage(IPCCommand.IpcDisconnect);
 
-            if (!runBroker && !Broker.IsActive())
+            var writeToPipeResult = brokerIPC.WriteToPipe(disconnectMessage);
+            if (writeToPipeResult)
             {
-                ClearConnectionTransitionState();
-                return false;
+                uptimeStart = DateTime.MinValue;
+                SetDisconnecting();
             }
 
-            if (!InitiateBroker())
-            {
-                ClearConnectionTransitionState();
-                return false;
-            }
-
-            var connectMessage = new IPCMessage(IPCCommand.IpcDisconnect);
-            brokerIPC.WriteToPipe(connectMessage);
-
-            return true;
+            return writeToPipeResult;
         }
 
         /// <summary>
@@ -147,7 +125,7 @@ namespace FirefoxPrivateNetwork.WireGuard
                         return false;
                     }
 
-                    var serverSwitchRequest = new WireGuard.IPCMessage(WireGuard.IPCCommand.WgSet);
+                    var serverSwitchRequest = new IPCMessage(IPCCommand.WgSet);
                     serverSwitchRequest.AddAttribute("replace_peers", "true");
                     serverSwitchRequest.AddAttribute("public_key", BitConverter.ToString(Convert.FromBase64String(publicKey)).Replace("-", string.Empty).ToLower());
                     serverSwitchRequest.AddAttribute("endpoint", endpoint);
@@ -182,6 +160,16 @@ namespace FirefoxPrivateNetwork.WireGuard
         }
 
         /// <summary>
+        /// Sends a command to the broker service to initiate the captive portal detection.
+        /// </summary>
+        public void DetectCaptivePortal()
+        {
+            var ipcDetectCaptivePortalMsg = new IPCMessage(IPCCommand.IpcDetectCaptivePortal);
+            ipcDetectCaptivePortalMsg.AddAttribute("ip", Manager.Settings.Network.CaptivePortalDetectionIp);
+            brokerIPC.WriteToPipe(ipcDetectCaptivePortalMsg, promptRestartBrokerServiceOnFail: false);
+        }
+
+        /// <summary>
         /// Fetches the connection timestamp.
         /// </summary>
         /// <returns>Object depicting the time when the connection was first made.</returns>
@@ -193,36 +181,28 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// <summary>
         /// Retrieves the current connection status of the Tunnel.
         /// </summary>
-        /// <returns>Object depicting the current status.</returns>
-        public Models.ConnectionStatus ConnectionStatus()
+        public void RequestConnectionStatus()
         {
-            // Broker process checks
-            if (!Broker.IsActive())
-            {
-                if (IsConnecting == false && IsDisconnecting == false)
-                {
-                    // Not connecting, not disconnecting, tunnel is not up and user is unprotected
-                    return new Models.ConnectionStatus() { Status = Models.ConnectionState.Unprotected };
-                }
-                else if (IsConnecting == true)
-                {
-                    // We are currently only connecting
-                    return new Models.ConnectionStatus() { Status = Models.ConnectionState.Connecting };
-                }
-                else if (IsDisconnecting == true)
-                {
-                    // We are currently only disconnecting
-                    return new Models.ConnectionStatus() { Status = Models.ConnectionState.Disconnecting };
-                }
-            }
-
-            // Broker process is running, do tunnel service checks
+            // Do tunnel service checks
             if (Service.IsTunnelServiceRunning())
             {
                 // Service is now running, clear transitioning states and query statistics
                 ClearConnectionTransitionState();
-                return QueryConnectionStatisticsFromTunnel();
+
+                // Sends the connection statistics request to the broker
+                if (!QueryConnectionStatisticsFromBroker())
+                {
+                    Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.SetResult(true);
+
+                    var newConnectionStatus = new Models.ConnectionStatus() { Status = Models.ConnectionState.Protected, ConnectionStability = Models.ConnectionStability.NoSignal };
+                    Manager.ConnectionStatusUpdater.UpdateConnectionStatus(newConnectionStatus);
+                }
+
+                return;
             }
+
+            // Service is not running, mark the request connection status task to be complete
+            Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.SetResult(true);
 
             if (!Service.IsTunnelServiceRunning() && IsDisconnecting)
             {
@@ -234,58 +214,40 @@ namespace FirefoxPrivateNetwork.WireGuard
             if (IsConnecting == false)
             {
                 // We are not in a connecting state, meaning if the tunnel service is down, the user is unprotected
-                return new Models.ConnectionStatus() { Status = Models.ConnectionState.Unprotected };
+                Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Unprotected });
+                return;
             }
             else if (IsConnecting == true)
             {
                 // We are currently only connecting
-                return new Models.ConnectionStatus() { Status = Models.ConnectionState.Connecting };
+                Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Connecting });
+                return;
             }
             else if (IsDisconnecting == true)
             {
                 // We are currently only disconnecting
-                return new Models.ConnectionStatus() { Status = Models.ConnectionState.Disconnecting };
+                Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Disconnecting });
+                return;
             }
 
             // No previous checks apply, the user is unprotected
-            return new Models.ConnectionStatus() { Status = Models.ConnectionState.Unprotected };
+            Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Unprotected });
         }
 
         /// <summary>
-        /// Send a request for connection statistics from the tunnel service via named pipe.
+        /// Parses the message returned as a result of the connection status request from the broker.
         /// </summary>
-        /// <returns>Connection status received from the tunnel named pipe.</returns>
-        private Models.ConnectionStatus QueryConnectionStatisticsFromTunnel()
+        /// <param name="message">The IPC message from the broker containing tunnel connection statistics.</param>
+        /// <returns>The parsed tunnel connection status.</returns>
+        public Models.ConnectionStatus ParseStatusResponse(IPCMessage message)
         {
-            NamedPipeClientStream tunnelPipe = null;
-            try
+            // Retrieve broker error code if any
+            var brokerErrorCode = message["broker_error_code"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(brokerErrorCode) && brokerErrorCode == Broker.IPCConnectionStatusError.ToString())
             {
-                tunnelPipe = ConnectWGTunnelNamedPipe();
-                if (tunnelPipe != null)
-                {
-                    IPC.WriteToPipe(tunnelPipe, new WireGuard.IPCMessage(WireGuard.IPCCommand.WgGet));
-                    var ret = ParseStatusResponse(IPC.ReadFromPipe(tunnelPipe));
-                    tunnelPipe.Close();
-                    return ret;
-                }
-            }
-            catch (Exception e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Debug);
-            }
-            finally
-            {
-                if (tunnelPipe != null && tunnelPipe.IsConnected)
-                {
-                    tunnelPipe.Close();
-                }
+                return new Models.ConnectionStatus() { Status = Models.ConnectionState.Protected, ConnectionStability = Models.ConnectionStability.NoSignal };
             }
 
-            return new Models.ConnectionStatus() { Status = Models.ConnectionState.Protected, ConnectionStability = Models.ConnectionStability.NoSignal };
-        }
-
-        private Models.ConnectionStatus ParseStatusResponse(IPCMessage message)
-        {
             var currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
             var connectionStatus = new Models.ConnectionStatus
@@ -347,6 +309,12 @@ namespace FirefoxPrivateNetwork.WireGuard
             return connectionStatus;
         }
 
+        private bool QueryConnectionStatisticsFromBroker()
+        {
+            var ipcConnectionStatusMsg = new IPCMessage(IPCCommand.IpcConnectionStatus);
+            return brokerIPC.WriteToPipe(ipcConnectionStatusMsg, promptRestartBrokerServiceOnFail: false);
+        }
+
         private NamedPipeClientStream ConnectWGTunnelNamedPipe()
         {
             try
@@ -384,24 +352,6 @@ namespace FirefoxPrivateNetwork.WireGuard
         {
             IsConnecting = false;
             IsDisconnecting = false;
-        }
-
-        /// <summary>
-        /// Launch the elevated child process, if not already running and start an IPC listener thread.
-        /// </summary>
-        /// <returns>True if success, false otherwise.</returns>
-        private bool InitiateBroker()
-        {
-            if (!Broker.IsActive())
-            {
-                if (!Broker.LaunchChildProcess())
-                {
-                    return false;
-                }
-            }
-
-            brokerIPC = Manager.Broker.GetBrokerIPC();
-            return true;
         }
     }
 }

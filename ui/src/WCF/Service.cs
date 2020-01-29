@@ -46,7 +46,9 @@ namespace FirefoxPrivateNetwork.WCF
         {
             try
             {
-                if (Manager.Tunnel.ConnectionStatus().Status == Models.ConnectionState.Unprotected)
+                WaitForConnectionStateChange(Models.ConnectionState.Unprotected, TimeSpan.FromSeconds(10));
+
+                if (Manager.ConnectionStatusUpdater.LastConnectionStatus.Status == Models.ConnectionState.Unprotected)
                 {
                     var configuration = new WireGuard.Config(ProductConstants.FirefoxPrivateNetworkConfFile);
 
@@ -73,7 +75,7 @@ namespace FirefoxPrivateNetwork.WCF
         {
             try
             {
-                ConnectionState connectionState = Manager.Tunnel.ConnectionStatus().Status;
+                ConnectionState connectionState = Manager.ConnectionStatusUpdater.LastConnectionStatus.Status;
                 return new Response(200, connectionState.ToString());
             }
             catch (Exception ex)
@@ -292,6 +294,27 @@ namespace FirefoxPrivateNetwork.WCF
             catch (Exception ex)
             {
                 return new Response(500, ex.Message, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// Wait until the connection state has changed, with an appropriate timeout.
+        /// </summary>
+        /// <param name="wantedState">State to wait for before returning.</param>
+        /// <param name="timeout">Timeout before waiting will cease.</param>
+        private void WaitForConnectionStateChange(Models.ConnectionState wantedState, TimeSpan timeout)
+        {
+            var completedTask = Task.WhenAny(Task.Run(() =>
+            {
+                while (Manager.ConnectionStatusUpdater.LastConnectionStatus.Status != wantedState)
+                {
+                    Task.Delay(TimeSpan.FromSeconds(1));
+                }
+            }), Task.Delay(timeout));
+
+            if (Manager.ConnectionStatusUpdater.LastConnectionStatus.Status != wantedState)
+            {
+                throw new TimeoutException("Connection status did not change.");
             }
         }
 
