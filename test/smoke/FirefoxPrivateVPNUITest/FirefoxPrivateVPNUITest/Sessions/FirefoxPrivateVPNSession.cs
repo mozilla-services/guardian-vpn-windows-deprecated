@@ -10,6 +10,7 @@ namespace FirefoxPrivateVPNUITest
     using OpenQA.Selenium;
     using OpenQA.Selenium.Appium.Windows;
     using OpenQA.Selenium.Remote;
+    using OpenQA.Selenium.Support.UI;
 
     /// <summary>
     /// Firefox Private VPN session.
@@ -30,8 +31,31 @@ namespace FirefoxPrivateVPNUITest
                 DesiredCapabilities appCapabilities = new DesiredCapabilities();
                 appCapabilities.SetCapability("app", FirefoxPrivateVPNAppId);
                 appCapabilities.SetCapability("deviceName", "WindowsPC");
-                this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
-                Assert.IsNotNull(this.Session);
+                try
+                {
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
+                    Assert.IsNotNull(this.Session);
+                }
+                catch (Exception)
+                {
+                    // 1. Creating a Desktop session
+                    DesiredCapabilities desktopAppCapabilities = new DesiredCapabilities();
+                    desktopAppCapabilities.SetCapability("app", "Root");
+                    var desktopSession = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), desktopAppCapabilities);
+
+                    WebDriverWait wait = new WebDriverWait(desktopSession, TimeSpan.FromSeconds(30));
+                    var firefoxVPN = wait.Until(ExpectedConditions.ElementExists(By.Name("Firefox Private Network VPN")));
+
+                    // 2. Attaching to existing firefox Window
+                    string applicationSessionHandle = firefoxVPN.GetAttribute("NativeWindowHandle");
+                    applicationSessionHandle = int.Parse(applicationSessionHandle).ToString("x");
+
+                    DesiredCapabilities capabilities = new DesiredCapabilities();
+                    capabilities.SetCapability("deviceName", "WindowsPC");
+                    capabilities.SetCapability("appTopLevelWindow", applicationSessionHandle);
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), capabilities);
+                    Assert.IsNotNull(this.Session);
+                }
 
                 // Set implicit timeout to 1.5 seconds to make element search to retry every 500 ms for at most three times
                 this.Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);
@@ -54,7 +78,7 @@ namespace FirefoxPrivateVPNUITest
                 this.Session.Quit();
                 DesiredCapabilities appCapabilities = new DesiredCapabilities();
                 appCapabilities.SetCapability("app", "Root");
-                var desktopSession = new WindowsDriver<WindowsElement>(new Uri("http://127.0.0.1:4723"), appCapabilities);
+                var desktopSession = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
                 var notification = desktopSession.FindElementByName("Notification Chevron");
                 notification.Click();
                 var clientTray = desktopSession.FindElementByName("Firefox Private Network VPN - Disconnected");
