@@ -8,23 +8,6 @@ using System.Runtime.InteropServices;
 namespace FirefoxPrivateNetwork.Windows
 {
     /// <summary>
-    /// Options for handle duplication.
-    /// </summary>
-    [Flags]
-    public enum DuplicateOptions : uint
-    {
-        /// <summary>
-        /// Closes the source handle. This occurs regardless of any error status returned.
-        /// </summary>
-        DUPLICATE_CLOSE_SOURCE = 0x00000001,
-
-        /// <summary>
-        /// Ignores the dwDesiredAccess parameter. The duplicate handle has the same access as the source handle.
-        /// </summary>
-        DUPLICATE_SAME_ACCESS = 0x00000002,
-    }
-
-    /// <summary>
     /// Moves an existing file or directory, including its children, with various move options.
     /// </summary>
     [Flags]
@@ -78,66 +61,6 @@ namespace FirefoxPrivateNetwork.Windows
     /// </summary>
     public class Kernel32
     {
-        /// <summary>
-        /// Duplicates an object handle.
-        /// </summary>
-        /// <param name="hSourceProcessHandle">A handle to the process with the handle to be duplicated.</param>
-        /// <param name="hSourceHandle">The handle to be duplicated.</param>
-        /// <param name="hTargetProcessHandle">A handle to the process that is to receive the duplicated handle.</param>
-        /// <param name="lpTargetHandle">A pointer to a variable that receives the duplicate handle.</param>
-        /// <param name="dwDesiredAccess">The access requested for the new handle.</param>
-        /// <param name="bInheritHandle">A variable that indicates whether the handle is inheritable.</param>
-        /// <param name="dwOptions">Optional duplication options.</param>
-        /// <returns>If the function succeeds, the return value is true.</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DuplicateHandle(IntPtr hSourceProcessHandle, IntPtr hSourceHandle, IntPtr hTargetProcessHandle, out IntPtr lpTargetHandle, uint dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, uint dwOptions);
-
-        /// <summary>
-        /// Creates an anonymous pipe, and returns handles to the read and write ends of the pipe.
-        /// </summary>
-        /// <param name="hReadPipe">A pointer to a variable that receives the read handle for the pipe.</param>
-        /// <param name="hWritePipe">A pointer to a variable that receives the write handle for the pipe.</param>
-        /// <param name="lpPipeAttributes">A pointer to a SecurityAttributes structure that determines whether the returned handle can be inherited by child processes.</param>
-        /// <param name="nSize">The size of the buffer for the pipe, in bytes. If this parameter is zero, the system uses the default buffer size.</param>
-        /// <returns>If the function succeeds, the return value is true.</returns>
-        [DllImport("kernel32.dll")]
-        public static extern bool CreatePipe(out IntPtr hReadPipe, out IntPtr hWritePipe, SecurityAttributes lpPipeAttributes, uint nSize);
-
-        /// <summary>
-        /// Reads data from the specified file or input/output (I/O) device. Reads occur at the position specified by the file pointer if supported by the device.
-        /// </summary>
-        /// <param name="hFile">A handle to the device.</param>
-        /// <param name="lpBuffer">A pointer to the buffer that receives the data read from a file or device.</param>
-        /// <param name="nNumberOfBytesToRead">The maximum number of bytes to be read.</param>
-        /// <param name="lpNumberOfBytesRead">A pointer to the variable that receives the number of bytes read when using a synchronous hFile parameter.</param>
-        /// <param name="lpOverlapped">A pointer to an OVERLAPPED structure is required if the hFile parameter was opened with FILE_FLAG_OVERLAPPED, otherwise it can be NULL.</param>
-        /// <returns>If the function succeeds, the return value is true.</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool ReadFile(IntPtr hFile, [Out] byte[] lpBuffer, uint nNumberOfBytesToRead, out uint lpNumberOfBytesRead, IntPtr lpOverlapped);
-
-        /// <summary>
-        /// Writes data to the specified file or input/output (I/O) device.
-        /// </summary>
-        /// <param name="hFile">A handle to the file or I/O device.</param>
-        /// <param name="lpBuffer">A pointer to the buffer containing the data to be written to the file or device.</param>
-        /// <param name="nNumberOfBytesToWrite">The number of bytes to be written to the file or device.</param>
-        /// <param name="lpNumberOfBytesWritten">A pointer to the variable that receives the number of bytes written when using a synchronous hFile parameter.</param>
-        /// <param name="lpOverlapped">A pointer to an OVERLAPPED structure is required if the hFile parameter was opened with FILE_FLAG_OVERLAPPED, otherwise this parameter can be NULL.</param>
-        /// <returns>If the function succeeds, the return value is true.</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool WriteFile(IntPtr hFile, byte[] lpBuffer, uint nNumberOfBytesToWrite, out uint lpNumberOfBytesWritten, [In] IntPtr lpOverlapped);
-
-        /// <summary>
-        /// Closes an open object handle.
-        /// </summary>
-        /// <param name="hObject">A valid handle to an open object.</param>
-        /// <returns>If the function succeeds, the return value is true.</returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool CloseHandle(IntPtr hObject);
-
         /// <summary>
         /// Sets the minimum and maximum working set sizes for the specified process.
         /// </summary>

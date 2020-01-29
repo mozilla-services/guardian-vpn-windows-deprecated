@@ -24,11 +24,6 @@ namespace FirefoxPrivateNetwork
         public static WireGuard.Tunnel Tunnel { get; set; }
 
         /// <summary>
-        /// Gets or sets the intermediary broker process.
-        /// </summary>
-        public static WireGuard.Broker Broker { get; set; }
-
-        /// <summary>
         /// Gets or sets the user's FxA account.
         /// </summary>
         public static FxA.Account Account { get; set; }
@@ -116,25 +111,13 @@ namespace FirefoxPrivateNetwork
         }
 
         /// <summary>
-        /// Initialize the Broker.
-        /// </summary>
-        public static void InitializeBroker()
-        {
-            if (Broker == null)
-            {
-                Broker = new WireGuard.Broker();
-            }
-        }
-
-        /// <summary>
         /// Initialize the Broker if not already initialized and then initialize the tunnel class.
         /// </summary>
         public static void InitializeTunnel()
         {
-            InitializeBroker();
             if (Tunnel == null)
             {
-                Tunnel = new WireGuard.Tunnel(Broker);
+                Tunnel = new WireGuard.Tunnel();
             }
         }
 

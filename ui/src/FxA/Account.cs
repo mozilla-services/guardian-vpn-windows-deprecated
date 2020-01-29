@@ -110,7 +110,7 @@ namespace FirefoxPrivateNetwork.FxA
             try
             {
                 // Disconnect the VPN tunnel
-                Manager.Tunnel.Disconnect(false);
+                Manager.Tunnel.Disconnect();
 
                 // Remove the current account device
                 if (removeDevice)

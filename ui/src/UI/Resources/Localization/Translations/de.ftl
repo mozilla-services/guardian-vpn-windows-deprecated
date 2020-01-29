@@ -214,6 +214,9 @@ toast-unable-to-connect = Verbindung kann nicht hergestellt werden.{" "}
 toast-try-again = Nochmal versuchen
 toast-feedback-submitted = Feedback abgeschickt!{" "}
 toast-feedback-undo = Rückgängig
+toast-service-communication-error = Unable to communicate with the {application-name} background service. Click to restart.
+toast-service-restart-error = We couldn't restart the background service. Please repair your installation of {application-name}.
+toast-service-restart-success = The {application-name} background service has been restored.
 
 ## ViewLog window
 viewlog-save-button = Speichern

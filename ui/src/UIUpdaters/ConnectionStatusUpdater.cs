@@ -4,6 +4,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -36,6 +37,16 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         }
 
         /// <summary>
+        /// Gets the latest connection status received.
+        /// </summary>
+        public Models.ConnectionStatus LastConnectionStatus { get; private set; } = new Models.ConnectionStatus() { Status = Models.ConnectionState.Protected, ConnectionStability = Models.ConnectionStability.Stable };
+
+        /// <summary>
+        /// Gets or sets the task completion source for the tunnel connection status request.
+        /// </summary>
+        public TaskCompletionSource<bool> RequestConnectionStatusTcs { get; set; }
+
+        /// <summary>
         /// Starts the connection health monitor thread.
         /// </summary>
         public void StartThread()
@@ -63,6 +74,34 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         }
 
         /// <summary>
+        /// Updates the tunnel connection status and its associated UI.
+        /// </summary>
+        /// <param name="newConnectionStatus">The new tunnel connection status.</param>
+        public void UpdateConnectionStatus(Models.ConnectionStatus newConnectionStatus)
+        {
+            // Save connection status
+            LastConnectionStatus = newConnectionStatus;
+
+            // Update connection bytes sent/received
+            UpdateRxTxUI(newConnectionStatus.RxBytes, newConnectionStatus.TxBytes);
+
+            // Update connection handshake
+            UpdateLastHandshakeUI(newConnectionStatus.LastHandshakeTimeSec);
+
+            // Update connection stability
+            UpdateConnectionStabilityUI(newConnectionStatus.ConnectionStability);
+
+            // Update connection state
+            UpdateConnectionStateUI(newConnectionStatus.Status);
+
+            // Update tray
+            UpdateTrayUI(newConnectionStatus.Status, newConnectionStatus.ConnectionStability);
+
+            // Update network
+            UpdateNetworkUI(newConnectionStatus.Status, newConnectionStatus.ConnectionStability);
+        }
+
+        /// <summary>
         /// Starts the connection transition stopwatch.
         /// </summary>
         public void StartConnectionTransitionStopwatch()
@@ -75,31 +114,19 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                // Get connection status
-                var connectionStatus = Manager.Tunnel.ConnectionStatus();
-
-                // Update connection bytes sent/received
-                UpdateRxTxUI(connectionStatus.RxBytes, connectionStatus.TxBytes);
-
-                // Update connection handshake
-                UpdateLastHandshakeUI(connectionStatus.LastHandshakeTimeSec);
-
-                // Update connection stability
-                UpdateConnectionStabilityUI(connectionStatus.ConnectionStability);
-
-                // Update connection state
-                UpdateConnectionStateUI(connectionStatus.Status);
-
-                // Update tray
-                UpdateTrayUI(connectionStatus.Status, connectionStatus.ConnectionStability);
-
-                // Update network
-                UpdateNetworkUI(connectionStatus.Status, connectionStatus.ConnectionStability);
-
                 // Update connection timer
                 UpdateConnectionTimer();
 
-                cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(1));
+                // Send the request for the tunnel connection status
+                RequestConnectionStatusTcs = new TaskCompletionSource<bool>();
+                Manager.Tunnel.RequestConnectionStatus();
+
+                // Wait for the request connection status task to complete or timeout to occur
+                using (cancellationToken.Register(() => RequestConnectionStatusTcs.TrySetCanceled()))
+                {
+                    var requestConnectionStatusTask = Task.Run(() => Task.WhenAny(RequestConnectionStatusTcs.Task, Task.Delay(TimeSpan.FromSeconds(1))));
+                    Task.WaitAll(Task.Run(() => cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(1))), requestConnectionStatusTask);
+                }
             }
         }
 
@@ -209,10 +236,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
                     // Initiate captive portal check if not already detected for the current network address
                     if (!Manager.CaptivePortalDetector.CaptivePortalDetected && !string.IsNullOrEmpty(Manager.Settings.Network.CaptivePortalDetectionIp))
                     {
-                        var ipcDetectCaptivePortalMsg = new IPCMessage(IPCCommand.IpcDetectCaptivePortal);
-                        ipcDetectCaptivePortalMsg.AddAttribute("ip", Manager.Settings.Network.CaptivePortalDetectionIp);
-                        var brokerIPC = Manager.Broker.GetBrokerIPC();
-                        brokerIPC.WriteToPipe(ipcDetectCaptivePortalMsg);
+                        Manager.Tunnel.DetectCaptivePortal();
                     }
                 }
 

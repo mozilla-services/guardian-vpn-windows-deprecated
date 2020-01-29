@@ -80,6 +80,19 @@
 				<File Source="../ui/bin/$(var.Platform)/Release/Resources/Graphics/icon_70x70.png" />
 				<File Source="../ui/bin/$(var.Platform)/Release/Resources/Graphics/icon_150x150.png" />
 
+				<!-- Broker Service -->
+				<ServiceInstall
+					Type="ownProcess"
+					Name="FirefoxPrivateNetworkVPNBroker"
+					DisplayName="Firefox Private Network VPN Broker"
+					Description="Provides connectivity between the Firefox Private Network VPN client and any applicable tunnel interfaces."
+					Start="auto"
+					Arguments="broker"
+					ErrorControl="normal"
+					Vital="yes" />
+				<ServiceControl Id="StartService" Start="install" Stop="both" Remove="both" Name="FirefoxPrivateNetworkVPNBroker" Wait="yes" />
+
+				<!-- Remove Tunnel Service, if running -->
 				<ServiceControl Id="FirefoxPrivateNetworkVPNService" Remove="both" Name="WireGuardTunnel$FirefoxPrivateNetworkVPN" Stop="both" Wait="yes" />
 			</Component>
 		</ComponentGroup>

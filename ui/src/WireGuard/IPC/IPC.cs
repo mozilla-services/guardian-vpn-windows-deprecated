@@ -4,12 +4,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.IO.Pipes;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using FirefoxPrivateNetwork.Windows;
+using System.Threading.Tasks;
 
 namespace FirefoxPrivateNetwork.WireGuard
 {
@@ -19,31 +19,26 @@ namespace FirefoxPrivateNetwork.WireGuard
     public class IPC
     {
         private const uint BufferSize = 512;
-
-        private const uint ErrorBrokenPipe = 0x6D;
-        private const uint ErrorMoreData = 0xEA;
-
-        private readonly IntPtr readPipe;
-        private readonly IntPtr writePipe;
-
+        private readonly PipeStream pipe;
         private Thread listener = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IPC"/> class.
         /// </summary>
-        /// <param name="readPipe">Read pipe handle.</param>
-        /// <param name="writePipe">Write pipe handle.</param>
-        public IPC(IntPtr readPipe, IntPtr writePipe)
+        /// <param name="pipe">Pipe handle.</param>
+        public IPC(NamedPipeServerStream pipe)
         {
-            this.IsActive = true;
-            this.readPipe = readPipe;
-            this.writePipe = writePipe;
+            this.pipe = pipe;
         }
 
         /// <summary>
-        /// Gets a value indicating whether the IPC pipe is active or not.
+        /// Initializes a new instance of the <see cref="IPC"/> class.
         /// </summary>
-        public bool IsActive { get; private set; }
+        /// <param name="pipe">Pipe handle.</param>
+        public IPC(NamedPipeClientStream pipe)
+        {
+            this.pipe = pipe;
+        }
 
         /// <summary>
         /// Writes a message to a named pipe.
@@ -52,6 +47,11 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// <param name="message">IPCMessage to send.</param>
         public static void WriteToPipe(NamedPipeClientStream pipe, IPCMessage message)
         {
+            if (!pipe.IsConnected)
+            {
+                pipe.Connect();
+            }
+
             var bytes = Encoding.UTF8.GetBytes(message.ToString());
             pipe.Write(bytes, 0, bytes.Length);
             pipe.Flush();
@@ -60,16 +60,26 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// <summary>
         /// Reads a message from a named Windows pipe.
         /// </summary>
-        /// <param name="pipe">Instance of a named pipe client stream.</param>
+        /// <param name="pipe">Instance of a named pipe stream.</param>
+        /// <param name="readAsync">Flag that indicates asynchronous/synchronous reading from the pipe.</param>
         /// <returns>Retrieved message from the pipe.</returns>
-        public static IPCMessage ReadFromPipe(NamedPipeClientStream pipe)
+        public static IPCMessage ReadFromPipe(PipeStream pipe, bool readAsync = false)
         {
             var readBytes = new List<byte>();
             byte[] buffer = new byte[BufferSize];
 
             while (true)
             {
-                int numBytesRead = pipe.Read(buffer, 0, buffer.Length);
+                int numBytesRead;
+                if (!readAsync)
+                {
+                    numBytesRead = pipe.Read(buffer, 0, buffer.Length);
+                }
+                else
+                {
+                    numBytesRead = PipeReadAsyncWrapper(pipe, buffer).Result;
+                }
+
                 if (numBytesRead == 0)
                 {
                     break;
@@ -114,27 +124,26 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// Writes a message to the instantiated Windows pipe.
         /// </summary>
         /// <param name="message">IPC message to write.</param>
+        /// <param name="promptRestartBrokerServiceOnFail">Prompt the user to restart a stopped broker service.</param>
         /// <returns>True on success.</returns>
-        public bool WriteToPipe(IPCMessage message)
+        public bool WriteToPipe(IPCMessage message, bool promptRestartBrokerServiceOnFail = true)
         {
             try
             {
                 var buffer = Encoding.UTF8.GetBytes(message.ToString());
-                var writeResult = Kernel32.WriteFile(this.writePipe, buffer, (uint)buffer.Length, out uint bytesWritten, IntPtr.Zero);
-                if (!writeResult)
-                {
-                    var lastWindowsError = Marshal.GetLastWin32Error();
-                    if (lastWindowsError == ErrorBrokenPipe)
-                    {
-                        ErrorHandling.ErrorHandler.Handle("Could not write to pipe, got ERROR_BROKEN_PIPE from Windows", ErrorHandling.LogLevel.Debug);
-                        this.StopListenerThread();
-                    }
-
-                    return false;
-                }
+                pipe.Write(buffer, 0, buffer.Length);
+                pipe.Flush();
             }
             catch (Exception e)
             {
+                if (pipe is NamedPipeClientStream && (e is InvalidOperationException || e is IOException))
+                {
+                    if (promptRestartBrokerServiceOnFail)
+                    {
+                        Broker.PromptRestartBrokerService();
+                    }
+                }
+
                 ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
                 return false;
             }
@@ -143,73 +152,15 @@ namespace FirefoxPrivateNetwork.WireGuard
         }
 
         /// <summary>
-        /// Reads a message from an instantiated Windows pipe.
-        /// </summary>
-        /// <returns>Retrieved IPC message from the pipe.</returns>
-        public IPCMessage ReadFromPipe()
-        {
-            var readBytes = new List<byte>();
-            byte[] buffer = new byte[BufferSize];
-            int lastWindowsError;
-
-            while (true)
-            {
-                bool readSuccess = Kernel32.ReadFile(this.readPipe, buffer, BufferSize, out uint numBytesRead, IntPtr.Zero);
-                lastWindowsError = Marshal.GetLastWin32Error();
-                if (!readSuccess && lastWindowsError != ErrorMoreData)
-                {
-                    break;
-                }
-
-                var foundFirst = false;
-                if (readBytes.Count > 0)
-                {
-                    foundFirst = readBytes.Last() == '\n';
-                }
-
-                var done = false;
-                for (var i = 0; i < numBytesRead; ++i)
-                {
-                    readBytes.Add(buffer[i]);
-                    if (buffer[i] == '\n')
-                    {
-                        if (foundFirst)
-                        {
-                            done = true;
-                            break;
-                        }
-
-                        foundFirst = true;
-                    }
-                    else
-                    {
-                        foundFirst = false;
-                    }
-                }
-
-                if (done)
-                {
-                    break;
-                }
-            }
-
-            if (lastWindowsError == ErrorBrokenPipe)
-            {
-                ErrorHandling.ErrorHandler.Handle("Could not read from pipe, got ERROR_BROKEN_PIPE from Windows", ErrorHandling.LogLevel.Error);
-                this.StopListenerThread();
-                return new IPCMessage();
-            }
-
-            return new IPCMessage(Encoding.UTF8.GetString(readBytes.ToArray()));
-        }
-
-        /// <summary>
         /// Initiates an IPC listener thread with this instance of IPC.
         /// </summary>
-        public void StartListenerThread()
+        public void StartClientListenerThread()
         {
-            IsActive = true;
-            listener = new Thread(new ThreadStart(ListenerThread))
+            listener = new Thread(() =>
+            {
+                ClientListenerThread();
+                ClientListenerThreadTerminated();
+            })
             {
                 IsBackground = true,
             };
@@ -217,31 +168,100 @@ namespace FirefoxPrivateNetwork.WireGuard
         }
 
         /// <summary>
-        /// Checks if the listener thread is active.
+        /// Broker listener thread, in which we continue listening for messages from the client until the app terminates or a cancellation has been requested.
         /// </summary>
-        /// <returns>Returns true or false, based on whether the listener is active.</returns>
-        public bool IsListenerActive()
+        public void BrokerListenerThread()
         {
-            return listener.IsAlive;
-        }
-
-        /// <summary>
-        /// Stops the listener thread, if active.
-        /// </summary>
-        public void StopListenerThread()
-        {
-            IsActive = false;
-        }
-
-        /// <summary>
-        /// Listener thread, in which we continue looping until the app terminates or IsActive is false.
-        /// </summary>
-        private void ListenerThread()
-        {
-            while (IsActive)
+            // Wait for a client to connect to the broker pipe
+            try
             {
-                IPCHandlers.HandleIncomingMessage(ReadFromPipe(), this);
+                if (WaitForConnectionAsyncWrapper().Result)
+                {
+                    Broker.StartChildProcess();
+                }
             }
+            catch (Exception e)
+            {
+                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Debug);
+                return;
+            }
+
+            // Handle incoming messages from the pipe while it is connected
+            while (!BrokerService.BrokerServiceTokenSource.IsCancellationRequested && pipe.IsConnected)
+            {
+                try
+                {
+                    IPCHandlers.HandleIncomingMessage(ReadFromPipe(pipe, readAsync: true), this);
+                }
+                catch (Exception e)
+                {
+                    ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Debug);
+                    break;
+                }
+            }
+        }
+
+        private static async Task<int> PipeReadAsyncWrapper(PipeStream pipe, byte[] buffer)
+        {
+            // Initialize a task completion source for the pipe read task
+            var completionSource = new TaskCompletionSource<object>();
+
+            // Register a method to cancel the task completion source with a cancellation is requested through the broker service's cancellation token source
+            var tokenRegistration = BrokerService.BrokerServiceTokenSource.Token.Register(() => completionSource.TrySetCanceled());
+
+            // Start the pipe read task
+            var task = Task<int>.Factory.StartNew(() =>
+            {
+                return pipe.Read(buffer, 0, buffer.Length);
+            }, BrokerService.BrokerServiceTokenSource.Token);
+
+            // Wait for either the pipe read task to complete, or the task completion source has been canceled
+            var completedTask = await Task.WhenAny(task, completionSource.Task);
+
+            // Dispose the registered method in the broker service's cancellation token source if the pipe read task completed successfully
+            if (completedTask == task)
+            {
+                tokenRegistration.Dispose();
+                return task.Result;
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// Client listener thread, in which we continue listening for message from the broker until the app terminates or a cancellation has been requested.
+        /// </summary>
+        private void ClientListenerThread()
+        {
+            while (true)
+            {
+                if (!pipe.IsConnected)
+                {
+                    try
+                    {
+                        ((NamedPipeClientStream)pipe).Connect();
+                    }
+                    catch (Exception e)
+                    {
+                        ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
+                        continue;
+                    }
+                }
+
+                IPCHandlers.HandleIncomingMessage(ReadFromPipe(pipe), this);
+            }
+        }
+
+        private void ClientListenerThreadTerminated()
+        {
+            ((NamedPipeClientStream)pipe).Close();
+            ((NamedPipeClientStream)pipe).Dispose();
+        }
+
+        private async Task<bool> WaitForConnectionAsyncWrapper()
+        {
+            await ((NamedPipeServerStream)pipe).WaitForConnectionAsync(BrokerService.BrokerServiceTokenSource.Token);
+            return pipe.IsConnected;
         }
     }
 }

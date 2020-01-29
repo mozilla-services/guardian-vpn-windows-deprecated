@@ -44,14 +44,14 @@ namespace FirefoxPrivateNetwork.WireGuard
         public const string IpcDetectCaptivePortalReply = "ipcdetectcaptiveportalreply=1";
 
         /// <summary>
-        /// Process ID reply command.
+        /// Request tunnel connection status.
         /// </summary>
-        public const string IpcPidReply = "ipcpid=1";
+        public const string IpcConnectionStatus = "ipcconnectionstatus=1";
 
         /// <summary>
-        /// Request a process ID.
+        /// Tunnel connection status reply.
         /// </summary>
-        public const string IpcRequestPid = "ipcpidrequest=1";
+        public const string IpcConnectionStatusReply = "ipcconnectionstatusreply=1";
 
         /// <summary>
         /// Unknown IPC command.
