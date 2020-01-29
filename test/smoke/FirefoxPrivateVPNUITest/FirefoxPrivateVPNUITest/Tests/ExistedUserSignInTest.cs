@@ -42,37 +42,18 @@ namespace FirefoxPrivateVPNUITest
         /// The test steps.
         /// </summary>
         [TestMethod]
-        public void TestSignInFlow()
+        public void TestExistingUserSignIn()
         {
             // Switch to VPN client session
             this.vpnClient.Session.SwitchTo();
             LandingScreen landingScreen = new LandingScreen(this.vpnClient.Session);
             landingScreen.ClickGetStartedButton();
 
-            // Switch to Browser session
-            this.browser.Session.SwitchTo();
-
-            // Email Input page
-            EmailInputPage emailInputPage = new EmailInputPage(this.browser.Session);
-            emailInputPage.InputEmail(Environment.GetEnvironmentVariable("EXISTED_USER_NAME"));
-            emailInputPage.ClickContinueButton();
-
-            // Password Input Page
-            PasswordInputPage passwordInputPage = new PasswordInputPage(this.browser.Session);
-            passwordInputPage.InputPassword(Environment.GetEnvironmentVariable("EXISTED_USER_PASSWORD"));
-            passwordInputPage.ClickSignInButton();
-            this.browser.Dispose();
-
-            // Quick Access Screen
-            this.vpnClient.Session.SwitchTo();
-            Thread.Sleep(TimeSpan.FromSeconds(5));
-            QuickAccessScreen quickAccessScreen = new QuickAccessScreen(this.vpnClient.Session);
-            Assert.AreEqual("Quick access", quickAccessScreen.GetTitle());
-            Assert.AreEqual("You can quickly access Firefox Private Network from your taskbar tray", quickAccessScreen.GetSubTitle());
-            Assert.AreEqual("Located next to the clock at the bottom right of your screen", quickAccessScreen.GetDescription());
-            quickAccessScreen.ClickContinueButton();
+            // User Sign In via web browser
+            ExistedUserSignIn.ExistedUserSignInFlow(this.vpnClient, this.browser);
 
             // Main Screen
+            this.vpnClient.Session.SwitchTo();
             MainScreen mainScreen = new MainScreen(this.vpnClient.Session);
             Assert.AreEqual("VPN is off", mainScreen.GetTitle());
             mainScreen.ClickSettingsButton();
@@ -81,7 +62,7 @@ namespace FirefoxPrivateVPNUITest
             SettingScreen settingScreen = new SettingScreen(this.vpnClient.Session);
             Assert.AreEqual("Settings", settingScreen.GetTitle());
             settingScreen.ClickSignOutButton();
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+            Thread.Sleep(TimeSpan.FromSeconds(2));
         }
     }
 }

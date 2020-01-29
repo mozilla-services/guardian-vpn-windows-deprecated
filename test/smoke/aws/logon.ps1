@@ -1,15 +1,20 @@
-$env:BUILD_NUMBER = [System.Environment]::GetEnvironmentVariable("BUILD_NUMBER","Machine") 
-$env:S3_BUCKET = [System.Environment]::GetEnvironmentVariable("S3_BUCKET","Machine") 
+$env:BUILD_NUMBER = [System.Environment]::GetEnvironmentVariable("BUILD_NUMBER", "Machine") 
+$env:S3_BUCKET = [System.Environment]::GetEnvironmentVariable("S3_BUCKET", "Machine") 
 New-Item -Path "~/" -Name "test" -ItemType "directory"
 If ([System.IO.File]::Exists("C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe")) {
     Start-Process -FilePath "powershell" -ArgumentList "C:\'Program Files (x86)'\'Windows Application Driver'\WinAppDriver.exe"
     
-    Start-Sleep -Seconds 15  
+    Start-Sleep -Seconds 10
 }     
+
+# warm up firefox browser
+Start-Process -FilePath "C:\Program Files\Mozilla Firefox\firefox.exe"
+Start-Sleep -Seconds 30
+Get-Process firefox | Foreach-Object { $_.CloseMainWindow() | Out-Null } | stop-process -Force
 
 $timeout = new-timespan -Minutes 10
 $sw = [diagnostics.stopwatch]::StartNew()
-while ($sw.elapsed -lt $timeout){
+while ($sw.elapsed -lt $timeout) {
 
     Start-Process -FilePath "powershell" -Wait -ArgumentList "C:\'Program Files (x86)'\'Microsoft Visual Studio'\2019\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe C:\Users\Administrator\guardian-vpn-windows\test\smoke\FirefoxPrivateVPNUITest\FirefoxPrivateVPNUITest\bin\Release\FirefoxPrivateVPNUITest.dll | Out-File -FilePath ~/test/result.txt"
 

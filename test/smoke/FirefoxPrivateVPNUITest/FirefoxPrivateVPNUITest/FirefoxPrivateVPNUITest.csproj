@@ -67,6 +67,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ExistedUserSignIn.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -74,6 +75,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Screens\MainScreen.cs" />
+    <Compile Include="Screens\LastOnboardingScreen.cs" />
+    <Compile Include="Screens\OnboardingScreen.cs" />
     <Compile Include="Screens\PasswordInputPage.cs" />
     <Compile Include="Screens\QuickAccessScreen.cs" />
     <Compile Include="Screens\RegisterPage.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="Tests\LayoutScreenTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\NewUserSignInTest.cs" />
+    <Compile Include="Tests\OnboardingScreenTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

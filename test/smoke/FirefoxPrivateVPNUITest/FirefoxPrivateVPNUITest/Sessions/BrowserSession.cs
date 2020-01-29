@@ -7,8 +7,10 @@ namespace FirefoxPrivateVPNUITest
     using System;
     using System.Threading;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using OpenQA.Selenium;
     using OpenQA.Selenium.Appium.Windows;
     using OpenQA.Selenium.Remote;
+    using OpenQA.Selenium.Support.UI;
 
     /// <summary>
     /// Firefox Browser session.
@@ -25,11 +27,51 @@ namespace FirefoxPrivateVPNUITest
         {
             if (this.Session == null)
             {
-                // Create a new session to bring up an instance of the FirefoxPrivateNetworkVPN application
-                DesiredCapabilities appCapabilities = new DesiredCapabilities();
-                appCapabilities.SetCapability("app", BrowserAppId);
-                this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
-                Assert.IsNotNull(this.Session);
+                DesiredCapabilities capabilities = new DesiredCapabilities();
+                capabilities.SetCapability("platormName", "Windows");
+                capabilities.SetCapability("deviceName", "WindowsPC");
+                capabilities.SetCapability("app", BrowserAppId);
+                try
+                {
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), capabilities);
+                    Assert.IsNotNull(this.Session);
+                }
+                catch (Exception)
+                {
+                    // 1. Creating a Desktop session
+                    DesiredCapabilities desktopAppCapabilities = new DesiredCapabilities();
+                    desktopAppCapabilities.SetCapability("app", "Root");
+                    var desktopSession = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), desktopAppCapabilities);
+                    bool retry = true;
+                    int retryTimes = 0;
+                    IWebElement firefoxWindows = null;
+                    while (retry)
+                    {
+                        retryTimes += 1;
+                        WebDriverWait wait = new WebDriverWait(desktopSession, TimeSpan.FromSeconds(600));
+                        firefoxWindows = wait.Until(ExpectedConditions.ElementExists(By.ClassName("MozillaWindowClass")));
+                        if (firefoxWindows == null)
+                        {
+                            retry = true;
+                            if (retryTimes == 5)
+                            {
+                                throw new Exception("Unable to launch firefox browser");
+                            }
+                        }
+                        else
+                        {
+                            retry = false;
+                        }
+                    }
+
+                    // 2. Attaching to existing firefox Window
+                    string applicationSessionHandle = firefoxWindows.GetAttribute("NativeWindowHandle");
+                    applicationSessionHandle = int.Parse(applicationSessionHandle).ToString("x");
+                    DesiredCapabilities appCapabilities = new DesiredCapabilities();
+                    appCapabilities.SetCapability("deviceName", "WindowsPC");
+                    appCapabilities.SetCapability("appTopLevelWindow", applicationSessionHandle);
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
+                }
 
                 // Set implicit timeout to 1.5 seconds to make element search to retry every 500 ms for at most three times
                 this.Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);

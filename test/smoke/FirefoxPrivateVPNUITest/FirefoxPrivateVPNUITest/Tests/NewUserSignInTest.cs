@@ -41,7 +41,7 @@ namespace FirefoxPrivateVPNUITest
         /// The test steps.
         /// </summary>
         [TestMethod]
-        public void TestSignInFlow()
+        public void TestNewUserSignIn()
         {
             // Switch to VPN client session
             this.vpnClient.Session.SwitchTo();
