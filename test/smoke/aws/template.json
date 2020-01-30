@@ -180,6 +180,7 @@
                   "Ref": "StageUrl"
                 },
                 "\" \n",
+                "New-Item -ItemType directory -Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\FirefoxPrivateNetworkVPN \n",
                 "New-Item -Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\FirefoxPrivateNetworkVPN -Name \"settings.conf\" -Value $env:Settings \n",
                 "Write-Host 'Complete.' \n", 
 

@@ -5,8 +5,8 @@
 namespace FirefoxPrivateVPNUITest
 {
     using System;
+    using System.Threading;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using OpenQA.Selenium;
     using OpenQA.Selenium.Appium.Windows;
     using OpenQA.Selenium.Remote;
 
@@ -29,7 +29,6 @@ namespace FirefoxPrivateVPNUITest
                 DesiredCapabilities appCapabilities = new DesiredCapabilities();
                 appCapabilities.SetCapability("app", BrowserAppId);
                 this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
-                this.Session.Keyboard.SendKeys(Keys.Command + Keys.ArrowUp + Keys.Command);
                 Assert.IsNotNull(this.Session);
 
                 // Set implicit timeout to 1.5 seconds to make element search to retry every 500 ms for at most three times
