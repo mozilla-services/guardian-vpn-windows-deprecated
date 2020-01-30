@@ -205,12 +205,12 @@ namespace FirefoxPrivateNetwork.UIUpdaters
 
             if (newStability == Models.ConnectionStability.NoSignal)
             {
-                Manager.TrayIcon.SetUnstable();
+                Manager.TrayIcon.SetNoSignal();
                 return;
             }
             else if (newStability == Models.ConnectionStability.Unstable)
             {
-                Manager.TrayIcon.SetIdle();
+                Manager.TrayIcon.SetUnstable();
                 return;
             }
 

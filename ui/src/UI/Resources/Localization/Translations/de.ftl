@@ -72,6 +72,11 @@ tray-disconnected = Getrennt
 tray-unstable = Instabil
 tray-no-signal = {hero-subtext-no-signal}
 
+## Tray menu
+tray-menu-exit = Be_enden
+tray-menu-show = _Anzeigen
+tray-menu-hide = A_usblenden
+
 ## Settings
 settings-auto-launch = VPN beim Hochfahren des Computers starten
 settings-unsecured-network-title = Alarm für unsichere Verbindungen
