@@ -21,6 +21,9 @@ namespace FirefoxPrivateNetwork.NotificationArea
         private readonly MouseHookDelegate mouseHookDelegate;
         private ContextMenu contextMenu;
         private MenuItem menuConnectionStatus;
+        private MenuItem menuShow;
+        private MenuItem menuHide;
+        private MenuItem menuExit;
 
         private int outsideClickHook = 0;
         private string connectionStatusText;
@@ -153,7 +156,7 @@ namespace FirefoxPrivateNetwork.NotificationArea
         /// </summary>
         public void SetDisconnected()
         {
-            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", "Disconnected");
+            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", Manager.TranslationService.GetString("tray-disconnected"));
             SetContextMenuStatus(newText);
             notifyIcon.UpdateIcon(IconType.Disconnected, newText);
         }
@@ -163,27 +166,27 @@ namespace FirefoxPrivateNetwork.NotificationArea
         /// </summary>
         public void SetConnected()
         {
-            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", "Connected");
+            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", Manager.TranslationService.GetString("tray-connected"));
             SetContextMenuStatus(newText);
             notifyIcon.UpdateIcon(IconType.Connected, newText);
         }
 
         /// <summary>
-        /// Sets the TrayIcon to have an "idle" image as its icon.
+        /// Sets the TrayIcon to have an "unstable" image as its icon.
         /// </summary>
-        public void SetIdle()
+        public void SetUnstable()
         {
-            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", "Idle");
+            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", Manager.TranslationService.GetString("tray-unstable"));
             SetContextMenuStatus(newText);
             notifyIcon.UpdateIcon(IconType.Unstable, newText);
         }
 
         /// <summary>
-        /// Sets the TrayIcon to have an "error" image as its icon.
+        /// Sets the TrayIcon to have a "no signal" image as its icon.
         /// </summary>
-        public void SetUnstable()
+        public void SetNoSignal()
         {
-            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", "No Signal");
+            var newText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", Manager.TranslationService.GetString("tray-no-signal"));
             SetContextMenuStatus(newText);
             notifyIcon.UpdateIcon(IconType.NoSignal, newText);
         }
@@ -244,6 +247,61 @@ namespace FirefoxPrivateNetwork.NotificationArea
         }
 
         /// <summary>
+        /// Setup the right click menu for the Tray.
+        /// </summary>
+        /// <param name="connectionActive">If true, the menu label will indicate that we are connected.</param>
+        public void SetupMenu(bool connectionActive)
+        {
+            // "Exit" menu item
+            menuExit = new System.Windows.Controls.MenuItem
+            {
+                Header = Manager.TranslationService.GetString("tray-menu-exit"),
+            };
+            menuExit.Click += (sender, e) =>
+            {
+                HideMainWindow();
+                Application.Current.Shutdown();
+            };
+
+            // "Show" menu item
+            menuShow = new MenuItem
+            {
+                Header = Manager.TranslationService.GetString("tray-menu-show"),
+            };
+            menuShow.Click += (sender, e) =>
+            {
+                ShowMainWindow();
+            };
+
+            // "Hide" menu item
+            menuHide = new MenuItem
+            {
+                Header = Manager.TranslationService.GetString("tray-menu-hide"),
+            };
+            menuHide.Click += (sender, e) =>
+            {
+                HideMainWindow();
+            };
+
+            // App title and connection status
+            connectionStatusText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", connectionActive ? Manager.TranslationService.GetString("tray-connected") : Manager.TranslationService.GetString("tray-disconnected"));
+            menuConnectionStatus = new MenuItem()
+            {
+                Header = connectionStatusText,
+                IsEnabled = false,
+            };
+
+            contextMenu = new ContextMenu();
+
+            contextMenu.Items.Add(menuConnectionStatus);
+            contextMenu.Items.Add(new Separator());
+            contextMenu.Items.Add(menuShow);
+            contextMenu.Items.Add(menuHide);
+            contextMenu.Items.Add(new Separator());
+            contextMenu.Items.Add(menuExit);
+        }
+
+        /// <summary>
         /// Sets the context menu connection status text.
         /// </summary>
         /// <param name="text">Text to show as the connection status in the context menu.</param>
@@ -272,60 +330,6 @@ namespace FirefoxPrivateNetwork.NotificationArea
                 Windows.User32.UnhookWindowsHookEx(outsideClickHook);
                 outsideClickHook = 0;
             }
-        }
-
-        /// <summary>
-        /// Setup the right click menu for the Tray.
-        /// </summary>
-        private void SetupMenu(bool connectionActive)
-        {
-            // "Exit" menu item
-            var menuExit = new System.Windows.Controls.MenuItem
-            {
-                Header = "_Exit",
-            };
-            menuExit.Click += (sender, e) =>
-            {
-                HideMainWindow();
-                Application.Current.Shutdown();
-            };
-
-            // "Show" menu item
-            var menuShow = new MenuItem
-            {
-                Header = "_Show",
-            };
-            menuShow.Click += (sender, e) =>
-            {
-                ShowMainWindow();
-            };
-
-            // "Hide" menu item
-            var menuHide = new MenuItem
-            {
-                Header = "_Hide",
-            };
-            menuHide.Click += (sender, e) =>
-            {
-                HideMainWindow();
-            };
-
-            // App title and connection status
-            connectionStatusText = string.Concat(ProductConstants.DefaultSystemTrayTitle, " - ", connectionActive ? "Connected" : "Disconnected");
-            menuConnectionStatus = new MenuItem()
-            {
-                Header = connectionStatusText,
-                IsEnabled = false,
-            };
-
-            contextMenu = new ContextMenu();
-
-            contextMenu.Items.Add(menuConnectionStatus);
-            contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(menuShow);
-            contextMenu.Items.Add(menuHide);
-            contextMenu.Items.Add(new Separator());
-            contextMenu.Items.Add(menuExit);
         }
     }
 }

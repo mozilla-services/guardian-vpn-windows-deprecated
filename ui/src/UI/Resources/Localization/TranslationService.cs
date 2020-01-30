@@ -131,6 +131,12 @@ namespace FirefoxPrivateNetwork.UI.Resources.Localization
             };
 
             culture = new CultureInfo(cultureName);
+
+            // Refresh system tray, if available
+            if (Manager.TrayIcon != null)
+            {
+                Manager.TrayIcon.SetupMenu(true);
+            }
         }
 
         /// <summary>

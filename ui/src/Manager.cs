@@ -99,12 +99,12 @@ namespace FirefoxPrivateNetwork
         public static void Initialize()
         {
             InitializeSettings();
+            InitializeTranslationService();
             InitializeTray();
             InitializeServerListCache();
             InitializeTunnel();
             InitializeAccount();
             InitializeViewModels();
-            InitializeTranslationService();
             InitializeWlanWatcher();
             InitializeCaptivePortalDetector();
             InitializeUIUpdaters();

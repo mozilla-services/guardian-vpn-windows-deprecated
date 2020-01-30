@@ -59,7 +59,7 @@ namespace FirefoxPrivateVPNUITest
                 notification.Click();
                 var clientTray = desktopSession.FindElementByName("Firefox Private Network VPN - Disconnected");
                 desktopSession.Mouse.ContextClick(clientTray.Coordinates);
-                var exitItem = desktopSession.FindElementByName("_Exit");
+                var exitItem = desktopSession.FindElementByName("E_xit");
                 exitItem.Click();
                 notification.Click();
                 desktopSession.Quit();
