@@ -4,8 +4,16 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
+using System.Net.Http;
+using System.Runtime.Caching;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace FirefoxPrivateNetwork.UI.Components
 {
@@ -17,7 +25,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         /// <summary>
         /// Dependency property for the profile picture image source.
         /// </summary>
-        public static readonly DependencyProperty UrlProperty = DependencyProperty.Register("Url", typeof(string), typeof(Avatar));
+        public static readonly DependencyProperty AvatarImageProperty = DependencyProperty.Register("Url", typeof(ImageSource), typeof(Avatar));
 
         /// <summary>
         /// Dependency property for the avatar size.
@@ -30,7 +38,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         public Avatar()
         {
             InitializeComponent();
-            InitializeProfileImage();
+            AvatarImage = GetProfileImage();
         }
 
         /// <summary>
@@ -47,16 +55,16 @@ namespace FirefoxPrivateNetwork.UI.Components
         /// <summary>
         /// Gets or sets the profile picture image source.
         /// </summary>
-        public string Url
+        public ImageSource AvatarImage
         {
             get
             {
-                return (string)GetValue(UrlProperty);
+                return GetProfileImage();
             }
 
             set
             {
-                SetValue(UrlProperty, value);
+                SetValue(AvatarImageProperty, value);
             }
         }
 
@@ -76,15 +84,30 @@ namespace FirefoxPrivateNetwork.UI.Components
             }
         }
 
-        private void InitializeProfileImage()
+        /// <summary>
+        /// Gets or sets the avatar image.
+        /// </summary>
+        /// <returns>Image source.</returns>
+        public ImageSource GetProfileImage()
         {
             if (Manager.Account.LoginState == FxA.LoginState.LoggedIn)
             {
                 if (Manager.Account.Config.FxALogin.User.Avatar != null)
                 {
-                    Url = Manager.Account.Config.FxALogin.User.Avatar;
+                    var image = Manager.Cache.Get("avatarImage");
+
+                    if (image == null)
+                    {
+                        CacheItemPolicy policy = new CacheItemPolicy();
+                        image = Manager.GetAvatarImageWithURL();
+                        Manager.Cache.Set("avatarImage", image, policy);
+                    }
+
+                    return (BitmapImage)image;
                 }
             }
+
+            return Manager.GetDefaultAvatarImage();
         }
 
         private void NavigateSettings(object sender, RoutedEventArgs e)

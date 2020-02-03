@@ -100,7 +100,7 @@
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                             <Ellipse>
                                 <Ellipse.Fill>
-                                    <ImageBrush RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased" Stretch="Uniform" ImageSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Url, TargetNullValue={x:Null}}"/>
+                                    <ImageBrush RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased" Stretch="Uniform" ImageSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=AvatarImage, TargetNullValue={x:Null}}"/>
                                 </Ellipse.Fill>
                             </Ellipse>
                         </ControlTemplate>
