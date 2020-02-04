@@ -6,6 +6,7 @@ namespace FirefoxPrivateVPNUITest
 {
     using System;
     using System.Threading;
+    using FirefoxPrivateVPNUITest.Screens;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Appium.Windows;
@@ -75,36 +76,29 @@ namespace FirefoxPrivateVPNUITest
             // Close the application and delete the session
             if (this.Session != null)
             {
+                this.Session.SwitchTo();
+                try
+                {
+                    WindowsElement landingView = this.Session.FindElementByClassName("LandingView");
+                }
+                catch (InvalidOperationException)
+                {
+                    MainScreen mainScreen = new MainScreen(this.Session);
+                    if (mainScreen.GetOnImage().Displayed)
+                    {
+                        mainScreen.ToggleVPNSwitch();
+                    }
+
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
+                    mainScreen.ClickSettingsButton();
+                    UserCommonOperation.UserSignOut(this);
+                }
+
                 this.Session.Quit();
-                DesiredCapabilities appCapabilities = new DesiredCapabilities();
-                appCapabilities.SetCapability("app", "Root");
-                var desktopSession = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
-                var notification = desktopSession.FindElementByName("Notification Chevron");
-                notification.Click();
-                var clientTray = desktopSession.FindElementByName("Firefox Private Network VPN - Disconnected");
-                desktopSession.Mouse.ContextClick(clientTray.Coordinates);
-                var exitItem = desktopSession.FindElementByName("E_xit");
-                exitItem.Click();
-                notification.Click();
-                desktopSession.Quit();
+                var desktopSession = new DesktopSession();
+                desktopSession.CloseVPNClient();
                 this.Session = null;
             }
-        }
-
-        /// <summary>
-        /// Minimize the VPN window.
-        /// </summary>
-        public void MinimizeWindows()
-        {
-            this.Session.Keyboard.SendKeys(Keys.Command + Keys.ArrowDown + Keys.Command);
-        }
-
-        /// <summary>
-        /// Maximize the VPN window.
-        /// </summary>
-        public void MaxmizeWindows()
-        {
-            this.Session.Keyboard.SendKeys(Keys.Command + Keys.ArrowUp + Keys.ArrowUp + Keys.Command);
         }
     }
 }

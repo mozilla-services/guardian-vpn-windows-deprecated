@@ -50,7 +50,7 @@ namespace FirefoxPrivateVPNUITest
             landingScreen.ClickGetStartedButton();
 
             // User Sign In via web browser
-            ExistedUserSignIn.ExistedUserSignInFlow(this.vpnClient, this.browser);
+            UserCommonOperation.UserSignIn(this.vpnClient, this.browser);
 
             // Main Screen
             this.vpnClient.Session.SwitchTo();
@@ -59,10 +59,7 @@ namespace FirefoxPrivateVPNUITest
             mainScreen.ClickSettingsButton();
 
             // Setting Screen
-            SettingScreen settingScreen = new SettingScreen(this.vpnClient.Session);
-            Assert.AreEqual("Settings", settingScreen.GetTitle());
-            settingScreen.ClickSignOutButton();
-            Thread.Sleep(TimeSpan.FromSeconds(2));
+            UserCommonOperation.UserSignOut(this.vpnClient);
         }
     }
 }

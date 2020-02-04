@@ -7,6 +7,7 @@ namespace FirefoxPrivateVPNUITest
     using System;
     using System.Threading;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using OpenQA.Selenium;
 
     /// <summary>
     /// This is to test the layout screen.
@@ -42,13 +43,17 @@ namespace FirefoxPrivateVPNUITest
         {
             this.vpnClient.Session.SwitchTo();
 
-            // Test minimize
-            this.vpnClient.MinimizeWindows();
-            Thread.Sleep(TimeSpan.FromSeconds(1));
-
             // Test maximize
-            this.vpnClient.MaxmizeWindows();
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            this.vpnClient.Session.Keyboard.SendKeys(Keys.Command + Keys.ArrowUp + Keys.Command);
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+
+            // Recover to normal size
+            this.vpnClient.Session.Keyboard.SendKeys(Keys.Command + Keys.ArrowDown + Keys.Command);
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+
+            // Test minimize
+            this.vpnClient.Session.Keyboard.SendKeys(Keys.Command + Keys.ArrowDown + Keys.Command);
+            Thread.Sleep(TimeSpan.FromSeconds(2));
         }
     }
 }

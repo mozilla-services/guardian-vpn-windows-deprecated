@@ -12,7 +12,6 @@ namespace FirefoxPrivateVPNUITest.Screens
     /// </summary>
     internal class LandingScreen
     {
-        private WindowsDriver<WindowsElement> vpnSession;
         private AppiumWebElement titleElement;
         private AppiumWebElement subTitleElement;
         private AppiumWebElement getStartedButton;
@@ -24,7 +23,6 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public LandingScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            this.vpnSession = vpnSession;
             WindowsElement landingView = vpnSession.FindElementByClassName("LandingView");
             var titles = landingView.FindElementsByClassName("TextBlock");
             this.titleElement = titles[0];
