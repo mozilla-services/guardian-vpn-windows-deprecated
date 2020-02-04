@@ -55,10 +55,14 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp, Version=106.0.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.10.1\lib\net452\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="WebDriver, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Selenium.WebDriver.3.8.0\lib\net45\WebDriver.dll</HintPath>
     </Reference>
@@ -67,7 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\ExistedUserSignIn.cs" />
+    <Compile Include="Common\UserCommonOperation.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -83,8 +87,12 @@
     <Compile Include="Screens\EmailInputPage.cs" />
     <Compile Include="Screens\LandingScreen.cs" />
     <Compile Include="Screens\SettingScreen.cs" />
+    <Compile Include="Screens\VerifyAccountScreen.cs" />
+    <Compile Include="Screens\WindowsNotificationScreen.cs" />
     <Compile Include="Sessions\BrowserSession.cs" />
+    <Compile Include="Sessions\DesktopSession.cs" />
     <Compile Include="Sessions\FirefoxPrivateVPNSession.cs" />
+    <Compile Include="Tests\ConnectTest.cs" />
     <Compile Include="Tests\ExistedUserSignInTest.cs" />
     <Compile Include="Tests\LandingScreenTest.cs" />
     <Compile Include="Tests\LayoutScreenTest.cs" />

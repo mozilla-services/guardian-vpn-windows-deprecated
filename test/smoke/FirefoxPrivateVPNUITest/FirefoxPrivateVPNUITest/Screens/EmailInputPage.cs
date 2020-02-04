@@ -32,11 +32,15 @@ namespace FirefoxPrivateVPNUITest.Screens
         {
             this.emailTextBox.Clear();
             this.emailTextBox.SendKeys(email);
+            this.emailTextBox.Click();
         }
 
         /// <summary>
         /// This method is to simulate the user action clicking on the Continue button.
         /// </summary>
-        public void ClickContinueButton() => this.continueButton.Click();
+        public void ClickContinueButton()
+        {
+            this.continueButton.Click();
+        }
     }
 }
