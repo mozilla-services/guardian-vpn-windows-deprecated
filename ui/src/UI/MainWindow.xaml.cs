@@ -124,7 +124,6 @@ namespace FirefoxPrivateNetwork.UI
 
             if (!string.IsNullOrEmpty(resource))
             {
-
                 sb = (this.FindResource(resource) as Storyboard).Clone();
                 Storyboard.SetTarget(sb, Viewer);
                 sb.Completed += (sender, e) => { SlideCompleted(newView, slideDirection); };
