@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="FirefoxPrivateNetwork.UI.DevicesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cef="clr-namespace:FirefoxPrivateNetwork.FxA"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI"
@@ -9,6 +10,9 @@
              mc:Ignorable="d" 
              VerticalContentAlignment="Top"
              d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+    <UserControl.Resources>
+        <cef:RangeConverter x:Key="rangeConv"></cef:RangeConverter>
+    </UserControl.Resources>
 
     <Grid Height="Auto" Width="Auto">
         <Grid.ColumnDefinitions>
@@ -31,14 +35,29 @@
 
                     <!-- Number of devices -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <TextBlock Style="{StaticResource 'Body 10'}" VerticalAlignment="Center" Height="22" Margin="17" Foreground="{StaticResource 'Grey/Grey 50'}">
-                            <TextBlock.Text>
-                                <MultiBinding StringFormat="{}{0} {1} {2}">
-                                    <Binding Path="UserNumDevices" UpdateSourceTrigger="PropertyChanged" />
-                                    <Binding Path="[devices-of]" />
-                                    <Binding Path="MaxNumDevices" />
-                                </MultiBinding>
-                            </TextBlock.Text>
+                        <TextBlock VerticalAlignment="Center" Height="22" Margin="17" Foreground="{StaticResource 'Grey/Grey 50'}">
+                            <TextBlock.Style>
+                                <Style BasedOn="{StaticResource 'Body 10'}" TargetType="{x:Type TextBlock}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Path=UserNumDevices, Converter={StaticResource ResourceKey=rangeConv}}" Value="False">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding Path=UserNumDevices, Converter={StaticResource ResourceKey=rangeConv}}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Setter Property="Text">
+                                                <Setter.Value>
+                                                    <MultiBinding StringFormat="{}{0} {1} {2}">
+                                                        <Binding Path="UserNumDevices" UpdateSourceTrigger="PropertyChanged" />
+                                                        <Binding Path="[devices-of]" />
+                                                        <Binding Path="MaxNumDevices" UpdateSourceTrigger="PropertyChanged" />
+                                                    </MultiBinding>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
                         </TextBlock>
                     </StackPanel>
                 </DockPanel>
