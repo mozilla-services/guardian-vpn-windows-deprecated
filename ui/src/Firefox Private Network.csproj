@@ -347,8 +347,15 @@
     <Compile Include="UIUpdaters\ToastManager\EphemeralToastQueue.cs" />
     <Compile Include="UIUpdaters\ToastManager\PersistentToastList.cs" />
     <Compile Include="UIUpdaters\ToastManager\ToastCollection.cs" />
+    <Compile Include="UI\Components\Card\FlipCard.xaml.cs">
+      <DependentUpon>FlipCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Components\Converters\EqualityConverter.cs" />
     <Compile Include="UI\Components\Converters\StringEmptyConverter.cs" />
+    <Compile Include="UI\Components\NetworkSpeedVisual.xaml.cs">
+      <DependentUpon>NetworkSpeedVisual.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Components\VPNToggle\VpnStableConverter.cs" />
     <Compile Include="UI\Views\Settings\NotificationsView.xaml.cs">
       <DependentUpon>NotificationsView.xaml</DependentUpon>
     </Compile>
@@ -533,7 +540,15 @@
     </Compile>
     <Compile Include="NotificationArea\Tray.cs" />
     <Compile Include="ProductConstants.cs" />
+    <Page Include="UI\Components\Card\FlipCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\Components\Dev.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\Components\NetworkSpeedVisual.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1099,6 +1114,7 @@
     <Content Include="FirefoxPrivateNetworkVPN.visualelementsmanifest.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="UI\Resources\Icons\Generic\info-white.svg" />
     <Resource Include="UI\Resources\Icons\Generic\default-avatar.png" />
     <Resource Include="UI\Resources\Icons\Generic\dev.png" />
     <Resource Include="UI\Resources\Icons\Generic\languages.svg" />

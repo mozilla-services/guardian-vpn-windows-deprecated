@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Threading;
@@ -19,6 +20,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
     internal class ConnectionStatusUpdater
     {
         private readonly ViewModels.MainWindowViewModel viewModel;
+        private readonly int speedHistorySize = 30;
         private Thread updater = null;
         private CancellationTokenSource updaterCancellationTokenSource;
 
@@ -79,11 +81,16 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         /// <param name="newConnectionStatus">The new tunnel connection status.</param>
         public void UpdateConnectionStatus(Models.ConnectionStatus newConnectionStatus)
         {
+            UpdateNetworkSpeedHistory(LastConnectionStatus, newConnectionStatus);
+
             // Save connection status
             LastConnectionStatus = newConnectionStatus;
 
-            // Update connection bytes sent/received
-            UpdateRxTxUI(newConnectionStatus.RxBytes, newConnectionStatus.TxBytes);
+            // Update connection bytes received
+            UpdateRxUI(newConnectionStatus.RxBytes);
+
+            // Update connection bytes sent
+            UpdateTxUI(newConnectionStatus.TxBytes);
 
             // Update connection handshake
             UpdateLastHandshakeUI(newConnectionStatus.LastHandshakeTimeSec);
@@ -255,15 +262,88 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             }
         }
 
-        private void UpdateRxTxUI(string newRxBytes, string newTxBytes)
+        private void UpdateNetworkSpeedHistory(Models.ConnectionStatus oldConnectionStatus, Models.ConnectionStatus newConnectionStatus)
         {
-            if (!string.IsNullOrEmpty(newRxBytes) && !string.IsNullOrEmpty(newTxBytes))
+            double.TryParse(newConnectionStatus.RxBytes, out double newRx);
+            double.TryParse(oldConnectionStatus.RxBytes, out double oldRx);
+            double.TryParse(newConnectionStatus.TxBytes, out double newTx);
+            double.TryParse(oldConnectionStatus.TxBytes, out double oldTx);
+
+            var curDownloadSpeed = Math.Round(Math.Max((newRx - oldRx) * 8, 0), 1);
+            var curUploadSpeed = Math.Round(Math.Max((newTx - oldTx) * 8, 0), 1);
+
+            List<double> speeds = Manager.MainWindowViewModel.DownloadSpeedHistory;
+            speeds.Add(curDownloadSpeed);
+            RemoveOldData(speeds);
+            Manager.MainWindowViewModel.DownloadSpeedHistory = speeds;
+            Manager.MainWindowViewModel.DownloadSpeedHistoryString = string.Join(",", speeds);
+
+            Tuple<string, string> lastDownloadSpeed = GetNetworkSpeedUnits(speeds[speeds.Count - 1]);
+            Manager.MainWindowViewModel.LastDownloadSpeed = lastDownloadSpeed.Item1;
+            Manager.MainWindowViewModel.LastDownloadSpeedUnits = lastDownloadSpeed.Item2;
+
+            speeds = Manager.MainWindowViewModel.UploadSpeedHistory;
+            speeds.Add(curUploadSpeed);
+            RemoveOldData(speeds);
+            Manager.MainWindowViewModel.UploadSpeedHistory = speeds;
+            Manager.MainWindowViewModel.UploadSpeedHistoryString = string.Join(",", speeds);
+
+            Tuple<string, string> lastUploadSpeed = GetNetworkSpeedUnits(speeds[speeds.Count - 1]);
+            Manager.MainWindowViewModel.LastUploadSpeed = lastUploadSpeed.Item1;
+            Manager.MainWindowViewModel.LastUploadSpeedUnits = lastUploadSpeed.Item2;
+        }
+
+        private void RemoveOldData(List<double> dataList)
+        {
+            if (dataList.Count > speedHistorySize)
             {
-                viewModel.RxTx = string.Format("{0}/{1}", ConvertBytesToUserFriendlyString(newRxBytes), ConvertBytesToUserFriendlyString(newTxBytes));
+                dataList.RemoveAt(0);
+            }
+        }
+
+        private Tuple<string, string> GetNetworkSpeedUnits(double speedInBytes)
+        {
+            string[] units = new string[] { "Kbps", "Mbps", "Gbps", "Tbps" };
+            string unit = units[0];
+            var value = speedInBytes / 1000;
+
+            for (var i = 0; i < units.Length; i++)
+            {
+                unit = units[i];
+
+                if (value < 1000)
+                {
+                    break;
+                }
+
+                value /= 1000;
+            }
+
+            value = Math.Round(value, 1);
+            return new Tuple<string, string>(value.ToString(), unit);
+        }
+
+        private void UpdateRxUI(string newRxBytes)
+        {
+            if (!string.IsNullOrEmpty(newRxBytes))
+            {
+                viewModel.Rx = ConvertBytesToUserFriendlyString(newRxBytes);
             }
             else
             {
-                viewModel.RxTx = string.Empty;
+                viewModel.Rx = string.Empty;
+            }
+        }
+
+        private void UpdateTxUI(string newTxBytes)
+        {
+            if (!string.IsNullOrEmpty(newTxBytes))
+            {
+                viewModel.Tx = ConvertBytesToUserFriendlyString(newTxBytes);
+            }
+            else
+            {
+                viewModel.Tx = string.Empty;
             }
         }
 

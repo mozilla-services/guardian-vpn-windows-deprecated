@@ -27,15 +27,10 @@ namespace FirefoxPrivateNetwork.UI
 
         private void ReinitializeUI()
         {
-            InitializeToggle();
             InitializeConnectionNavButton();
+            SetCardIPAddress();
 
             Manager.AccountInfoUpdater.RefreshDeviceList();
-        }
-
-        private void InitializeToggle()
-        {
-            Toggle.Status = Manager.MainWindowViewModel.TunnelStatus;
         }
 
         private void InitializeConnectionNavButton()
@@ -60,6 +55,11 @@ namespace FirefoxPrivateNetwork.UI
             }
         }
 
+        private void SetCardIPAddress()
+        {
+            MainCard.IPAddress = "IP: " + Manager.MainWindowViewModel.ServerSelected.Endpoint;
+        }
+
         private void NavigateConnection(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
@@ -70,17 +70,6 @@ namespace FirefoxPrivateNetwork.UI
         {
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             mainWindow.NavigateToView(new DevicesView(), MainWindow.SlideDirection.Left);
-        }
-
-        private void NavigateSettings(object sender, RoutedEventArgs e)
-        {
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.NavigateToView(new SettingsView(), MainWindow.SlideDirection.Up);
-        }
-
-        private void Toggle_TargetUpdated(object sender, DataTransferEventArgs e)
-        {
-            Toggle.Status = Manager.MainWindowViewModel.TunnelStatus;
         }
     }
 }
