@@ -21,7 +21,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         public EmailInputPage(WindowsDriver<WindowsElement> browserSession)
         {
             this.emailTextBox = browserSession.FindElementByName("Email");
-            this.continueButton = browserSession.FindElementByName("Continue");
+            this.continueButton = browserSession.FindElementByAccessibilityId("submit-btn");
         }
 
         /// <summary>

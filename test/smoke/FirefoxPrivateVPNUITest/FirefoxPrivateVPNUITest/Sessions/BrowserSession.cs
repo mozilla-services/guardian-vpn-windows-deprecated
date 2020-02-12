@@ -38,16 +38,14 @@ namespace FirefoxPrivateVPNUITest
                 catch (Exception)
                 {
                     // 1. Creating a Desktop session
-                    DesiredCapabilities desktopAppCapabilities = new DesiredCapabilities();
-                    desktopAppCapabilities.SetCapability("app", "Root");
-                    var desktopSession = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), desktopAppCapabilities);
+                    var desktopSession = new DesktopSession();
                     bool retry = true;
                     int retryTimes = 0;
                     IWebElement firefoxWindows = null;
                     while (retry)
                     {
                         retryTimes += 1;
-                        WebDriverWait wait = new WebDriverWait(desktopSession, TimeSpan.FromSeconds(600));
+                        WebDriverWait wait = new WebDriverWait(desktopSession.Session, TimeSpan.FromSeconds(60));
                         firefoxWindows = wait.Until(ExpectedConditions.ElementExists(By.ClassName("MozillaWindowClass")));
                         if (firefoxWindows == null)
                         {
@@ -91,8 +89,15 @@ namespace FirefoxPrivateVPNUITest
             if (this.Session != null)
             {
                 this.Session.Close();
-                WindowsElement closeButton = this.Session.FindElementByName("Close Tabs");
-                closeButton.Click();
+                try
+                {
+                    WindowsElement closeButton = this.Session.FindElementByName("Close Tabs");
+                    closeButton.Click();
+                }
+                catch (InvalidOperationException)
+                {
+                }
+
                 this.Session.Quit();
                 this.Session = null;
             }

@@ -24,7 +24,7 @@ namespace FirefoxPrivateVPNUITest
             {
                 DesiredCapabilities appCapabilities = new DesiredCapabilities();
                 appCapabilities.SetCapability("app", "Root");
-                this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
+                this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities, TimeSpan.FromSeconds(10));
                 this.Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);
             }
         }
