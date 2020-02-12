@@ -36,6 +36,10 @@ namespace FirefoxPrivateNetwork.WireGuard
 
             if (switchServer && Manager.MainWindowViewModel.Status == Models.ConnectionState.Protected)
             {
+                // Update IP info.
+                var ipInfo = new FxA.IpInfo();
+                ipInfo.RetreiveIpInfo();
+
                 // Set "switching" bindings so they show up in the UI
                 Manager.MainWindowViewModel.IsServerSwitching = true;
                 Manager.MainWindowViewModel.SwitchingServerFrom = previousServerCity;

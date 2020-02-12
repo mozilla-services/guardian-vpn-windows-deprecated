@@ -21,8 +21,20 @@ namespace FirefoxPrivateNetwork.ViewModels
 
         // Connection Status Properties
         private readonly Models.ConnectionStatus connectionStatus;
+        private readonly int initNumSpeeds = 30;
         private string connectionTime = "00:00:00";
-        private string rxTx;
+        private string rx;
+        private string tx;
+        private Queue<double> downloadSpeedHistory;
+        private Queue<double> uploadSpeedHistory;
+        private string downloadSpeedHistoryString;
+        private string uploadSpeedHistoryString;
+        private string lastDownloadSpeed;
+        private string lastUploadSpeed;
+        private string lastDownloadSpeedUnits;
+        private string lastUploadSpeedUnits;
+        private bool isDownloadIdle;
+        private bool isUploadIdle;
         private string lastHandshakeState;
         private Models.ConnectionState tunnelStatus = Models.ConnectionState.Unprotected;
         private bool isConnectionTransitioning;
@@ -31,6 +43,10 @@ namespace FirefoxPrivateNetwork.ViewModels
         private List<Models.CountryServerListItem> countryServerList;
         private Models.CityServerListItem serverCityListSelectedItem;
         private Models.ServerListItem serverSelected;
+
+        // IP Information Properties
+        private Models.IpInfo ipInfo;
+        private string ipAddressString;
 
         // Device Management Properties
         private IEnumerable<Models.DeviceListItem> deviceList;
@@ -69,6 +85,9 @@ namespace FirefoxPrivateNetwork.ViewModels
 
             // Intialize the selected item of the server list
             RefreshServerListSelectedItem(initialLoad: true);
+
+            InitializeSpeedLists();
+            InitializeSpeedListStrings();
 
             // Get the number of user devices and current device if exists
             JSONStructures.Device currentDevice = null;
@@ -237,19 +256,204 @@ namespace FirefoxPrivateNetwork.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the received/transmitted bytes count for the current VPN connection.
+        /// Gets or sets the received bytes count for the current VPN connection.
         /// </summary>
-        public string RxTx
+        public string Rx
         {
             get
             {
-                return rxTx;
+                return rx;
             }
 
             set
             {
-                rxTx = value;
-                OnPropertyChanged("RxTx");
+                rx = value;
+                OnPropertyChanged("Rx");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the transmitted bytes count for the current VPN connection.
+        /// </summary>
+        public string Tx
+        {
+            get
+            {
+                return tx;
+            }
+
+            set
+            {
+                tx = value;
+                OnPropertyChanged("Tx");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of recent download speeds.
+        /// </summary>
+        public Queue<double> DownloadSpeedHistory
+        {
+            get
+            {
+                return downloadSpeedHistory;
+            }
+
+            set
+            {
+                downloadSpeedHistory = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of recent upload speeds.
+        /// </summary>
+        public Queue<double> UploadSpeedHistory
+        {
+            get
+            {
+                return uploadSpeedHistory;
+            }
+
+            set
+            {
+                uploadSpeedHistory = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of recent download speeds as a string.
+        /// </summary>
+        public string DownloadSpeedHistoryString
+        {
+            get
+            {
+                return downloadSpeedHistoryString;
+            }
+
+            set
+            {
+                downloadSpeedHistoryString = value;
+                OnPropertyChanged("DownloadSpeedHistoryString");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of recent upload speeds as a string.
+        /// </summary>
+        public string UploadSpeedHistoryString
+        {
+            get
+            {
+                return uploadSpeedHistoryString;
+            }
+
+            set
+            {
+                uploadSpeedHistoryString = value;
+                OnPropertyChanged("UploadSpeedHistoryString");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the most recent download speed.
+        /// </summary>
+        public string LastDownloadSpeed
+        {
+            get
+            {
+                return lastDownloadSpeed;
+            }
+
+            set
+            {
+                lastDownloadSpeed = value;
+                OnPropertyChanged("LastDownloadSpeed");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the most recent upload speed.
+        /// </summary>
+        public string LastUploadSpeed
+        {
+            get
+            {
+                return lastUploadSpeed;
+            }
+
+            set
+            {
+                lastUploadSpeed = value;
+                OnPropertyChanged("LastUploadSpeed");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of recent upload speeds.
+        /// </summary>
+        public string LastDownloadSpeedUnits
+        {
+            get
+            {
+                return lastDownloadSpeedUnits;
+            }
+
+            set
+            {
+                lastDownloadSpeedUnits = value;
+                OnPropertyChanged("LastDownloadSpeedUnits");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the list of recent upload speeds.
+        /// </summary>
+        public string LastUploadSpeedUnits
+        {
+            get
+            {
+                return lastUploadSpeedUnits;
+            }
+
+            set
+            {
+                lastUploadSpeedUnits = value;
+                OnPropertyChanged("LastUploadSpeedUnits");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether downloading is idle.
+        /// </summary>
+        public bool IsDownloadIdle
+        {
+            get
+            {
+                return isDownloadIdle;
+            }
+
+            set
+            {
+                isDownloadIdle = value;
+                OnPropertyChanged("IsDownloadIdle");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether gets or sets value indicating whether uploading is idle.
+        /// </summary>
+        public bool IsUploadIdle
+        {
+            get
+            {
+                return isUploadIdle;
+            }
+
+            set
+            {
+                isUploadIdle = value;
+                OnPropertyChanged("IsUploadIdle");
             }
         }
 
@@ -356,7 +560,41 @@ namespace FirefoxPrivateNetwork.ViewModels
             set
             {
                 serverSelected = value;
-                OnPropertyChanged("CityServerSelected");
+                OnPropertyChanged("ServerSelected");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the IP information.
+        /// </summary>
+        public Models.IpInfo IpInfo
+        {
+            get
+            {
+                return ipInfo;
+            }
+
+            set
+            {
+                ipInfo = value;
+                OnPropertyChanged("IpInfo");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the IP Address.
+        /// </summary>
+        public string IpAddressString
+        {
+            get
+            {
+                return ipAddressString;
+            }
+
+            set
+            {
+                ipAddressString = value;
+                OnPropertyChanged("ipAddressString");
             }
         }
 
@@ -631,6 +869,56 @@ namespace FirefoxPrivateNetwork.ViewModels
                 var e = new PropertyChangedEventArgs(propertyName);
                 handler(this, e);
             }
+        }
+
+        /// <summary>
+        /// Initializes list of 0's for initial speeds.
+        /// </summary>
+        /// <returns>List of speeds.</returns>
+        private Queue<double> GetInitialSpeedList()
+        {
+            Queue<double> speeds = new Queue<double>();
+
+            for (int i = 0; i < initNumSpeeds; i++)
+            {
+                speeds.Enqueue(0);
+            }
+
+            return speeds;
+        }
+
+        /// <summary>
+        /// Initializes upload and download speed lists.
+        /// </summary>
+        private void InitializeSpeedLists()
+        {
+            DownloadSpeedHistory = GetInitialSpeedList();
+            UploadSpeedHistory = GetInitialSpeedList();
+        }
+
+        /// <summary>
+        /// Initializes list of 0's for initial speeds.
+        /// </summary>
+        /// <returns>List of speeds.</returns>
+        private string GetInitialSpeedListString()
+        {
+            string speeds = string.Empty;
+
+            for (int i = 0; i < initNumSpeeds; i++)
+            {
+                speeds += "0,";
+            }
+
+            return speeds;
+        }
+
+        /// <summary>
+        /// Initializes upload and download speed lists.
+        /// </summary>
+        private void InitializeSpeedListStrings()
+        {
+            DownloadSpeedHistoryString = GetInitialSpeedListString();
+            UploadSpeedHistoryString = GetInitialSpeedListString();
         }
     }
 }
