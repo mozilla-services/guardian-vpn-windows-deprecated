@@ -61,7 +61,9 @@ namespace FirefoxPrivateVPNUITest.Screens
         {
             this.scrollDownButton.Click();
             this.vpnSession.Mouse.MouseDown(null);
-            Thread.Sleep(TimeSpan.FromSeconds(5));
+
+            // Scroll down for 2 second to show signout button
+            Thread.Sleep(TimeSpan.FromSeconds(2));
             this.vpnSession.Mouse.MouseUp(null);
             this.signOutButton.Click();
         }

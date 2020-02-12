@@ -56,7 +56,6 @@ namespace FirefoxPrivateVPNUITest
             this.vpnClient.Session.SwitchTo();
             MainScreen mainScreen = new MainScreen(this.vpnClient.Session);
             Assert.AreEqual("VPN is off", mainScreen.GetTitle());
-            mainScreen.ClickSettingsButton();
 
             // Setting Screen
             UserCommonOperation.UserSignOut(this.vpnClient);

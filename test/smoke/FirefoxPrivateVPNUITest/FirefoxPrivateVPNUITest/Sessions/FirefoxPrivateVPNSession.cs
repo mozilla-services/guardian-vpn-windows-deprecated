@@ -40,21 +40,17 @@ namespace FirefoxPrivateVPNUITest
                 catch (Exception)
                 {
                     // 1. Creating a Desktop session
-                    DesiredCapabilities desktopAppCapabilities = new DesiredCapabilities();
-                    desktopAppCapabilities.SetCapability("app", "Root");
-                    var desktopSession = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), desktopAppCapabilities);
-
-                    WebDriverWait wait = new WebDriverWait(desktopSession, TimeSpan.FromSeconds(30));
+                    var desktopSession = new DesktopSession();
+                    WebDriverWait wait = new WebDriverWait(desktopSession.Session, TimeSpan.FromSeconds(30));
                     var firefoxVPN = wait.Until(ExpectedConditions.ElementExists(By.Name("Firefox Private Network VPN")));
 
                     // 2. Attaching to existing firefox Window
                     string applicationSessionHandle = firefoxVPN.GetAttribute("NativeWindowHandle");
                     applicationSessionHandle = int.Parse(applicationSessionHandle).ToString("x");
 
-                    DesiredCapabilities capabilities = new DesiredCapabilities();
-                    capabilities.SetCapability("deviceName", "WindowsPC");
-                    capabilities.SetCapability("appTopLevelWindow", applicationSessionHandle);
-                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), capabilities);
+                    appCapabilities.SetCapability("app", null);
+                    appCapabilities.SetCapability("appTopLevelWindow", applicationSessionHandle);
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
                     Assert.IsNotNull(this.Session);
                 }
 
@@ -89,8 +85,6 @@ namespace FirefoxPrivateVPNUITest
                         mainScreen.ToggleVPNSwitch();
                     }
 
-                    Thread.Sleep(TimeSpan.FromSeconds(2));
-                    mainScreen.ClickSettingsButton();
                     UserCommonOperation.UserSignOut(this);
                 }
 

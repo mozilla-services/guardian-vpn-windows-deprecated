@@ -65,61 +65,13 @@ namespace FirefoxPrivateVPNUITest
             Assert.IsTrue(mainScreen.GetOffImage().Displayed);
             Assert.IsFalse(mainScreen.GetOnImage().Displayed);
 
-            // Verify user is not connected to Mullvad VPN
-            IRestResponse response = UserCommonOperation.AmIMullvad();
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-            Assert.IsTrue(response.Content.Contains("You are not connected to Mullvad"));
+            // User turns on VPN
+            UserCommonOperation.ConnectVPN(this.vpnClient, this.desktop);
 
-            // Click VPN switch toggle and turn on VPN
-            mainScreen.ToggleVPNSwitch();
-            Assert.AreEqual("Connecting...", mainScreen.GetTitle());
-            Assert.AreEqual("You will be protected shortly", mainScreen.GetSubtitle());
-            Assert.IsTrue(mainScreen.GetOnImage().Displayed);
-            Assert.IsFalse(mainScreen.GetOffImage().Displayed);
-
-            // Verify the windows notification
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-            this.desktop.Session.SwitchTo();
-            WindowsNotificationScreen windowsNotificationScreen = new WindowsNotificationScreen(this.desktop.Session);
-            Assert.AreEqual("VPN is on", windowsNotificationScreen.GetTitleText());
-            Assert.AreEqual("You're secure and protected.", windowsNotificationScreen.GetMessageText());
-            windowsNotificationScreen.ClickDismissButton();
-
-            this.vpnClient.Session.SwitchTo();
-            Assert.AreEqual("VPN is on", mainScreen.GetTitle());
-            Assert.IsTrue(mainScreen.GetSubtitle().Contains("Secure and protected"));
-
-            // Verify user is connected to Mullvad VPN
-            response = UserCommonOperation.AmIMullvad();
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-            Assert.IsTrue(response.Content.Contains("You are connected to Mullvad"));
-
-            // Click VPN switch toggle and turn off VPN
-            mainScreen.ToggleVPNSwitch();
-            Assert.AreEqual("Disconnecting...", mainScreen.GetTitle());
-            Assert.AreEqual("You will be disconnected shortly", mainScreen.GetSubtitle());
-            Assert.IsTrue(mainScreen.GetOffImage().Displayed);
-            Assert.IsFalse(mainScreen.GetOnImage().Displayed);
-
-            // Verify the windows notification
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-            this.desktop.Session.SwitchTo();
-            windowsNotificationScreen = new WindowsNotificationScreen(this.desktop.Session);
-            Assert.AreEqual("VPN is off", windowsNotificationScreen.GetTitleText());
-            Assert.AreEqual("You disconnected.", windowsNotificationScreen.GetMessageText());
-            windowsNotificationScreen.ClickDismissButton();
-
-            this.vpnClient.Session.SwitchTo();
-            Assert.AreEqual("VPN is off", mainScreen.GetTitle());
-            Assert.AreEqual("Turn it on to protect your entire device", mainScreen.GetSubtitle());
-
-            // Verify user disconnected to Mullvad VPN
-            response = UserCommonOperation.AmIMullvad();
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
-            Assert.IsTrue(response.Content.Contains("You are not connected to Mullvad"));
+            // User turns off VPN
+            UserCommonOperation.DisconnectVPN(this.vpnClient, this.desktop);
 
             // Sign out
-            mainScreen.ClickSettingsButton();
             UserCommonOperation.UserSignOut(this.vpnClient);
         }
     }
