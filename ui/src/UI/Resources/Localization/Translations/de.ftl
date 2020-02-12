@@ -14,6 +14,7 @@ navigation-open-terms-of-service
 navigation-open-privacy-policy
 navigation-open-debug
 navigation-open-log
+navigation-open-data-usage
 
 ## Pages
 connection-page-title = Verbindungen
@@ -47,6 +48,9 @@ decoration-image
 shadow-image
 connection-navigation-button
 vpn-status-image
+data-usage-download
+data-usage-upload
+data-usage-idle
 
 hero-subtext-unstable = Instabil
 hero-subtext-no-signal = Kein Signal

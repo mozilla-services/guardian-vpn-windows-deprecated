@@ -1,0 +1,435 @@
+﻿<UserControl x:Class="FirefoxPrivateNetwork.UI.Components.FlipCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI.Components"
+             xmlns:ui="clr-namespace:FirefoxPrivateNetwork.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Storyboard x:Key="FlipToVpnConnectionStoryboard"
+                    FillBehavior="HoldEnd">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="DataUsage">
+                <SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="1" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="DataUsage">
+                <SplineDoubleKeyFrame KeyTime="0" Value="1" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="VpnConnection">
+                <SplineDoubleKeyFrame KeyTime="0:0:0.2" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.4" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="FlipToDataUsageStoryboard"
+                    FillBehavior="HoldEnd">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="DataUsage">
+                <SplineDoubleKeyFrame KeyTime="0:0:0.15" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="VpnConnection">
+                <SplineDoubleKeyFrame KeyTime="0" Value="1" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.15" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" Storyboard.TargetName="DataUsage">
+                <SplineDoubleKeyFrame KeyTime="0:0:0.15" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <local:VpnNotUnprotectedConverter x:Key="VpnNotUnprotectedConverter"></local:VpnNotUnprotectedConverter>
+        <local:VpnProtectedConverter x:Key="VpnProtectedConverter"></local:VpnProtectedConverter>
+        <local:VpnStableConverter x:Key="VpnStableConverter"></local:VpnStableConverter>
+    </UserControl.Resources>
+
+    <UserControl.RenderTransform>
+        <TransformGroup>
+            <TranslateTransform />
+            <RotateTransform />
+        </TransformGroup>
+    </UserControl.RenderTransform>
+
+    <Grid>
+        <Grid x:Name="card">
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform />
+                    <TranslateTransform />
+                </TransformGroup>
+            </Grid.RenderTransform>
+
+            <!--VPN connection card side -->
+            <Border CornerRadius="8"
+                    Visibility="Visible"
+                    x:Name="VpnConnection"
+                    RenderTransformOrigin=".5,.5">
+
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform />
+                        <SkewTransform />
+                    </TransformGroup>
+                </Border.RenderTransform>
+
+                <Grid>
+                    <local:Card x:Name="MainCard" IsHitTestVisible="False" Status="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                IsStable="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FlipCard}}, Path=(ui:CardExtensions.VpnStability), Mode=OneWay, Converter={StaticResource VpnStableConverter}, UpdateSourceTrigger=PropertyChanged}"
+                                IsCardShown="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FlipCard}}, Path=HasVpnConnectionSideUp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    
+                    <Grid Height="Auto" Width="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="48" />
+                            <RowDefinition Height="104" />
+                            <RowDefinition Height="32" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="104" />
+                        </Grid.RowDefinitions>
+
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">
+                            <DockPanel VerticalAlignment="Center" Width="328">
+
+                                <!-- Data stats button-->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Button AutomationProperties.Name="{Binding Path=[navigation-open-data-usage]}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" ui:ButtonExtensions.IconUri="{StaticResource 'info-white'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="Flip">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+
+                                <!-- Dev mode badge-->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                    <Image AutomationProperties.Name="{Binding Path=[dev-mode-on]}" Style="{StaticResource DevMode}" Source="{Binding Source={StaticResource 'dev'}}" Width="44" Height="18" Margin="16,0" />
+                                </StackPanel>
+
+
+                                <!-- Navigate settings button -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button AutomationProperties.Name="{Binding Path=[settings-page-title]}" Width="40" Height="40" Margin="8,0" ui:ButtonExtensions.IconUri="{StaticResource 'settings'}" Click="NavigateSettings">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="0">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                    <Button AutomationProperties.Name="{Binding Path=[settings-page-title]}" Width="40" Height="40" Margin="8,0" ui:ButtonExtensions.IconUri="{StaticResource 'settings-white'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="NavigateSettings">
+                                        <Button.Style>
+                                            <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                            </DockPanel>
+                        </Grid>
+
+                        <!-- VPN status animation -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
+                            <local:HeroImage AutomationProperties.Name="{Binding Path=[vpn-status-image]}"  Width="80" Height="80" IsHitTestVisible="False" ui:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- status text -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0">
+                            <local:HeroText IsHitTestVisible="False" ui:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!--VPN stability text -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+                            <local:HeroSubText IsHitTestVisible="False" ui:CardExtensions.VpnStatus="{Binding ElementName=Toggle, Path=Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" ui:CardExtensions.VpnStability="{Binding Stability, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Grid>
+
+                        <!-- VPN toggle-->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" Grid.Column="0">
+                            <local:VPNToggle x:Name="Toggle" AutomationProperties.Name="{Binding Path=[toggle-vpn]}" Margin="0,24,0,0" EnableWhiteSwitchBorder="True" Status="{Binding TunnelStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, NotifyOnTargetUpdated=True}" TargetUpdated="Toggle_TargetUpdated"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Data Usage card side -->
+            <Border CornerRadius="8"
+                    Visibility="Collapsed"
+                    x:Name="DataUsage"
+                    RenderTransformOrigin=".5,.5">
+
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform />
+                        <SkewTransform />
+                    </TransformGroup>
+                </Border.RenderTransform>
+
+                <Grid>
+                    <!-- Card background -->
+                    <Grid Background="Transparent" Margin="12,4,12,4" ClipToBounds="True">
+                        <Border x:Name="CardBackground" BorderThickness="0" Margin="4,4,4,4" CornerRadius="8">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="BorderBrush" Value="{StaticResource 'Purple/Purple 90'}"/>
+                                    <Setter Property="Background" Value="{StaticResource 'Purple/Purple 90'}" />
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                        <local:NetworkSpeedVisual x:Name="SpeedVisual" 
+                                                          DownloadSpeedsString="{Binding DownloadSpeedHistoryString, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                                          UploadSpeedsString="{Binding UploadSpeedHistoryString, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
+                                                          GraphShown="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FlipCard}}, Path=HasDataUsageSideUp, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          IsDownloadIdle="{Binding IsDownloadIdle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          IsUploadIdle="{Binding IsUploadIdle, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Border x:Name="CardBorder" BorderThickness="2" Margin="2,2,2,2" CornerRadius="8">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/Grey 5'}"/>
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                            </Border.Style>
+                        </Border>
+                        <Border x:Name="CardBorderBlur" BorderThickness="0" Margin="4,4,4,4" CornerRadius="8">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" Direction="0"  Color="{StaticResource 'Grey/Grey 10 Solid'}" RenderingBias="Quality" ShadowDepth="0"/>
+                            </Border.Effect>
+                        </Border>
+                    </Grid>
+
+                    <!-- Card content -->
+                    <Grid Height="Auto" Width="Auto" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="48" />
+                            <RowDefinition Height="156" />
+                            <RowDefinition Height="18" />
+                            <RowDefinition Height="24" />
+                            <RowDefinition Height="70" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Navigate back button -->
+                        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">
+                            <Button AutomationProperties.Name="{Binding Path=[navigation-back]}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" ui:ButtonExtensions.IconUri="{StaticResource 'close-white'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="Flip">
+                                <Button.Style>
+                                    <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}"/>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+
+                        <!-- IP address -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
+                            <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:FlipCard}}, Path=IPAddress, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource 'Title 10'}" TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+
+                        <!-- Speed graph legend -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="164" />
+                                <ColumnDefinition Width="164" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">
+                                <TextBlock Text="{Binding LastDownloadSpeedUnits, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="64,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style BasedOn="{StaticResource 'Caption 10'}" TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Foreground" Value="{StaticResource 'Grey/White 80'}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsDownloadIdle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+
+                            <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1">
+                                <TextBlock Text="{Binding LastUploadSpeedUnits, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="48,0,0,0">
+                                    <TextBlock.Style>
+                                        <Style BasedOn="{StaticResource 'Caption 10'}" TargetType="{x:Type TextBlock}">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Setter Property="Foreground" Value="{StaticResource 'Grey/White 80'}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsUploadIdle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </Grid>
+
+                        <!-- Speed graph legend -->
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3" Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="164" />
+                                <ColumnDefinition Width="164" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Download label -->
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Rectangle Width="16" Height="16" RadiusX="4" RadiusY="4" Margin="36,0,0,0">
+                                        <Rectangle.Fill>
+                                            <RadialGradientBrush GradientOrigin="1,0" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.75">
+                                                <GradientStop Color="#9D62FC" Offset="0"/>
+                                                <GradientStop Color="#FD3296" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                    <TextBlock Text="{Binding Path=[data-usage-download]}" Margin="64,5,0,0">
+                                        <TextBlock.Style>
+                                            <Style BasedOn="{StaticResource 'Header 20'}" TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Foreground" Value="{StaticResource 'Grey/White'}"/>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Upload label -->
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="0" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                    <Rectangle Width="16" Height="16" RadiusX="4" RadiusY="4" Margin="20,0,0,0">
+                                        <Rectangle.Fill>
+                                            <RadialGradientBrush GradientOrigin="1,0" Center="0.5,0.5" RadiusX="0.75" RadiusY="0.75">
+                                                <GradientStop Color="#E22850" Offset="0"/>
+                                                <GradientStop Color="#FFA436" Offset="1"/>
+                                            </RadialGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                    <TextBlock Text="{Binding Path=[data-usage-upload]}" Margin="48,5,0,0">
+                                        <TextBlock.Style>
+                                            <Style BasedOn="{StaticResource 'Header 20'}" TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Foreground" Value="{StaticResource 'Grey/White'}"/>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+
+
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="4" Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="164" />
+                                <ColumnDefinition Width="164" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Download speed -->
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                    <TextBlock Text="{Binding LastDownloadSpeed, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="64,0,73,0">
+                                        <TextBlock.Style>
+                                            <Style BasedOn="{StaticResource 'Title 10'}" TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Setter Property="Foreground" Value="{StaticResource 'Grey/White 80'}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsDownloadIdle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Value="True">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding Path=[data-usage-idle]}" Margin="64,0,73,0">
+                                        <TextBlock.Style>
+                                            <Style BasedOn="{StaticResource 'Title 10'}" TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Setter Property="Foreground" Value="{StaticResource 'Grey/White 80'}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsDownloadIdle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Upload speed -->
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="0" Grid.Column="1">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+                                    <TextBlock Text="{Binding LastUploadSpeed, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="48,0,84,0">
+                                        <TextBlock.Style>
+                                            <Style BasedOn="{StaticResource 'Title 10'}" TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Setter Property="Foreground" Value="{StaticResource 'Grey/White 80'}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsUploadIdle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Value="True">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock Text="{Binding Path=[data-usage-idle]}" Margin="48,0,84,0">
+                                        <TextBlock.Style>
+                                            <Style BasedOn="{StaticResource 'Title 10'}" TargetType="{x:Type TextBlock}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Setter Property="Foreground" Value="{StaticResource 'Grey/White 80'}"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsUploadIdle, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

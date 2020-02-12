@@ -3,8 +3,10 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipes;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +21,7 @@ namespace FirefoxPrivateNetwork.UIUpdaters
     internal class ConnectionStatusUpdater
     {
         private readonly ViewModels.MainWindowViewModel viewModel;
+        private readonly int speedHistorySize = 30;
         private Thread updater = null;
         private CancellationTokenSource updaterCancellationTokenSource;
 
@@ -79,11 +82,16 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         /// <param name="newConnectionStatus">The new tunnel connection status.</param>
         public void UpdateConnectionStatus(Models.ConnectionStatus newConnectionStatus)
         {
+            UpdateNetworkSpeedHistory(LastConnectionStatus, newConnectionStatus);
+
             // Save connection status
             LastConnectionStatus = newConnectionStatus;
 
-            // Update connection bytes sent/received
-            UpdateRxTxUI(newConnectionStatus.RxBytes, newConnectionStatus.TxBytes);
+            // Update connection bytes received
+            UpdateRxUI(newConnectionStatus.RxBytes);
+
+            // Update connection bytes sent
+            UpdateTxUI(newConnectionStatus.TxBytes);
 
             // Update connection handshake
             UpdateLastHandshakeUI(newConnectionStatus.LastHandshakeTimeSec);
@@ -146,12 +154,18 @@ namespace FirefoxPrivateNetwork.UIUpdaters
                 {
                     if (newStatus == Models.ConnectionState.Protected)
                     {
+                        Manager.IPInfoUpdater.StartThread();
                         Manager.TrayIcon.ShowNotification(Manager.TranslationService.GetString("windows-notification-vpn-on-title"), Manager.TranslationService.GetString("windows-notification-vpn-on-content"), NotificationArea.ToastIconType.Connected);
                     }
                 }
 
                 if (newStatus == Models.ConnectionState.Unprotected)
                 {
+                    if (previousStatus != Models.ConnectionState.Connecting)
+                    {
+                        Manager.IPInfoUpdater.StopThread();
+                    }
+
                     EnforceMinTransitionTime(minDisconnectingTime);
                     viewModel.TunnelStatus = Models.ConnectionState.Unprotected;
                     Manager.TrayIcon.ShowNotification(Manager.TranslationService.GetString("windows-notification-vpn-off-title"), Manager.TranslationService.GetString("windows-notification-vpn-off-content"), NotificationArea.ToastIconType.Disconnected);
@@ -255,15 +269,106 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             }
         }
 
-        private void UpdateRxTxUI(string newRxBytes, string newTxBytes)
+        private void UpdateNetworkSpeedHistory(Models.ConnectionStatus oldConnectionStatus, Models.ConnectionStatus newConnectionStatus)
         {
-            if (!string.IsNullOrEmpty(newRxBytes) && !string.IsNullOrEmpty(newTxBytes))
+            double.TryParse(newConnectionStatus.RxBytes, out double newRx);
+            double.TryParse(oldConnectionStatus.RxBytes, out double oldRx);
+            double.TryParse(newConnectionStatus.TxBytes, out double newTx);
+            double.TryParse(oldConnectionStatus.TxBytes, out double oldTx);
+
+            var curDownloadSpeed = Math.Round(Math.Max((newRx - oldRx) * 8, 0), 1);
+            var curUploadSpeed = Math.Round(Math.Max((newTx - oldTx) * 8, 0), 1);
+
+            Queue<double> speeds = Manager.MainWindowViewModel.DownloadSpeedHistory;
+            speeds.Enqueue(curDownloadSpeed);
+            RemoveOldData(speeds);
+            Manager.MainWindowViewModel.DownloadSpeedHistory = speeds;
+            Manager.MainWindowViewModel.DownloadSpeedHistoryString = string.Join(",", speeds);
+            Manager.MainWindowViewModel.IsDownloadIdle = GetIsIdle(speeds);
+
+            Tuple<string, string> lastDownloadSpeed = GetNetworkSpeedUnits(curDownloadSpeed);
+            Manager.MainWindowViewModel.LastDownloadSpeed = lastDownloadSpeed.Item1;
+            Manager.MainWindowViewModel.LastDownloadSpeedUnits = lastDownloadSpeed.Item2;
+
+            speeds = Manager.MainWindowViewModel.UploadSpeedHistory;
+            speeds.Enqueue(curUploadSpeed);
+            RemoveOldData(speeds);
+            Manager.MainWindowViewModel.UploadSpeedHistory = speeds;
+            Manager.MainWindowViewModel.UploadSpeedHistoryString = string.Join(",", speeds);
+            Manager.MainWindowViewModel.IsUploadIdle = GetIsIdle(speeds);
+
+            Tuple<string, string> lastUploadSpeed = GetNetworkSpeedUnits(curUploadSpeed);
+            Manager.MainWindowViewModel.LastUploadSpeed = lastUploadSpeed.Item1;
+            Manager.MainWindowViewModel.LastUploadSpeedUnits = lastUploadSpeed.Item2;
+        }
+
+        private void RemoveOldData(Queue<double> dataList)
+        {
+            if (dataList.Count > speedHistorySize)
             {
-                viewModel.RxTx = string.Format("{0}/{1}", ConvertBytesToUserFriendlyString(newRxBytes), ConvertBytesToUserFriendlyString(newTxBytes));
+                dataList.Dequeue();
+            }
+        }
+
+        private Tuple<string, string> GetNetworkSpeedUnits(double speedInBytes)
+        {
+            string[] units = new string[] { "Kbps", "Mbps", "Gbps", "Tbps" };
+            string unit = units[0];
+            var value = speedInBytes / 1000;
+
+            for (var i = 0; i < units.Length; i++)
+            {
+                unit = units[i];
+
+                if (value < 1000)
+                {
+                    break;
+                }
+
+                value /= 1000;
+            }
+
+            value = Math.Round(value, 1);
+            return new Tuple<string, string>(value.ToString(), unit);
+        }
+
+        private bool GetIsIdle(Queue<double> speeds)
+        {
+            IEnumerator<double> en = speeds.Reverse().GetEnumerator();
+            int i = 0;
+
+            while (en.MoveNext() && i++ < ProductConstants.TunnelUnstableTimeout)
+            {
+                if (en.Current > 1000)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void UpdateRxUI(string newRxBytes)
+        {
+            if (!string.IsNullOrEmpty(newRxBytes))
+            {
+                viewModel.Rx = ConvertBytesToUserFriendlyString(newRxBytes);
             }
             else
             {
-                viewModel.RxTx = string.Empty;
+                viewModel.Rx = string.Empty;
+            }
+        }
+
+        private void UpdateTxUI(string newTxBytes)
+        {
+            if (!string.IsNullOrEmpty(newTxBytes))
+            {
+                viewModel.Tx = ConvertBytesToUserFriendlyString(newTxBytes);
+            }
+            else
+            {
+                viewModel.Tx = string.Empty;
             }
         }
 

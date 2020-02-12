@@ -14,6 +14,7 @@ navigation-open-terms-of-service = Open Terms of Service link
 navigation-open-privacy-policy = Open Privacy Policy link
 navigation-open-debug = Open Debug link
 navigation-open-log = Open View log link
+navigation-open-data-usage = Open data usage
 
 ## Pages
 connection-page-title = Connection
@@ -47,6 +48,9 @@ decoration-image = Decoration
 shadow-image = Shadow
 connection-navigation-button = Connection navigation
 vpn-status-image = VPN status
+data-usage-download = Download
+data-usage-upload = Upload
+data-usage-idle = Idle
 
 hero-subtext-unstable = Unstable
 hero-subtext-no-signal = No signal

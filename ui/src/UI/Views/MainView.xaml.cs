@@ -2,9 +2,13 @@
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, you can obtain one at http://mozilla.org/MPL/2.0/.
 // </copyright>
 
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using FirefoxPrivateNetwork.ErrorHandling;
+using FirefoxPrivateNetwork.FxA;
+using Newtonsoft.Json;
 
 namespace FirefoxPrivateNetwork.UI
 {
@@ -27,15 +31,9 @@ namespace FirefoxPrivateNetwork.UI
 
         private void ReinitializeUI()
         {
-            InitializeToggle();
             InitializeConnectionNavButton();
 
             Manager.AccountInfoUpdater.RefreshDeviceList();
-        }
-
-        private void InitializeToggle()
-        {
-            Toggle.Status = Manager.MainWindowViewModel.TunnelStatus;
         }
 
         private void InitializeConnectionNavButton()
@@ -70,17 +68,6 @@ namespace FirefoxPrivateNetwork.UI
         {
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             mainWindow.NavigateToView(new DevicesView(), MainWindow.SlideDirection.Left);
-        }
-
-        private void NavigateSettings(object sender, RoutedEventArgs e)
-        {
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.NavigateToView(new SettingsView(), MainWindow.SlideDirection.Up);
-        }
-
-        private void Toggle_TargetUpdated(object sender, DataTransferEventArgs e)
-        {
-            Toggle.Status = Manager.MainWindowViewModel.TunnelStatus;
         }
     }
 }

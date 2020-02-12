@@ -149,6 +149,11 @@ namespace FirefoxPrivateNetwork
         public static readonly int TunnelInitialGracePeriodTimeout = 10;
 
         /// <summary>
+        /// Number of minutes to wait after refreshing IP information bfore refreshing again.
+        /// </summary>
+        public static readonly int IpInfoRefreshPeriod = 10;
+
+        /// <summary>
         /// Number of seconds after which failed communication efforts with the Broker will be marked as troublesome and acted upon.
         /// </summary>
         public static readonly int BrokerToubleGracePeriod = 5;

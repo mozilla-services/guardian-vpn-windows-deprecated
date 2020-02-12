@@ -31,9 +31,14 @@ namespace FirefoxPrivateNetwork.UI.Components
         public static readonly DependencyProperty StatusProperty = DependencyProperty.Register("Status", typeof(Models.ConnectionState), typeof(Card), new PropertyMetadata(OnStatusChangedCallBack));
 
         /// <summary>
+        /// Indicates that the VPN status is not unprotected, triggering the card background to change.
+        /// </summary>
+        public static readonly DependencyProperty IsStableProperty = DependencyProperty.Register("IsStable", typeof(bool), typeof(Card), new PropertyMetadata(IsStableChangedCallBack));
+
+        /// <summary>
         /// Indicates that the VPN status is protected, trigger the ripple animation to start.
         /// </summary>
-        public static readonly DependencyProperty AnimateRippleProperty = DependencyProperty.Register("AnimateRipple", typeof(bool), typeof(Card), new PropertyMetadata(OnAnimateRippleChangedCallBack));
+        public static readonly DependencyProperty IsCardShownProperty = DependencyProperty.Register("IsCardShown", typeof(bool), typeof(Card), new PropertyMetadata(OnIsCardShownChangedCallBack));
 
         private const int SharpDxAvailabilityMaxRetries = 10;
         private Windows.SessionMonitor sessionMonitor;
@@ -70,19 +75,36 @@ namespace FirefoxPrivateNetwork.UI.Components
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the VPN status is protected, trigger the ripple animation to start.
+        /// Gets or sets a value indicating whether the tunnel is stable.
         /// </summary>
-        public bool AnimateRipple
+        public bool IsStable
         {
             get
             {
-                return (bool)GetValue(AnimateRippleProperty);
+                return (bool)GetValue(IsStableProperty);
             }
 
             set
             {
-                SetValue(AnimateRippleProperty, value);
-                OnPropertyChanged("AnimateRipple");
+                SetValue(IsStableProperty, value);
+                OnPropertyChanged("IsStable");
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the Card is in view.
+        /// </summary>
+        public bool IsCardShown
+        {
+            get
+            {
+                return (bool)GetValue(IsCardShownProperty);
+            }
+
+            set
+            {
+                SetValue(IsCardShownProperty, value);
+                OnPropertyChanged("IsCardShown");
             }
         }
 
@@ -99,13 +121,14 @@ namespace FirefoxPrivateNetwork.UI.Components
                 handler(this, e);
             }
 
-            if (propertyName == "AnimateRipple")
+            if (propertyName == "IsCardShown" || propertyName == "IsStable")
             {
                 SetRippleAnimation();
             }
 
             if (propertyName == "Status")
             {
+                SetRippleAnimation();
                 SetCardUI();
             }
         }
@@ -119,13 +142,27 @@ namespace FirefoxPrivateNetwork.UI.Components
             }
         }
 
-        private static void OnAnimateRippleChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        private static void IsStableChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             Card c = sender as Card;
             if (c != null)
             {
-                c.OnPropertyChanged("AnimateRipple");
+                c.OnPropertyChanged("IsStable");
             }
+        }
+
+        private static void OnIsCardShownChangedCallBack(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            Card c = sender as Card;
+            if (c != null)
+            {
+                c.OnPropertyChanged("IsCardShown");
+            }
+        }
+
+        private bool ShouldAnimateRipple()
+        {
+            return Status == Models.ConnectionState.Protected && IsCardShown && IsStable;
         }
 
         private void StartSessionMonitor()
@@ -163,7 +200,7 @@ namespace FirefoxPrivateNetwork.UI.Components
 
         private void SetRippleAnimation()
         {
-            if (AnimateRipple)
+            if (ShouldAnimateRipple())
             {
                 if (rippleAnimation == null)
                 {
@@ -347,7 +384,7 @@ namespace FirefoxPrivateNetwork.UI.Components
 
         private void RedrawRippleAnimation()
         {
-            if (Status == Models.ConnectionState.Protected)
+            if (ShouldAnimateRipple())
             {
                 ConstructRippleAnimation().ContinueWith(task => StartRippleAnimation());
             }

@@ -59,6 +59,11 @@ namespace FirefoxPrivateNetwork
         public static UIUpdaters.AccountInfoUpdater AccountInfoUpdater { get; set; }
 
         /// <summary>
+        /// Gets or sets the IP info updater.
+        /// </summary>
+        public static UIUpdaters.IpInfoUpdater IPInfoUpdater { get; set; }
+
+        /// <summary>
         /// Gets or sets the application version updater.
         /// </summary>
         public static UIUpdaters.VersionUpdater VersionUpdater { get; set; }
@@ -117,6 +122,7 @@ namespace FirefoxPrivateNetwork
             InitializeViewModels();
             InitializeWlanWatcher();
             InitializeCaptivePortalDetector();
+            InitializeIpInfo();
             InitializeUIUpdaters();
             InitializeCache();
         }
@@ -184,6 +190,15 @@ namespace FirefoxPrivateNetwork
         }
 
         /// <summary>
+        /// Initializes the IP information.
+        /// </summary>
+        public static void InitializeIpInfo()
+        {
+            var ipInfo = new FxA.IpInfo();
+            ipInfo.RetreiveIpInfo();
+        }
+
+        /// <summary>
         /// Initialize the UI updaters.
         /// </summary>
         public static void InitializeUIUpdaters()
@@ -191,6 +206,7 @@ namespace FirefoxPrivateNetwork
             ConnectionStatusUpdater = new UIUpdaters.ConnectionStatusUpdater(MainWindowViewModel);
             ServerListUpdater = new UIUpdaters.ServerListUpdater();
             AccountInfoUpdater = new UIUpdaters.AccountInfoUpdater(MainWindowViewModel);
+            IPInfoUpdater = new UIUpdaters.IpInfoUpdater();
             VersionUpdater = new UIUpdaters.VersionUpdater();
             ToastManager = new UIUpdaters.ToastManager();
             PingManager = new Network.Pinger();

@@ -19,6 +19,7 @@
     <system:String x:Key="drop-open">pack://application:,,,/UI/Resources/Icons/Generic/drop-open.svg</system:String>
     <system:String x:Key="dev">pack://application:,,,/UI/Resources/Icons/Generic/dev.png</system:String>
     <system:String x:Key="info-red">pack://application:,,,/UI/Resources/Icons/Generic/info-red.svg</system:String>
+    <system:String x:Key="info-white">pack://application:,,,/UI/Resources/Icons/Generic/info-white.svg</system:String>
     <system:String x:Key="info">pack://application:,,,/UI/Resources/Icons/Generic/info.svg</system:String>
     <system:String x:Key="languages">pack://application:,,,/UI/Resources/Icons/Generic/languages.svg</system:String>
     <system:String x:Key="list">pack://application:,,,/UI/Resources/Icons/Generic/list.svg</system:String>
