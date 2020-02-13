@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
+using System.Windows;
 using FirefoxPrivateNetwork.WCF;
 using FirefoxPrivateNetwork.Windows;
 using FirefoxPrivateNetwork.WireGuard;
@@ -64,7 +65,7 @@ namespace FirefoxPrivateNetwork
                 var runningWindow = User32.FindWindow(ProductConstants.TrayWindowClassName, string.Empty);
                 if (runningWindow != IntPtr.Zero)
                 {
-                    User32.SendMessage(runningWindow, User32.SwShow, IntPtr.Zero, string.Empty);
+                    User32.SendMessage(runningWindow, User32.WmShow, IntPtr.Zero, string.Empty);
                 }
 
                 Environment.Exit(1);

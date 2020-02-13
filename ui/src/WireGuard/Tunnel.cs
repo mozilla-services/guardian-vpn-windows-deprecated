@@ -192,7 +192,7 @@ namespace FirefoxPrivateNetwork.WireGuard
                 // Sends the connection statistics request to the broker
                 if (!QueryConnectionStatisticsFromBroker())
                 {
-                    Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.SetResult(true);
+                    Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.TrySetResult(true);
 
                     var newConnectionStatus = new Models.ConnectionStatus() { Status = Models.ConnectionState.Protected, ConnectionStability = Models.ConnectionStability.NoSignal };
                     Manager.ConnectionStatusUpdater.UpdateConnectionStatus(newConnectionStatus);

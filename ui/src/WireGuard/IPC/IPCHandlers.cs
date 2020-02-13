@@ -185,7 +185,7 @@ namespace FirefoxPrivateNetwork.WireGuard
         {
             var connectionStatus = Manager.Tunnel.ParseStatusResponse(cmd);
             Manager.ConnectionStatusUpdater.UpdateConnectionStatus(connectionStatus);
-            Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.SetResult(true);
+            Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.TrySetResult(true);
         }
 
         private static void BrokerHandleIPCDetectCaptivePortal(IPCMessage cmd, IPC ipc)
