@@ -13,9 +13,9 @@ namespace FirefoxPrivateNetwork.Windows
     public class User32
     {
         /// <summary>
-        /// SW_SHOW - shows the Window.
+        /// WM_SHOW - shows the Window.
         /// </summary>
-        public const int SwShow = 0x5;
+        public const int WmShow = 0x0018;
 
         /// <summary>
         /// WM_DESTROY - A message to destroy a window.

@@ -383,6 +383,7 @@
     <Compile Include="Update\UpdateHttpClient.cs" />
     <Compile Include="WCF\RootFingerprintRequest.cs" />
     <Compile Include="WCF\VersionRequest.cs" />
+    <Compile Include="Windows\SessionMonitor.cs" />
     <Compile Include="Windows\WlanApi.cs" />
     <Compile Include="Windows\WlanApiStructures\WlanApiAdditionalStructures.cs" />
     <Compile Include="WireGuard\BrokerService.cs">

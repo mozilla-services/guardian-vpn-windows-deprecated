@@ -6,6 +6,8 @@
              xmlns:lottieSharp="clr-namespace:LottieSharp;assembly=LottieSharp"
              xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI.Components"
              mc:Ignorable="d" 
+             Unloaded="Card_Unloaded"
+             IsVisibleChanged="Card_IsVisibleChanged"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <Storyboard x:Key="ShowBorder">

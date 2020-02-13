@@ -100,7 +100,7 @@ namespace FirefoxPrivateNetwork.NotificationArea
                     User32.PostQuitMessage(0);
                     return IntPtr.Zero;
 
-                case Windows.User32.SwShow:
+                case Windows.User32.WmShow:
                     Tray.ShowMainWindow();
                     return IntPtr.Zero;
 
