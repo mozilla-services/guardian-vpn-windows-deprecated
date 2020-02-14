@@ -39,11 +39,6 @@ namespace FirefoxPrivateNetwork.UI
         public string InstalledUICulture => CultureInfo.InstalledUICulture.ToString();
 
         /// <summary>
-        /// Gets a value indicating whether the "Allow local device access" checkbox is checked.
-        /// </summary>
-        public bool AllowLocalDeviceAccess => Manager.Settings.Network.AllowLocalDeviceAccess;
-
-        /// <summary>
         /// Gets the user's name which will be displayed in the settings card.
         /// </summary>
         public string UserDisplayName => Manager.Account.Config.FxALogin.User.DisplayName;
@@ -111,23 +106,16 @@ namespace FirefoxPrivateNetwork.UI
             mainWindow.NavigateToView(new NotificationsView(this), MainWindow.SlideDirection.Left);
         }
 
+        private void NavigateNetworkSettings(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+            mainWindow.NavigateToView(new NetworkSettingsView(this), MainWindow.SlideDirection.Left);
+        }
+
         private void RunOnStartup_Click(object sender, RoutedEventArgs e)
         {
             CheckBox runOnStartupCheckBox = sender as CheckBox;
             RunOnStartup = runOnStartupCheckBox.IsChecked ?? false;
-        }
-
-        private void AllowLocalDeviceAccessCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            CheckBox allowLocalDeviceAccessCheckBox = sender as CheckBox;
-
-            // Save the new Unsecured Network Alert settings
-            var networkSettings = Manager.Settings.Network;
-            networkSettings.AllowLocalDeviceAccess = allowLocalDeviceAccessCheckBox.IsChecked ?? false;
-            Manager.Settings.Network = networkSettings;
-
-            // Reconfigure the VPN allowed IPs
-            ProductConstants.AllowedIPs = Manager.Settings.Network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPsLocal : ProductConstants.DefaultAllowedIPs;
         }
 
         private void Feedback_Click(object sender, RoutedEventArgs e)

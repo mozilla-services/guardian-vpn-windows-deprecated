@@ -342,6 +342,7 @@
     <Compile Include="FxA\RangeConverter.cs" />
     <Compile Include="FxA\ServerList\VPNServer.cs" />
     <Compile Include="JSONStructures\BalrogResponse.cs" />
+    <Compile Include="Migrations\Settings.cs" />
     <Compile Include="Network\CaptivePortalDetection.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="UIUpdaters\ToastManager\EphemeralToastQueue.cs" />
@@ -349,6 +350,9 @@
     <Compile Include="UIUpdaters\ToastManager\ToastCollection.cs" />
     <Compile Include="UI\Components\Converters\EqualityConverter.cs" />
     <Compile Include="UI\Components\Converters\StringEmptyConverter.cs" />
+    <Compile Include="UI\Views\Settings\NetworkSettingsView.xaml.cs">
+      <DependentUpon>NetworkSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\Views\Settings\NotificationsView.xaml.cs">
       <DependentUpon>NotificationsView.xaml</DependentUpon>
     </Compile>
@@ -540,6 +544,10 @@
     <Page Include="UI\Resources\Animations\Animations.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Views\Settings\NetworkSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\Views\Settings\NotificationsView.xaml">
       <SubType>Designer</SubType>

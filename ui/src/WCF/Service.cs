@@ -52,8 +52,15 @@ namespace FirefoxPrivateNetwork.WCF
                 {
                     var configuration = new WireGuard.Config(ProductConstants.FirefoxPrivateNetworkConfFile);
 
+                    string address = Manager.Settings.Network.IPv4Address;
+
+                    if (Manager.Settings.Network.EnableIPv6)
+                    {
+                        address += "," + Manager.Settings.Network.IPv6Address;
+                    }
+
                     var currentServer = FxA.Cache.FxAServerList.GetServerByIndex(0);
-                    configuration.SetEndpoint(FxA.Cache.FxAServerList.GetServerIPByIndex(0), FxA.Cache.FxAServerList.GetServerPublicKeyByIndex(0), ProductConstants.AllowedIPs, currentServer.DNSServerAddress);
+                    configuration.SetEndpoint(FxA.Cache.FxAServerList.GetServerIPByIndex(0), FxA.Cache.FxAServerList.GetServerPublicKeyByIndex(0), ProductConstants.AllowedIPs, address, currentServer.DNSServerAddress);
 
                     bool result = Manager.Tunnel.Connect();
                     return new Response(result ? 200 : 500, result ? "successfully connect!" : "fail to connect");

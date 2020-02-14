@@ -25,6 +25,7 @@ about-page-title = Über
 feedback-page-title = Feedback
 language-page-title = Sprache
 notifications-page-title = Mitteilungen
+network-settings-page-title
 
 ## Urls
 terms-service-url-title = Nutzungsbedingungen
@@ -87,6 +88,10 @@ settings-local-device-access-checked-disabled-message = VPN muss vor der Deaktiv
 settings-local-device-access-unchecked-disabled-message = VPN muss vor der Aktivierung ausgeschaltet werden
 settings-captive-portal-title = Guest Wi-Fi portal alert
 settings-captive-portal-content = Get notified if a guest Wi-Fi portal is blocked due to VPN connection
+settings-enable-IPv6-title
+settings-enable-IPv6-content
+settings-enable-IPv6-checked-disabled-message = VPN muss vor der Deaktivierung ausgeschaltet werden
+settings-enable-IPv6-unchecked-disabled-message = VPN muss vor der Aktivierung ausgeschaltet werden
 
 ## About
 about-version-title = Version

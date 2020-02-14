@@ -242,6 +242,8 @@ namespace FirefoxPrivateNetwork
         /// </summary>
         public static void InitializeSettings()
         {
+            var migSettings = new Migrations.Settings();
+            migSettings.MigrateConfigAddressToSettingsFile();
             Settings = new Settings(ProductConstants.SettingsFile);
         }
 
