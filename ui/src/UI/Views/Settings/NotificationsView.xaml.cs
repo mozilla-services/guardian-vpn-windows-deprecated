@@ -29,7 +29,7 @@ namespace FirefoxPrivateNetwork.UI
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationsView"/> class.
         /// </summary>
-        /// <param name="parentView">Parent view control of the <see cref="AboutView"/> instance.</param>
+        /// <param name="parentView">Parent view control of the <see cref="NotificationsView"/> instance.</param>
         public NotificationsView(UserControl parentView)
         {
             this.parentView = parentView;

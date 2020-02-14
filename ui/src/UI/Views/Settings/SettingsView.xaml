@@ -40,7 +40,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="48" />
                     <RowDefinition Height="48" />
                     <RowDefinition Height="48" />
                     <RowDefinition Height="48" />
@@ -78,63 +78,9 @@
                         </StackPanel>
                     </Border>
                 </Grid>
-                
-                <!-- Local device access setting -->
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
-                    <StackPanel Margin="18,18,18,16">
-                        <CheckBox x:Name="AllowLocalDeviceAccessCheckBox" Content="{Binding Path=[settings-local-device-access-title]}" Click="AllowLocalDeviceAccessCheckBox_Click">
-                            <CheckBox.Style>
-                                <Style BasedOn="{StaticResource Checkbox}" TargetType="{x:Type CheckBox}">
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                    <Setter Property="IsChecked" Value="False" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SettingsView}}, Path=AllowLocalDeviceAccess}" Value="True">
-                                            <Setter Property="IsChecked" Value="True" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Status}" Value="0">
-                                            <Setter Property="IsEnabled" Value="True"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </CheckBox.Style>
-                        </CheckBox>
-                        <TextBlock Style="{StaticResource 'Byline 10'}" Foreground="{StaticResource 'Grey/Grey 40'}" Margin="38,0,0,0" Text="{Binding Path=[settings-local-device-access-content]}" />
-
-                        <!-- Local device access setting disabled message -->
-                        <StackPanel Orientation="Horizontal" Margin="42,8,0,0">
-                            <Image Source="{svgc:SvgImage Source={StaticResource 'info-red'}}" VerticalAlignment="Center" Width="16" Height="16" />
-                            <TextBlock x:Name="AllowLocalDeviceAccessCheckBoxDisabledMessage" Foreground="{StaticResource 'Red/Red 50'}" MaxWidth="244" Margin="8,2,0,0">
-                                <TextBlock.Style>
-                                    <Style BasedOn="{StaticResource 'Byline 10'}" TargetType="{x:Type TextBlock}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=AllowLocalDeviceAccessCheckBox, Path=IsChecked}" Value="True">
-                                                <Setter Property="Text" Value="{Binding Path=[settings-local-device-access-checked-disabled-message]}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding ElementName=AllowLocalDeviceAccessCheckBox, Path=IsChecked}" Value="False">
-                                                <Setter Property="Text" Value="{Binding Path=[settings-local-device-access-unchecked-disabled-message]}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <StackPanel.Style>
-                                <Style TargetType="{x:Type StackPanel}">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ElementName=AllowLocalDeviceAccessCheckBox, Path=IsEnabled}" Value="False">
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </StackPanel.Style>
-                        </StackPanel>
-                    </StackPanel>
-                    <Separator VerticalAlignment="Bottom" Width="288" Margin="55,0,16,0" BorderThickness="1" BorderBrush="{StaticResource 'Grey/Grey 10'}" />
-                </Grid>
 
                 <!-- Launch VPN on startup setting -->
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0">
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
                     <StackPanel Margin="0,0,0,8">
                         <CheckBox Margin="18" Content="{Binding Path=[settings-auto-launch]}" Click="RunOnStartup_Click">
                             <CheckBox.Style>
@@ -153,10 +99,15 @@
                 </Grid>
 
                 <!-- Notifications view navigation button -->
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="2" Grid.Column="0">
                     <uc:PageNavigation x:Name="NotificationsNavButton" Title="{Binding Path=[notifications-page-title]}" TitleIconUrl="{StaticResource 'notifications'}" Click="NavigateNotifications" />
                 </Grid>
-                
+
+                <!-- Notifications view navigation button -->
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+                    <uc:PageNavigation x:Name="NetworkSettingsNavButton" Title="{Binding Path=[network-settings-page-title]}" TitleIconUrl="{StaticResource 'wifi'}" Click="NavigateNetworkSettings" />
+                </Grid>
+
                 <!-- Language view navigation button -->
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0">
                     <uc:PageNavigation x:Name="LanguageNavButton" Title="{Binding Path=[language-page-title]}" TitleIconUrl="{StaticResource 'languages'}" Click="NavigateLanguage" />

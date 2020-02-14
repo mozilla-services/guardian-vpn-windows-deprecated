@@ -91,11 +91,16 @@ namespace FirefoxPrivateNetwork.FxA
             var deviceName = string.Format("{0} ({1} {2})", System.Environment.MachineName, System.Environment.OSVersion.Platform, System.Environment.OSVersion.Version);
             var deviceAddResponse = devices.AddDevice(deviceName, keys.Public);
 
-            // Upon successful addition of a new device, save the device interface to the WireGuard configuration file
+            // Upon successful addition of a new device, save the device interface to the WireGuard configuration file and IP addresses to settings file
             if (deviceAddResponse != null)
             {
                 var conf = new WireGuard.Config(keys.Private, deviceAddResponse.IPv4Address + "," + deviceAddResponse.IPv6Address, string.Empty);
                 conf.WriteToFile(ProductConstants.FirefoxPrivateNetworkConfFile);
+
+                var networkSettings = Manager.Settings.Network;
+                networkSettings.IPv4Address = deviceAddResponse.IPv4Address;
+                networkSettings.IPv6Address = deviceAddResponse.IPv6Address;
+                Manager.Settings.Network = networkSettings;
 
                 return true;
             }

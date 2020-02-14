@@ -25,6 +25,7 @@ about-page-title = About
 feedback-page-title = Give feedback
 language-page-title = Language
 notifications-page-title = Notifications
+network-settings-page-title = Network settings
 
 ## Urls
 terms-service-url-title = Terms of Service
@@ -87,6 +88,10 @@ settings-local-device-access-checked-disabled-message = VPN must be off before d
 settings-local-device-access-unchecked-disabled-message = VPN must be off before enabling
 settings-captive-portal-title = Guest Wi-Fi portal alert
 settings-captive-portal-content = Get notified if a guest Wi-Fi portal is blocked due to VPN connection
+settings-enable-IPv6-title = Enable IPv6
+settings-enable-IPv6-content = Push the internet forward with the latest version of the Internet Protocol
+settings-enable-IPv6-checked-disabled-message = VPN must be off before disabling
+settings-enable-IPv6-unchecked-disabled-message = VPN must be off before enabling
 
 ## About
 about-version-title = Release version

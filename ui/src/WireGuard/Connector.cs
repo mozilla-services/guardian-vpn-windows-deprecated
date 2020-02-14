@@ -23,9 +23,16 @@ namespace FirefoxPrivateNetwork.WireGuard
             ErrorHandling.DebugLogger.LogDebugMsg("Connect command initiated");
             var configuration = new WireGuard.Config(ProductConstants.FirefoxPrivateNetworkConfFile);
 
+            string address = Manager.Settings.Network.IPv4Address;
+
+            if (Manager.Settings.Network.EnableIPv6)
+            {
+                address += "," + Manager.Settings.Network.IPv6Address;
+            }
+
             ErrorHandling.DebugLogger.LogDebugMsg("Setting endpoint to", Manager.MainWindowViewModel.ServerSelected.Endpoint);
             var currentServer = FxA.Cache.FxAServerList.GetServerByIP(Manager.MainWindowViewModel.ServerSelected.Endpoint);
-            configuration.SetEndpoint(currentServer.GetEndpointWithRandomPort(), currentServer.PublicKey, ProductConstants.AllowedIPs, currentServer.DNSServerAddress);
+            configuration.SetEndpoint(currentServer.GetEndpointWithRandomPort(), currentServer.PublicKey, ProductConstants.AllowedIPs, address, currentServer.DNSServerAddress);
 
             if (switchServer && Manager.MainWindowViewModel.Status == Models.ConnectionState.Protected)
             {

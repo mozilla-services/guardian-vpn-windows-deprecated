@@ -86,8 +86,9 @@ namespace FirefoxPrivateNetwork.WireGuard
         /// <param name="endpoint">The endpoint of the peer.</param>
         /// <param name="publicKey">The public key of the peer.</param>
         /// <param name="allowedIPs">A space-delimited string of the allowed IPs for the peer.</param>
+        /// <param name="address"> The IP address for the Interface. </param>
         /// <param name="dns">The DNS server address of the interface.</param>
-        public void SetEndpoint(string endpoint, string publicKey, string allowedIPs, string dns)
+        public void SetEndpoint(string endpoint, string publicKey, string allowedIPs, string address, string dns)
         {
             var newPeer = Peer;
             newPeer.Endpoint = endpoint;
@@ -96,6 +97,7 @@ namespace FirefoxPrivateNetwork.WireGuard
             Peer = newPeer;
 
             var newInterface = Interface;
+            newInterface.Address = address;
             newInterface.DNS = dns;
             Interface = newInterface;
 
