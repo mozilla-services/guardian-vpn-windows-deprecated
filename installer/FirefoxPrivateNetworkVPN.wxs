@@ -70,7 +70,7 @@
 			Components
 		-->
 		<ComponentGroup Id="FirefoxPrivateNetworkVPNComponents">
-			<Component Directory="FirefoxPrivateNetworkVPNFolder" Id="FirefoxPrivateNetworkVPNExecutable" Guid="db67026d-f0bb-4656-8833-7914bac2916e">
+			<Component Directory="FirefoxPrivateNetworkVPNFolder" Id="FirefoxPrivateNetworkVPNExecutable" Guid="dab6f29e-c825-4ee8-8815-417761fc6447">
 				<File Id="FirefoxPrivateNetworkVPNExecutable" Source="../ui/bin/$(var.Platform)/Release/FirefoxPrivateNetworkVPN.exe" KeyPath="yes">
 					<Shortcut Id="FirefoxPrivateNetworkVPNShortcut" Directory="ProgramMenuFolder" Name="Firefox Private Network VPN" Description="A fast, secure and easy to use VPN (Virtual Private Network)" WorkingDirectory="FirefoxPrivateNetworkVPNFolder" Advertise="yes" />
 				</File>
@@ -90,7 +90,7 @@
 					Arguments="broker"
 					ErrorControl="normal"
 					Vital="yes" />
-					
+
 				<util:ServiceConfig 
 					ServiceName="FirefoxPrivateNetworkVPNBroker" 
 					FirstFailureActionType="restart" 
