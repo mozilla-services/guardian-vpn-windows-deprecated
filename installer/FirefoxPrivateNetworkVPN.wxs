@@ -70,7 +70,7 @@
 			Components
 		-->
 		<ComponentGroup Id="FirefoxPrivateNetworkVPNComponents">
-			<Component Directory="FirefoxPrivateNetworkVPNFolder" Id="FirefoxPrivateNetworkVPNExecutable" Guid="dab6f29e-c825-4ee8-8815-417761fc6447">
+			<Component Directory="FirefoxPrivateNetworkVPNFolder" Id="FirefoxPrivateNetworkVPNExecutable" Guid="db67026d-f0bb-4656-8833-7914bac2916e">
 				<File Id="FirefoxPrivateNetworkVPNExecutable" Source="../ui/bin/$(var.Platform)/Release/FirefoxPrivateNetworkVPN.exe" KeyPath="yes">
 					<Shortcut Id="FirefoxPrivateNetworkVPNShortcut" Directory="ProgramMenuFolder" Name="Firefox Private Network VPN" Description="A fast, secure and easy to use VPN (Virtual Private Network)" WorkingDirectory="FirefoxPrivateNetworkVPNFolder" Advertise="yes" />
 				</File>
@@ -90,6 +90,15 @@
 					Arguments="broker"
 					ErrorControl="normal"
 					Vital="yes" />
+					
+				<util:ServiceConfig 
+					ServiceName="FirefoxPrivateNetworkVPNBroker" 
+					FirstFailureActionType="restart" 
+					SecondFailureActionType="restart" 
+					ThirdFailureActionType="none" 
+					ResetPeriodInDays="1" 
+					RestartServiceDelayInSeconds="5" />
+
 				<ServiceControl Id="StartService" Start="install" Stop="both" Remove="both" Name="FirefoxPrivateNetworkVPNBroker" Wait="yes" />
 
 				<!-- Remove Tunnel Service, if running -->
@@ -126,9 +135,10 @@
 		<!--
 			Force application closed
 		-->
-		<util:CloseApplication Id="CloseApplication" Target="FirefoxPrivateNetworkVPN.exe" RebootPrompt="no" TerminateProcess="0" Timeout="1" />
+		<Property Id="QtExecCmdLine" Value='"[#SystemFolder]taskkill.exe" /F /IM FirefoxPrivateNetworkVPN.exe'/>
+		<CustomAction Id="CloseApplication" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="immediate" Return="ignore"/>
 		<InstallExecuteSequence>
-			<Custom Action="WixCloseApplications" After="StopServices" />
+			<Custom Action="CloseApplication" After="StopServices" />
 		</InstallExecuteSequence>
 	</Product>
 </Wix>
