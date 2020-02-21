@@ -55,6 +55,7 @@ namespace FirefoxPrivateVPNUITest
                 Assert.Fail($"Unable to find element with {findMethod.Method.Name} - {selector}");
             }
 
+            time.Reset();
             return element;
         }
     }

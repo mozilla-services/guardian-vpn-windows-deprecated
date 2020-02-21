@@ -83,6 +83,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Screens\DeviceScreen.cs" />
     <Compile Include="Screens\MainScreen.cs" />
     <Compile Include="Screens\LastOnboardingScreen.cs" />
     <Compile Include="Screens\OnboardingScreen.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Sessions\DesktopSession.cs" />
     <Compile Include="Sessions\FirefoxPrivateVPNSession.cs" />
     <Compile Include="Tests\ConnectTest.cs" />
+    <Compile Include="Tests\DeviceTest.cs" />
     <Compile Include="Tests\ExistedUserSignInTest.cs" />
     <Compile Include="Tests\LandingScreenTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
