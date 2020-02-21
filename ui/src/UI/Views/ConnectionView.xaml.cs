@@ -3,11 +3,13 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using FirefoxPrivateNetwork.FxA;
 
 namespace FirefoxPrivateNetwork.UI
 {
@@ -24,7 +26,7 @@ namespace FirefoxPrivateNetwork.UI
             InitializeComponent();
             DataContext = Manager.MainWindowViewModel;
 
-            var selectedServerIndex = FxA.Cache.FxAServerList.GetServerIndexByCountry(Manager.MainWindowViewModel.CountryServerList, Manager.MainWindowViewModel.ServerListSelectedItem.Country);
+            var selectedServerIndex = FxA.Cache.FxAServerList.GetServerIndexByCountry(Manager.MainWindowViewModel.CountryServerList, Manager.MainWindowViewModel.ServerCityListSelectedItem.Country);
             CountryServerList.Loaded += (s, e) => CountryServerList.ScrollIntoView(Manager.MainWindowViewModel.CountryServerList[selectedServerIndex]);
         }
 
@@ -38,17 +40,18 @@ namespace FirefoxPrivateNetwork.UI
         {
             var selectedItem = ((sender as RadioButton)?.Tag as ListViewItem)?.DataContext;
 
-            if (selectedItem is Models.ServerListItem selectedServer)
+            if (selectedItem is Models.CityServerListItem selectedCity)
             {
-                var previousSelectedItem = Manager.MainWindowViewModel.ServerListSelectedItem;
+                var previousSelectedCity = Manager.MainWindowViewModel.ServerCityListSelectedItem;
 
-                // Set the selected server
-                Manager.MainWindowViewModel.ServerListSelectedItem = selectedServer;
+                // Set the selected server city and server
+                Manager.MainWindowViewModel.ServerCityListSelectedItem = selectedCity;
+                Manager.MainWindowViewModel.UpdateServerSelection();
 
                 // Switch servers if presently connected, do nothing otherwise
                 if (Manager.MainWindowViewModel.Status == Models.ConnectionState.Protected)
                 {
-                    WireGuard.Connector.Connect(switchServer: true, previousServerCity: previousSelectedItem.Name, switchServerCity: selectedServer.Name);
+                    WireGuard.Connector.Connect(switchServer: true, previousServerCity: previousSelectedCity.City, switchServerCity: selectedCity.City);
                 }
 
                 NavigateMain(sender, e);

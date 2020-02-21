@@ -88,7 +88,7 @@ namespace FirefoxPrivateNetwork.WCF
         /// <returns>List of server list items.</returns>
         [OperationContract]
         [WebInvoke(Method = "GET", ResponseFormat = WebMessageFormat.Json)]
-        List<ServerListItem> ServerList();
+        List<CityServerListItem> ServerCityList();
 
         /// <summary>
         /// Device list stub.

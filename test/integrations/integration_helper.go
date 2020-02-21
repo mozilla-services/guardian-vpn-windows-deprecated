@@ -81,7 +81,7 @@ func SubscriptionCheck(t *testing.T) {
 }
 
 func ListServers(t *testing.T) {
-	command := BASEURL + "/ServerList"
+	command := BASEURL + "/ServerCityList"
 	res := getJson(command)
 	servers := res.MustArray()
 	assert.Equal(t, true, len(servers) >= 0)

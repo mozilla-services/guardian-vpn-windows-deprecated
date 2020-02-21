@@ -29,7 +29,8 @@ namespace FirefoxPrivateNetwork.ViewModels
 
         // Server List Properties
         private List<Models.CountryServerListItem> countryServerList;
-        private Models.ServerListItem serverListSelectedItem;
+        private Models.CityServerListItem serverCityListSelectedItem;
+        private Models.ServerListItem serverSelected;
 
         // Device Management Properties
         private IEnumerable<Models.DeviceListItem> deviceList;
@@ -326,30 +327,36 @@ namespace FirefoxPrivateNetwork.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the servers in the server list.
+        /// Gets or sets the server city item selected.
         /// </summary>
-        public Models.ServerListItem ServerListSelectedItem
+        public Models.CityServerListItem ServerCityListSelectedItem
         {
             get
             {
-                return serverListSelectedItem;
+                return serverCityListSelectedItem;
             }
 
             set
             {
-                serverListSelectedItem = value;
+                serverCityListSelectedItem = value;
                 OnPropertyChanged("ServerListSelectedItem");
             }
         }
 
         /// <summary>
-        /// Gets the server list count.
+        /// Gets or sets the servers in the selected city server list.
         /// </summary>
-        public int ServerListCount
+        public Models.ServerListItem ServerSelected
         {
             get
             {
-                return FxA.Cache.FxAServerList.GetServerList().Count();
+                return serverSelected;
+            }
+
+            set
+            {
+                serverSelected = value;
+                OnPropertyChanged("CityServerSelected");
             }
         }
 
@@ -556,12 +563,12 @@ namespace FirefoxPrivateNetwork.ViewModels
         public void RefreshServerListSelectedItem(bool initialLoad = false)
         {
             // Cannot set selected item if server list contains no servers
-            if (FxA.Cache.FxAServerList.GetServerList().Count() == 0)
+            if (FxA.Cache.FxAServerList.GetServerCitiesList().Count() == 0)
             {
                 return;
             }
 
-            // Set the selected item of the server list to the server specificed in the current WireGuard configuration.  If it doesn't exist, default to the first server
+            // Set the selected item of the server list to the server specificed in the current WireGuard configuration.  If it doesn't exist, default to random server in US
             try
             {
                 var previouslySelectedServerIndex = 0;
@@ -577,25 +584,39 @@ namespace FirefoxPrivateNetwork.ViewModels
                 else
                 {
                     // Get the selected server prior to server list refresh
-                    previouslySelectedServerIndex = FxA.Cache.FxAServerList.GetServerIndexByIP(serverListSelectedItem.Endpoint);
+                    previouslySelectedServerIndex = FxA.Cache.FxAServerList.GetServerIndexByIP(ServerSelected.Endpoint);
                 }
 
-                serverListSelectedItem = FxA.Cache.FxAServerList.GetServerList()[previouslySelectedServerIndex];
+                var selectedServerCity = FxA.Cache.FxAServerList.GetServerItems()[previouslySelectedServerIndex].City;
+                ServerCityListSelectedItem = FxA.Cache.FxAServerList.GetServerCitiesList().FirstOrDefault(x => x.City == selectedServerCity);
             }
             catch (Exception)
             {
                 Random rand = new Random();
-                var serversInDefaultServerCounty = FxA.Cache.FxAServerList.GetServerList().Where(x => x.Country == DefaultServerCountry);
+                var serverCitiesInDefaultServerCounty = FxA.Cache.FxAServerList.GetServerCitiesList().Where(x => x.Country == DefaultServerCountry);
 
-                if (serversInDefaultServerCounty.Count() > 0)
+                if (serverCitiesInDefaultServerCounty.Count() > 0)
                 {
-                    serverListSelectedItem = serversInDefaultServerCounty.ElementAt(rand.Next(0, serversInDefaultServerCounty.Count()));
+                    ServerCityListSelectedItem = serverCitiesInDefaultServerCounty.ElementAt(rand.Next(0, serverCitiesInDefaultServerCounty.Count()));
                 }
                 else
                 {
-                    serverListSelectedItem = FxA.Cache.FxAServerList.GetServerList()[rand.Next(0, FxA.Cache.FxAServerList.GetServerList().Count)];
+                    ServerCityListSelectedItem = FxA.Cache.FxAServerList.GetServerCitiesList()[rand.Next(0, FxA.Cache.FxAServerList.GetServerCitiesList().Count)];
                 }
             }
+            finally
+            {
+                UpdateServerSelection();
+            }
+        }
+
+        /// <summary>
+        /// Updates the selected server for connection.
+        /// </summary>
+        public void UpdateServerSelection()
+        {
+            var server = FxA.Cache.FxAServerList.SelectServer(ServerCityListSelectedItem);
+            ServerSelected = ServerCityListSelectedItem.Servers.FirstOrDefault(x => x.Endpoint == server.Endpoint);
         }
 
         /// <summary>

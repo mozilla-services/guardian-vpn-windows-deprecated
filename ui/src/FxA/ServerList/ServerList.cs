@@ -19,7 +19,7 @@ namespace FirefoxPrivateNetwork.FxA
     public class ServerList
     {
         private const string DefaultServerCountry = "USA";
-        private List<Models.ServerListItem> serverData;
+        private List<Models.CityServerListItem> serverCityData;
         private Dictionary<int, VPNServer> vpnServers;
 
         /// <summary>
@@ -27,17 +27,17 @@ namespace FirefoxPrivateNetwork.FxA
         /// </summary>
         public ServerList()
         {
-            serverData = new List<Models.ServerListItem>();
+            serverCityData = new List<Models.CityServerListItem>();
             vpnServers = new Dictionary<int, VPNServer>();
         }
 
         /// <summary>
-        /// Gets the server list to be displayed.
+        /// Gets the server city list to be displayed.
         /// </summary>
-        /// <returns>A list of <see cref="Models.ServerListItem"/> objects.</returns>
-        public List<Models.ServerListItem> GetServerList()
+        /// <returns>A list of <see cref="Models.CityServerListItem"/> objects.</returns>
+        public List<Models.CityServerListItem> GetServerCitiesList()
         {
-            return serverData;
+            return serverCityData;
         }
 
         /// <summary>
@@ -48,11 +48,11 @@ namespace FirefoxPrivateNetwork.FxA
         {
             // Group the servers by country
             var countryServerList = new List<Models.CountryServerListItem>();
-            var groupedCountryServerList = serverData
+            var groupedCountryServerList = serverCityData
                 .GroupBy(s => s.Country)
                 .ToDictionary(grp => grp.Key, grp => grp.ToList());
 
-            foreach (KeyValuePair<string, List<Models.ServerListItem>> countryItem in groupedCountryServerList)
+            foreach (KeyValuePair<string, List<Models.CityServerListItem>> countryItem in groupedCountryServerList)
             {
                 // Get the country flag icon
                 var countryFlag = Application.Current.TryFindResource(countryItem.Key);
@@ -92,7 +92,6 @@ namespace FirefoxPrivateNetwork.FxA
                 // Gets index of a random server in the default server country
                 Random rand = new Random();
                 var serversInDefaultServerCounty = vpnServers.Where(x => x.Value.Country == DefaultServerCountry).ToDictionary(x => x.Key, x => x.Value);
-                serverIndex = serversInDefaultServerCounty.ElementAt(rand.Next(0, serversInDefaultServerCounty.Count)).Key;
 
                 if (serversInDefaultServerCounty.Count() > 0)
                 {
@@ -277,15 +276,17 @@ namespace FirefoxPrivateNetwork.FxA
 
             // Sort the server list
             newVPNServers = SortServerList(newVPNServers);
-            List<Models.ServerListItem> newServerData = new List<Models.ServerListItem>();
+            List<Models.CityServerListItem> newServerData = new List<Models.CityServerListItem>();
 
             var groupedServersByCity = newVPNServers.GroupBy(s => s.Value.City).ToDictionary(grp => grp.Key, grp => grp.ToList());
 
             foreach (var serverCity in groupedServersByCity)
             {
+                List<Models.ServerListItem> cityServers = new List<Models.ServerListItem>();
+
                 for (int i = 0; i < serverCity.Value.Count; i++)
                 {
-                    newServerData.Add(new Models.ServerListItem
+                    cityServers.Add(new Models.ServerListItem
                     {
                         Country = serverCity.Value[i].Value.Country,
                         City = serverCity.Value[i].Value.City,
@@ -294,9 +295,16 @@ namespace FirefoxPrivateNetwork.FxA
                         Endpoint = serverCity.Value[i].Value.Endpoint,
                     });
                 }
+
+                newServerData.Add(new Models.CityServerListItem
+                {
+                    Country = serverCity.Value[0].Value.Country,
+                    City = serverCity.Key,
+                    Servers = cityServers,
+                });
             }
 
-            serverData = newServerData;
+            serverCityData = newServerData;
             vpnServers = newVPNServers;
         }
 
@@ -309,6 +317,38 @@ namespace FirefoxPrivateNetwork.FxA
         {
             var sortedServerList = from server in vpnServers orderby server.Value.Country ascending, server.Value.City ascending, server.Value.Weight descending select server;
             return sortedServerList.ToDictionary(pair => pair.Key, pair => pair.Value);
+        }
+
+        /// <summary>
+        /// Chooses a server from the selected server city according to server weights.
+        /// </summary>
+        /// <param name="serverCityItem">Selected server city for connection.</param>
+        /// <returns>VPN server selected for connection.</returns>
+        public VPNServer SelectServer(Models.CityServerListItem serverCityItem)
+        {
+            var city = serverCityItem.City;
+
+            Dictionary<int, VPNServer> servers = new Dictionary<int, VPNServer>();
+            servers = GetServerItems().Where(x => x.Value.City == city).ToDictionary(x => x.Key, x => x.Value);
+
+            var weightSum = servers.Sum(server => server.Value.Weight);
+
+            Random rand = new Random();
+            int r = rand.Next(0, weightSum + 1);
+
+            VPNServer serverSelection = new VPNServer();
+
+            foreach (var server in servers)
+            {
+                r -= server.Value.Weight;
+                if (r <= 0)
+                {
+                    serverSelection = server.Value;
+                    break;
+                }
+            }
+
+            return serverSelection;
         }
     }
 }

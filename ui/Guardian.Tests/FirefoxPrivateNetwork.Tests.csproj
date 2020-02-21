@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerList\ServerSelectionTest.cs" />
     <Compile Include="ServerList\SortingAndRetrievalTest.cs" />
     <Compile Include="ServerList\RandomPortSelectionTest.cs" />
     <Compile Include="Versioning\VersioningTest.cs" />

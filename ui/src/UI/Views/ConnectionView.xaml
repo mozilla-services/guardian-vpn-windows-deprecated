@@ -175,7 +175,7 @@
                                                 <DataTrigger.Binding>
                                                     <MultiBinding Converter="{StaticResource EqualityConverter}">
                                                         <Binding Path="Country" Mode="OneTime" />
-                                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:ConnectionView}}" Path="DataContext.ServerListSelectedItem.Country" UpdateSourceTrigger="PropertyChanged" Mode="OneTime" />
+                                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:ConnectionView}}" Path="DataContext.ServerCityListSelectedItem.Country" UpdateSourceTrigger="PropertyChanged" Mode="OneTime" />
                                                     </MultiBinding>
                                                 </DataTrigger.Binding>
                                                 <Setter Property="IsExpanded" Value="True" />
@@ -215,15 +215,15 @@
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
                                             <!-- City server radio button -->
-                                            <RadioButton Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Margin="50,13,0,13" GroupName="SelectedServer" Content="{Binding Name}" Click="RadioButton_Click">
+                                            <RadioButton Tag="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Margin="50,13,0,13" GroupName="SelectedServer" Content="{Binding City}" Click="RadioButton_Click">
                                                 <RadioButton.Style>
                                                     <Style BasedOn="{StaticResource Radio}" TargetType="{x:Type RadioButton}">
                                                         <Style.Triggers>
                                                             <DataTrigger Value="True">
                                                                 <DataTrigger.Binding>
                                                                     <MultiBinding Converter="{StaticResource EqualityConverter}">
-                                                                        <Binding Path="Endpoint" Mode="OneWay" />
-                                                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:ConnectionView}}" Path="DataContext.ServerListSelectedItem.Endpoint" UpdateSourceTrigger="PropertyChanged" Mode="OneWay" />
+                                                                        <Binding Path="City" Mode="OneWay" />
+                                                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:ConnectionView}}" Path="DataContext.ServerSelected.City" UpdateSourceTrigger="PropertyChanged" Mode="OneWay" />
                                                                     </MultiBinding>
                                                                 </DataTrigger.Binding>
                                                                 <Setter Property="IsChecked" Value="True" />
