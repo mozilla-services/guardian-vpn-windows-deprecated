@@ -152,9 +152,9 @@ namespace FirefoxPrivateNetwork.WCF
         /// Retrieve server list.
         /// </summary>
         /// <returns>List of ServerListItems.</returns>
-        public List<ServerListItem> ServerList()
+        public List<CityServerListItem> ServerCityList()
         {
-            return FxA.Cache.FxAServerList.GetServerList();
+            return FxA.Cache.FxAServerList.GetServerCitiesList();
         }
 
         /// <summary>

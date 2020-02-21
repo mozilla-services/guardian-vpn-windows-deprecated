@@ -62,7 +62,7 @@ namespace FirefoxPrivateNetwork.Network
                 {
                     if (Manager.MainWindowViewModel.Status == Models.ConnectionState.Protected)
                     {
-                        var currentServer = FxA.Cache.FxAServerList.GetServerByIP(Manager.MainWindowViewModel.ServerListSelectedItem.Endpoint);
+                        var currentServer = FxA.Cache.FxAServerList.GetServerByIP(Manager.MainWindowViewModel.ServerSelected.Endpoint);
                         Ping(currentServer.DNSServerAddress);
                     }
 

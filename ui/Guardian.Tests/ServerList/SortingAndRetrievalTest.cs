@@ -9,14 +9,14 @@ namespace FirefoxPrivateNetwork.Tests.ServerList
     class SortingAndRetrievalTest
     {
         private FxA.ServerList servers;
-        private List<Models.ServerListItem> serverList;
+        private List<Models.CityServerListItem> serverCityList;
 
         [SetUp]
         public void SetupServerListTest()
         {
             servers = new FxA.ServerList();
             servers.LoadServerDataFromFile(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Fixtures", "servers.json"));
-            serverList = servers.GetServerList();
+            serverCityList = servers.GetServerCitiesList();
         }
 
         [Test]
@@ -25,7 +25,7 @@ namespace FirefoxPrivateNetwork.Tests.ServerList
             // For test coverage purposes, we need to call this again
             servers.LoadServerDataFromFile(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Fixtures", "servers.json"));
 
-            Assert.AreEqual(9, serverList.Count);
+            Assert.AreEqual(5, serverCityList.Count);
 
             var vpnServerItems = servers.GetServerItems();
             Assert.AreEqual(9, vpnServerItems.Count);
@@ -77,12 +77,22 @@ namespace FirefoxPrivateNetwork.Tests.ServerList
         }
 
         [Test]
-        public void TestGetServerList()
+        public void TestGetServerCityList()
         {
-            var testServers = servers.GetServerList();
-            Assert.AreEqual(9, testServers.Count);
+            var testServerCities = servers.GetServerCitiesList();
+            Assert.AreEqual(5, testServerCities.Count);
 
-            var testServer = testServers[0];
+            var testCity = testServerCities[0];
+            Assert.AreEqual("Wien", testCity.City);
+        }
+
+        [Test]
+        public void TestGetServerSelection()
+        {
+            var testServerCities = servers.GetServerCitiesList();
+            Assert.AreEqual(5, testServerCities.Count);
+
+            var testServer = testServerCities[0].Servers[0];
             Assert.AreEqual("Wien 1", testServer.Name);
         }
 

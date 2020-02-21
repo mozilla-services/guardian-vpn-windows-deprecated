@@ -24,7 +24,7 @@ namespace FirefoxPrivateNetwork.Models
         /// <summary>
         /// Gets or sets the list of servers available within this country.
         /// </summary>
-        public List<ServerListItem> Servers { get; set; }
+        public List<CityServerListItem> Servers { get; set; }
 
         /// <summary>
         /// Gets the name of the country.

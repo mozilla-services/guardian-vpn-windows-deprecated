@@ -40,12 +40,12 @@ namespace FirefoxPrivateNetwork.UI
 
         private void InitializeConnectionNavButton()
         {
-            if (Manager.MainWindowViewModel.ServerListSelectedItem == null)
+            if (Manager.MainWindowViewModel.ServerCityListSelectedItem == null)
             {
                 return;
             }
 
-            var selectedServer = FxA.Cache.FxAServerList.GetServerByIP(Manager.MainWindowViewModel.ServerListSelectedItem.Endpoint);
+            var selectedServer = FxA.Cache.FxAServerList.GetServerByIP(Manager.MainWindowViewModel.ServerSelected.Endpoint);
 
             if (selectedServer != null)
             {
