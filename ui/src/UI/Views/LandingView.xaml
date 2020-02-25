@@ -8,6 +8,36 @@
              mc:Ignorable="d" 
              VerticalContentAlignment="Top"
              d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+    <UserControl.Resources>
+        <Storyboard x:Key="storyboard">
+            <ObjectAnimationUsingKeyFrames
+              Storyboard.TargetProperty="Foreground"
+              Duration="0:0:0.1">
+                <ObjectAnimationUsingKeyFrames.KeyFrames>
+                    <DiscreteObjectKeyFrame KeyTime="0:0:0.1" Value="{StaticResource 'Blue/Blue 80'}"/>
+                </ObjectAnimationUsingKeyFrames.KeyFrames>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Style TargetType="{x:Type Hyperlink}">
+            <Setter Property="Foreground" Value="{StaticResource 'Blue/Blue 50'}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource 'Blue/Blue 70'}" />
+                    <Trigger.ExitActions>
+                        <RemoveStoryboard BeginStoryboardName="beginStoryboard"/>
+                    </Trigger.ExitActions>
+                </Trigger>
+                <EventTrigger RoutedEvent="PreviewMouseLeftButtonDown">
+                    <BeginStoryboard Storyboard="{StaticResource storyboard}" x:Name="beginStoryboard"/>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="PreviewMouseLeftButtonUp">
+                    <RemoveStoryboard BeginStoryboardName="beginStoryboard"/>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid Height="454" Width="360">
             <Grid.ColumnDefinitions>
@@ -41,9 +71,9 @@
             <!-- Learn more link -->
             <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
                 <TextBlock AutomationProperties.LabeledBy="{Binding ElementName=LearnMoreLabel}" Style="{StaticResource 'Body 10'}" Foreground="{StaticResource 'Blue/Blue 50'}" TextDecorations="{x:Null}" Margin="0,0,0,32">
-                        <Hyperlink AutomationProperties.Name="{Binding ElementName=LearnMoreLabel, Path=Text}" Click="NavigateOnboarding1" TextDecorations="{x:Null}">
-                            <TextBlock Name="LearnMoreLabel" Text="{Binding Path=[nux-learn-more]}"/>
-                        </Hyperlink>
+                    <Hyperlink AutomationProperties.Name="{Binding ElementName=LearnMoreLabel, Path=Text}" Click="NavigateOnboarding1" TextDecorations="{x:Null}">
+                        <TextBlock Name="LearnMoreLabel" Text="{Binding Path=[nux-learn-more]}"/>
+                    </Hyperlink>
                 </TextBlock>
             </Grid>
         </Grid>
