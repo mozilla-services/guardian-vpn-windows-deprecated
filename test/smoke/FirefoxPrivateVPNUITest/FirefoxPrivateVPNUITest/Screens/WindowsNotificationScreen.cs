@@ -5,8 +5,6 @@
 namespace FirefoxPrivateVPNUITest.Screens
 {
     using System;
-    using System.Threading;
-    using OpenQA.Selenium;
     using OpenQA.Selenium.Appium;
     using OpenQA.Selenium.Appium.Windows;
 
@@ -27,7 +25,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         {
             try
             {
-                WindowsElement notification = desktopSession.WaitUntilFindElement(desktopSession.FindElementByAccessibilityId, "NormalToastView");
+                WindowsElement notification = Utils.WaitUntilFindElement(desktopSession.FindElementByAccessibilityId, "NormalToastView");
                 this.titleText = notification.FindElementByAccessibilityId("TitleText");
                 this.messageText = notification.FindElementByAccessibilityId("MessageText");
                 this.dismissButton = notification.FindElementByAccessibilityId("DismissButton");
@@ -35,7 +33,7 @@ namespace FirefoxPrivateVPNUITest.Screens
             catch (Exception)
             {
                 desktopSession.FindElementByName("Action Center").Click();
-                var actionCenterWindow = desktopSession.WaitUntilFindElement(desktopSession.FindElementByName, "Action center");
+                var actionCenterWindow = Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Action center");
                 var notification = actionCenterWindow.FindElementByName("Notifications from Firefox Private Network VPN");
                 var latestNotification = notification.FindElementByClassName("ListViewItem");
                 this.titleText = latestNotification.FindElementByAccessibilityId("Title");

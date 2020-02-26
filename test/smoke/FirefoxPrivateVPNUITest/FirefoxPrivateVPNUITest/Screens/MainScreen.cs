@@ -16,7 +16,8 @@ namespace FirefoxPrivateVPNUITest.Screens
     {
         private AppiumWebElement titleElement;
         private AppiumWebElement subtitleElement;
-        private AppiumWebElement settingButton;
+        private AppiumWebElement vpnOffSettingButton;
+        private AppiumWebElement vpnOnSettingButton;
         private AppiumWebElement vpnSwitch;
         private AppiumWebElement serverListButton;
         private AppiumWebElement deviceListButton;
@@ -30,7 +31,9 @@ namespace FirefoxPrivateVPNUITest.Screens
         {
             this.titleElement = vpnSession.FindElementByClassName("HeroText");
             this.subtitleElement = vpnSession.FindElementByClassName("HeroSubText");
-            this.settingButton = vpnSession.FindElementByName("Settings");
+            var settingButtons = vpnSession.FindElementsByName("Settings");
+            this.vpnOffSettingButton = settingButtons[0];
+            this.vpnOnSettingButton = settingButtons[1];
             this.vpnSwitch = vpnSession.FindElementByName("Toggle");
             this.serverListButton = vpnSession.FindElementByAccessibilityId("ConnectionNavButton");
             this.deviceListButton = vpnSession.FindElementByName("My devices");
@@ -60,7 +63,14 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// </summary>
         public void ClickSettingsButton()
         {
-            this.settingButton.Click();
+            if (this.vpnOnSettingButton.Displayed)
+            {
+                this.vpnOnSettingButton.Click();
+            }
+            else
+            {
+                this.vpnOffSettingButton.Click();
+            }
         }
 
         /// <summary>

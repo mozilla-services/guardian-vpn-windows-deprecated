@@ -5,6 +5,8 @@
 namespace FirefoxPrivateVPNUITest
 {
     using System;
+    using System.Drawing;
+    using System.Threading;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using OpenQA.Selenium;
     using OpenQA.Selenium.Appium.Windows;
@@ -101,6 +103,32 @@ namespace FirefoxPrivateVPNUITest
                 this.Session.Quit();
                 this.Session = null;
             }
+        }
+
+        /// <summary>
+        /// Get current url on browser.
+        /// </summary>
+        /// <returns>The url string.</returns>
+        public string GetCurrentUrl()
+        {
+            Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "reload-button");
+            var urlInput = this.Session.FindElementByAccessibilityId("urlbar-input");
+            return urlInput.Text;
+        }
+
+        /// <summary>
+        /// Set windows to a new postion.
+        /// </summary>
+        /// <param name="x">The x position.</param>
+        /// <param name="y">The y position.</param>
+        public void SetWindowPosition(int x, int y)
+        {
+            int offset = 100;
+            this.Session.Manage().Window.Position = new Point(x + offset, y + offset);
+            var windowPosition = this.Session.Manage().Window.Position;
+            Assert.IsNotNull(windowPosition);
+            Assert.AreEqual(x + offset, windowPosition.X);
+            Assert.AreEqual(y + offset, windowPosition.Y);
         }
     }
 }
