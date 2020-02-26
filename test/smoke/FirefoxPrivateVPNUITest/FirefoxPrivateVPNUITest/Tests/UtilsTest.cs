@@ -25,5 +25,15 @@ namespace FirefoxPrivateVPNUITest
             int randomIndex2 = Utils.RandomSelectIndex(Enumerable.Range(0, 2), (number) => number != 0);
             Assert.AreNotEqual(0, randomIndex2);
         }
+
+        [TestMethod]
+        public void TestCleanText()
+        {
+            string text = @"abc 
+efg
+";
+            string cleanText = Utils.CleanText(text);
+            Assert.AreEqual("abcefg", cleanText);
+        }
     }
 }

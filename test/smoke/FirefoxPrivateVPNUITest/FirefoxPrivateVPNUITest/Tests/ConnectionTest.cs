@@ -1,4 +1,4 @@
-﻿// <copyright file="ServerSelectTest.cs" company="Mozilla">
+﻿// <copyright file="ConnectionTest.cs" company="Mozilla">
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, you can obtain one at http://mozilla.org/MPL/2.0/.
 // </copyright>
 
@@ -6,7 +6,6 @@ namespace FirefoxPrivateVPNUITest
 {
     using System;
     using System.Net;
-    using System.Threading;
     using FirefoxPrivateVPNUITest.Screens;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -14,7 +13,7 @@ namespace FirefoxPrivateVPNUITest
     /// This is to test server selection.
     /// </summary>
     [TestClass]
-    public class ServerSelectTest
+    public class ConnectionTest
     {
         private FirefoxPrivateVPNSession vpnClient;
         private BrowserSession browser;
@@ -29,6 +28,11 @@ namespace FirefoxPrivateVPNUITest
             this.browser = new BrowserSession();
             this.vpnClient = new FirefoxPrivateVPNSession();
             this.desktop = new DesktopSession();
+
+            // Resize browser to make vpn client and browser are not overlapped
+            var vpnClientPosition = this.vpnClient.Session.Manage().Window.Position;
+            var vpnClientSize = this.vpnClient.Session.Manage().Window.Size;
+            this.browser.SetWindowPosition(vpnClientPosition.X + vpnClientSize.Width, 0);
         }
 
         /// <summary>
@@ -43,49 +47,10 @@ namespace FirefoxPrivateVPNUITest
         }
 
         /// <summary>
-        /// Test server selection before user turns on VPN.
+        /// Test vpn connection.
         /// </summary>
         [TestMethod]
-        public void TestServerSelectionBeforeConnection()
-        {
-            // Switch to VPN client session
-            this.vpnClient.Session.SwitchTo();
-            LandingScreen landingScreen = new LandingScreen(this.vpnClient.Session);
-            landingScreen.ClickGetStartedButton();
-
-            // User Sign In via web browser
-            UserCommonOperation.UserSignIn(this.vpnClient, this.browser);
-
-            // Main Screen
-            this.vpnClient.Session.SwitchTo();
-            MainScreen mainScreen = new MainScreen(this.vpnClient.Session);
-            mainScreen.ClickServerListButton();
-
-            // Server Screen
-            ServerListScreen serverListScreen = new ServerListScreen(this.vpnClient.Session);
-            serverListScreen.RandomSelectDifferentCityServer("Miami");
-            string currentCity = serverListScreen.GetSelectedCity();
-
-            // User turns on VPN
-            UserCommonOperation.ConnectVPN(this.vpnClient, this.desktop);
-
-            // Verify city via Mullvad API
-            var cityResponse = UserCommonOperation.GetCityViaMullvad();
-            Assert.AreEqual(HttpStatusCode.OK, cityResponse.StatusCode);
-            Assert.IsTrue(currentCity.Contains(cityResponse.Content.Trim()));
-
-            // User turns off VPN
-            UserCommonOperation.DisconnectVPN(this.vpnClient, this.desktop);
-
-            // Sign out
-            UserCommonOperation.UserSignOut(this.vpnClient);
-        }
-
-        /// <summary>
-        /// Test server selection after user turns on VPN.
-        /// </summary>
-        [TestMethod]
-        public void TestServerSelectionAfterConnection()
+        public void TestVPNConnection()
         {
             // Switch to VPN client session
             this.vpnClient.Session.SwitchTo();
@@ -110,7 +75,8 @@ namespace FirefoxPrivateVPNUITest
             UserCommonOperation.ConnectVPN(this.vpnClient, this.desktop);
 
             // Verify city via Mullvad API
-            var cityResponse = UserCommonOperation.GetCityViaMullvad();
+            var cityResponse = Utils.GetCityViaMullvad(prevCity);
+            Console.WriteLine($"Before switching (server connected) - Mullvad city API response: {cityResponse.Content}");
             Assert.AreEqual(HttpStatusCode.OK, cityResponse.StatusCode);
             Assert.IsTrue(prevCity.Contains(cityResponse.Content.Trim()));
 
@@ -135,7 +101,8 @@ namespace FirefoxPrivateVPNUITest
             windowsNotificationScreen.ClickDismissButton();
 
             // Verify city via Mullvad API
-            cityResponse = UserCommonOperation.GetCityViaMullvad();
+            cityResponse = Utils.GetCityViaMullvad(currentCity);
+            Console.WriteLine($"After switching (server connected) - Mullvad city API response: {cityResponse.Content}");
             Assert.AreEqual(HttpStatusCode.OK, cityResponse.StatusCode);
             Assert.IsTrue(currentCity.Contains(cityResponse.Content.Trim()));
 

@@ -5,7 +5,6 @@
 namespace FirefoxPrivateVPNUITest.Screens
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using OpenQA.Selenium.Appium;
@@ -110,7 +109,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="city">The city we want to select.</param>
         public void RandomSelectDifferentCityServer(string city = null)
         {
-            var cityList = this.selectedServerCountryCityList.FindElementsByClassName("ListBoxItem");
+            var cityList = this.selectedServerCountryCityList.FindElementsByClassName("RadioButton");
             Func<int, bool> randomPickCondition = (i) =>
             {
                 string currentCityName = cityList[i].GetAttribute("Name");

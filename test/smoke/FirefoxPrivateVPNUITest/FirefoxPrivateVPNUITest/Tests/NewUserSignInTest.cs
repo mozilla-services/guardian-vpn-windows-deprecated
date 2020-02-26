@@ -25,6 +25,11 @@ namespace FirefoxPrivateVPNUITest
         {
             this.browser = new BrowserSession();
             this.vpnClient = new FirefoxPrivateVPNSession();
+
+            // Resize browser to make vpn client and browser are not overlapped
+            var vpnClientPosition = this.vpnClient.Session.Manage().Window.Position;
+            var vpnClientSize = this.vpnClient.Session.Manage().Window.Size;
+            this.browser.SetWindowPosition(vpnClientPosition.X + vpnClientSize.Width, 0);
         }
 
         /// <summary>
