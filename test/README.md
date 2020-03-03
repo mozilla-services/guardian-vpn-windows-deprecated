@@ -4,10 +4,10 @@
 ### Overview
 ![Overview](./assets/Overview.png)
 
-**CircleCI** is the CI/CD tool that handles all automations. There are two workflows setup in CircleCI. One workflow will be triggered by any pull request. The other one will be triggered automatically every midnight.
+**CircleCI** is the CI/CD tool that handles all automations. There are three workflows setup in CircleCI. The first workflow will be triggered by any pull request. The second one will be triggered automatically every midnight. The third one will be triggered automatically every 12 hours.
 
 ### Workflows
-Both PR workflow and Nightly workflow have exactly the same steps. The difference between them is the trigger.
+Both PR workflow and Nightly workflow have exactly the same job. The difference between them is the trigger. The workflow which runs every 12 hours has two jobs running sequentially. The first job is the same as PR workflow and nightly workflow. The second job is going to run UI tests on AWS ecosystem.
 
 #### Checkout
 - Checkout the latest code
@@ -83,4 +83,59 @@ go test github.com/mozilla-services/guardian-vpn-windows/test/integrations -v | 
 - Save the MSI file into `test/result`
 ```
 Copy-Item ".\installer\x64\FirefoxPrivateNetworkVPN.msi" -Destination ".\test\result"
+```
+
+#### Upload MSI to S3 (Only for the every-12-hours workflow)
+- Upload VPN client MSI to S3 bucket
+```
+$ProgressPreference = "SilentlyContinue"
+Write-S3Object -BucketName $env:S3_BUCKET -File test/result/FirefoxPrivateNetworkVPN.msi -Key msi/$env:CIRCLE_BUILD_NUM/FirefoxPrivateNetworkVPN.msi
+```
+
+#### Launch EC2 with Windows 10 (Only for the every-12-hours workflow)
+- Launch an EC2 instance with a customized windows 10 image
+- After the EC2 instance is launched successfully, the instance will automatically run the script to install the MSI downloaded from S3, start WinAppDriver to prepare for UI testing, run the UI tests.
+- After UI tests finish, the EC2 instance will upload the test result to S3 bucket.
+
+#### Pull test result from S3 (Only for the every-12-hours workflow)
+- Pull the rest result generated from last step from S3 bucket.
+```
+$ProgressPreference = "SilentlyContinue"
+Read-S3Object -BucketName $env:S3_BUCKET -Key smoke/$env:CIRCLE_BUILD_NUM/smoke_test_result.txt -File test/result/smoketest/smoke_test_result.txt
+```
+
+#### Terminate EC2 (Only for the every-12-hours workflow)
+- Terminate the EC2 instance after pulling the test result from S3.
+
+
+
+## Run UI Tests Locally
+
+#### Download and Install WinAppDriver
+- https://github.com/microsoft/WinAppDriver/releases/download/v1.2-RC/WindowsApplicationDriver.msi
+
+#### Download and Install Firefox
+- https://www.mozilla.org/firefox/download/thanks/
+
+#### Build UI Test Program
+```
+cd .\test\smoke\FirefoxPrivateVPNUITest
+
+nuget.exe restore -SolutionDirectory ./ 
+
+& 'MSBuild.exe' /t:Rebuild /p:Configuration=Release
+```
+
+#### Start WinAppDriver
+```
+C:\'Program Files (x86)'\'Windows Application Driver'\WinAppDriver.exe
+```
+
+#### Run UI Tests
+```
+### Run all UI tests ###
+vstest.console.exe .\FirefoxPrivateVPNUITest\bin\Release\FirefoxPrivateVPNUITest.dll
+
+### Run specific test ###
+vstest.console.exe .\FirefoxPrivateVPNUITest\bin\Release\FirefoxPrivateVPNUITest.dll /Tests:{SPECIFIC_TEST}
 ```
