@@ -89,12 +89,6 @@ jobs:
               MSBuild -t:Rebuild -p:Configuration=Release
               .\bin\Release\RingloggerParser.exe C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin C:\Users\circleci\project\test\result\log.txt
             }
-            # add comments to PR if there are any warnings or errors on committed files
-            If ($env:CIRCLE_PULL_REQUEST -And [System.IO.File]::Exists("C:\Users\circleci\project\test\result\Output.log")) {
-              cd C:\Users\circleci\project\test\comment
-              npm i
-              node index.js
-            }
           when: always
       - run:
           name: Deploy
@@ -105,6 +99,16 @@ jobs:
           path: test/result
       - store_artifacts:
           path: test/result
+      - run:
+          name: Add Comment 
+          command: |
+            # add comments to PR if there are any warnings or errors on committed files
+            If ($env:CIRCLE_PULL_REQUEST -And [System.IO.File]::Exists("C:\Users\circleci\project\test\result\Output.log")) {
+              cd C:\Users\circleci\project\test\comment
+              npm i
+              node index.js
+            }
+          when: always
       - persist_to_workspace:
           root: ~/project/test
           paths: .
