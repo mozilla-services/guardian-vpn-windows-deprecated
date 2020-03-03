@@ -4,7 +4,8 @@
   "description": "",
   "main": "comment.js",
   "dependencies": {
-    "circle-github-bot": "^2.0.1"
+    "circle-github-bot": "^2.0.1",
+    "request": "^2.88.2"
   },
   "devDependencies": {},
   "scripts": {
