@@ -74,12 +74,6 @@ namespace FirefoxPrivateVPNUITest
             // User turns on VPN
             UserCommonOperation.ConnectVPN(this.vpnClient, this.desktop);
 
-            // Verify city via Mullvad API
-            var cityResponse = Utils.GetCityViaMullvad(prevCity);
-            Console.WriteLine($"Before switching (server connected) - Mullvad city API response: {cityResponse.Content}");
-            Assert.AreEqual(HttpStatusCode.OK, cityResponse.StatusCode);
-            Assert.IsTrue(prevCity.Contains(cityResponse.Content.Trim()));
-
             // Click the server button
             mainScreen = new MainScreen(this.vpnClient.Session);
             mainScreen.ClickServerListButton();
@@ -99,12 +93,6 @@ namespace FirefoxPrivateVPNUITest
             Assert.AreEqual(string.Format("From {0} to {1}", prevCity, currentCity), windowsNotificationScreen.GetTitleText());
             Assert.AreEqual("You switched servers.", windowsNotificationScreen.GetMessageText());
             windowsNotificationScreen.ClickDismissButton();
-
-            // Verify city via Mullvad API
-            cityResponse = Utils.GetCityViaMullvad(currentCity);
-            Console.WriteLine($"After switching (server connected) - Mullvad city API response: {cityResponse.Content}");
-            Assert.AreEqual(HttpStatusCode.OK, cityResponse.StatusCode);
-            Assert.IsTrue(currentCity.Contains(cityResponse.Content.Trim()));
 
             // User turns off VPN
             UserCommonOperation.DisconnectVPN(this.vpnClient, this.desktop);

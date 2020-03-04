@@ -20,8 +20,7 @@ namespace FirefoxPrivateVPNUITest
         /// </summary>
         /// <param name="vpnClient">VPN session.</param>
         /// <param name="browser">Browser session.</param>
-        /// <param name="disposeBrowser">Whether to dispose the browser after login.</param>
-        public static void UserSignIn(FirefoxPrivateVPNSession vpnClient, BrowserSession browser, bool disposeBrowser = true)
+        public static void UserSignIn(FirefoxPrivateVPNSession vpnClient, BrowserSession browser)
         {
             // Verify Account Screen
             vpnClient.Session.SwitchTo();
@@ -41,10 +40,6 @@ namespace FirefoxPrivateVPNUITest
             PasswordInputPage passwordInputPage = new PasswordInputPage(browser.Session);
             passwordInputPage.InputPassword(Environment.GetEnvironmentVariable("EXISTED_USER_PASSWORD"));
             passwordInputPage.ClickSignInButton();
-            if (disposeBrowser)
-            {
-                browser.Dispose();
-            }
 
             // Quick Access Screen
             vpnClient.Session.SwitchTo();

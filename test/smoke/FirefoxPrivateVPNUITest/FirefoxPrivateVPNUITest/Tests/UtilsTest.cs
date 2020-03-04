@@ -4,6 +4,7 @@
 
 namespace FirefoxPrivateVPNUITest
 {
+    using System;
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,8 +25,17 @@ namespace FirefoxPrivateVPNUITest
 
             int randomIndex2 = Utils.RandomSelectIndex(Enumerable.Range(0, 2), (number) => number != 0);
             Assert.AreNotEqual(0, randomIndex2);
+
+            int randomIndex3 = Utils.RandomSelectIndex(Enumerable.Range(0, 0), (number) => true);
+            Assert.AreEqual(-1, randomIndex3);
+
+            int randomIndex4 = Utils.RandomSelectIndex(Enumerable.Range(0, 1), (number) => number != 0);
+            Assert.AreEqual(-1, randomIndex4);
         }
 
+        /// <summary>
+        /// Test CleanText() method.
+        /// </summary>
         [TestMethod]
         public void TestCleanText()
         {

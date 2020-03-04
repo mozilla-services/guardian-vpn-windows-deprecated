@@ -20,8 +20,8 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="browserSession">browser session.</param>
         public EmailInputPage(WindowsDriver<WindowsElement> browserSession)
         {
-            this.emailTextBox = browserSession.FindElementByName("Email");
-            this.continueButton = browserSession.FindElementByAccessibilityId("submit-btn");
+            this.emailTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Email");
+            this.continueButton = Utils.WaitUntilFindElement(browserSession.FindElementByAccessibilityId, "submit-btn");
         }
 
         /// <summary>

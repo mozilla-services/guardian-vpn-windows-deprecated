@@ -65,9 +65,29 @@ Do you wish to proceed?";
         /// </summary>
         public static readonly string AmIMullvadConnectedAPI = "https://am.i.mullvad.net/connected";
 
-         /// <summary>
-        /// Am I mullvad city API.
+        /// <summary>
+        /// Rest mail API.
         /// </summary>
-        public static readonly string AmIMullvadCityAPI = "https://am.i.mullvad.net/city";
+        public static readonly string RestMailAPI = "https://restmail.net/mail";
+
+        /// <summary>
+        /// New user name.
+        /// </summary>
+        public static readonly string NewUserName = $"automation-{Environment.GetEnvironmentVariable("BUILD_NUMBER")}";
+
+        /// <summary>
+        /// New user email.
+        /// </summary>
+        public static readonly string NewUserEmail = $"{NewUserName}@restmail.net";
+
+        /// <summary>
+        /// Key word in Payment url.
+        /// </summary>
+        public static readonly string KeyWordInPaymentUrl = $"payments";
+
+        /// <summary>
+        /// The default session timeout in seconds.
+        /// </summary>
+        public static readonly int SessionTimeoutInSeconds = 5;
     }
 }

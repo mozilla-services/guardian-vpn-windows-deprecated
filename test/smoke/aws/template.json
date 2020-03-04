@@ -67,6 +67,22 @@
       "Description" : "existed user name for testing",
       "Type": "String"
     },
+    "TestNewUserCardNumber": {
+      "Description" : "new user card number for testing",
+      "Type": "String"
+    },
+    "TestNewUserCardExpDate": {
+      "Description" : "new user card exp date for testing",
+      "Type": "String"
+    },
+    "TestNewUserCardCVC": {
+      "Description" : "new user card cvc for testing",
+      "Type": "String"
+    },
+    "TestNewUserZipCode": {
+      "Description" : "new user zip code for testing",
+      "Type": "String"
+    },
     "TestExistedPassword": {
       "Description" : "existed user password for testing",
       "Type": "String"
@@ -116,6 +132,26 @@
                 "[Environment]::SetEnvironmentVariable('EXISTED_USER_PASSWORD', '",
                 {
                   "Ref": "TestExistedPassword"
+                },
+                "', [EnvironmentVariableTarget]::Machine) \n",
+                "[Environment]::SetEnvironmentVariable('NEW_USER_CARD_NUMBER', '",
+                {
+                  "Ref": "TestNewUserCardNumber"
+                },
+                "', [EnvironmentVariableTarget]::Machine) \n",
+                "[Environment]::SetEnvironmentVariable('NEW_USER_CARD_EXP_DATE', '",
+                {
+                  "Ref": "TestNewUserCardExpDate"
+                },
+                "', [EnvironmentVariableTarget]::Machine) \n",
+                "[Environment]::SetEnvironmentVariable('NEW_USER_CARD_CVC', '",
+                {
+                  "Ref": "TestNewUserCardCVC"
+                },
+                "', [EnvironmentVariableTarget]::Machine) \n",
+                "[Environment]::SetEnvironmentVariable('NEW_USER_ZIP_CODE', '",
+                {
+                  "Ref": "TestNewUserZipCode"
                 },
                 "', [EnvironmentVariableTarget]::Machine) \n",
 

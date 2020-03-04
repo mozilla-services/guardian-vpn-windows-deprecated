@@ -12,6 +12,7 @@ namespace FirefoxPrivateVPNUITest
     using System.Net;
     using System.Text.RegularExpressions;
     using System.Threading;
+    using OpenQA.Selenium.Appium;
     using OpenQA.Selenium.Appium.Windows;
     using Polly;
     using RestSharp;
@@ -21,6 +22,10 @@ namespace FirefoxPrivateVPNUITest
     /// </summary>
     public class Utils
     {
+        private static readonly int RetryTimes = 10;
+        private static readonly int RetryDelayInSeconds = 10;
+        private static readonly int RetrySleepInMilliseconds = 200;
+
         /// <summary>
         /// Random select an index from integers based on the condition.
         /// </summary>
@@ -29,7 +34,20 @@ namespace FirefoxPrivateVPNUITest
         /// <returns>A random index.</returns>
         public static int RandomSelectIndex(IEnumerable<int> range, Func<int, bool> condition)
         {
+            // If the range has no element.
+            if (range.Count() <= 0)
+            {
+                return -1;
+            }
+
             var result = range.Where(condition);
+
+            // If the filtered result has no element
+            if (result.Count() <= 0)
+            {
+                return -1;
+            }
+
             var rand = new Random();
             int index = rand.Next(0, result.Count());
             return result.ElementAt(index);
@@ -73,6 +91,20 @@ namespace FirefoxPrivateVPNUITest
         }
 
         /// <summary>
+        /// Wait for {timeOut} milliseconds until find element.
+        /// </summary>
+        /// <param name="findMethod">The method used to find element.</param>
+        /// <param name="selector">The selector used in the findMethod.</param>
+        /// <param name="timeOut">Time out in milliseconds. Default is 10000 milliseconds.</param>
+        /// <returns>Appium Web Element.</returns>
+        public static AppiumWebElement WaitUntilFindElement(Func<string, AppiumWebElement> findMethod, string selector, double timeOut = 10000)
+        {
+            AppiumWebElement element = null;
+            Utils.WaitUntil(ref element, findMethod, selector, (ele) => ele != null, timeOut);
+            return element;
+        }
+
+        /// <summary>
         /// Generic method to implement wait until.
         /// </summary>
         /// <typeparam name="T">Generic type.</typeparam>
@@ -86,11 +118,14 @@ namespace FirefoxPrivateVPNUITest
             Stopwatch time = new Stopwatch();
             time.Start();
             bool retry = true;
+            int count = 0;
             while (retry && time.ElapsedMilliseconds <= timeOut)
             {
                 try
                 {
+                    Console.WriteLine($"Wait for {func.Method.Name} with {param}: {++count}");
                     result = func(param);
+
                     if (condition(result))
                     {
                         retry = false;
@@ -99,13 +134,14 @@ namespace FirefoxPrivateVPNUITest
                     else
                     {
                         retry = true;
-                        Thread.Sleep(TimeSpan.FromMilliseconds(500));
+                        Thread.Sleep(TimeSpan.FromMilliseconds(RetrySleepInMilliseconds));
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Console.WriteLine($"Error message for {func.Method.Name} with {param}: {ex.Message}");
                     retry = true;
-                    Thread.Sleep(TimeSpan.FromMilliseconds(500));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(RetrySleepInMilliseconds));
                 }
             }
 
@@ -114,6 +150,7 @@ namespace FirefoxPrivateVPNUITest
                 time.Stop();
             }
 
+            Console.WriteLine($"Total waiting time for {func.Method.Name} with {param}: {time.ElapsedMilliseconds} milliseconds.");
             time.Reset();
         }
 
@@ -140,26 +177,42 @@ namespace FirefoxPrivateVPNUITest
         }
 
         /// <summary>
-        /// Call Mullvad API to get current city.
+        /// Get verification code from email subject.
         /// </summary>
-        /// <returns>The API response.</returns>
-        /// <param name="expectedCity">Expected city returned from API.</param>
-        public static IRestResponse GetCityViaMullvad(string expectedCity = null)
+        /// <param name="user">The email user name.</param>
+        /// <returns>The verification code.</returns>
+        public static string GetVerificationCode(string user)
         {
-            var client = new RestClient(Constants.AmIMullvadCityAPI);
+            var client = new RestClient($"{Constants.RestMailAPI}/{user}");
+            client.Timeout = -1;
             var request = new RestRequest(Method.GET);
             Func<IRestResponse, bool> condition = (res) =>
             {
-                if (string.IsNullOrEmpty(expectedCity))
-                {
-                    return res.StatusCode != HttpStatusCode.OK;
-                }
-
-                return res.StatusCode != HttpStatusCode.OK || !expectedCity.Contains(res.Content.Trim());
+                return res.StatusCode != HttpStatusCode.OK || res.Content == "[]";
             };
             IRestResponse response = RetryExecute(client, request, condition);
-            Console.WriteLine($"Mullvad API city response: {response.Content}");
-            return response;
+            dynamic json = Newtonsoft.Json.Linq.JArray.Parse(response.Content);
+            string subject = Convert.ToString(json[0].subject);
+            string verificationCode = subject.Split(':')[1].Trim();
+            return verificationCode;
+        }
+
+        /// <summary>
+        /// Delete user from rest mail.
+        /// </summary>
+        /// <param name="user">The email user name.</param>
+        /// <returns>Succeed or not.</returns>
+        public static bool DeleteUserFromRestMail(string user)
+        {
+            var client = new RestClient($"{Constants.RestMailAPI}/{user}");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.DELETE);
+            Func<IRestResponse, bool> condition = (res) =>
+            {
+                return res.StatusCode != HttpStatusCode.OK;
+            };
+            IRestResponse response = RetryExecute(client, request, condition);
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
         /// <summary>
@@ -175,7 +228,7 @@ namespace FirefoxPrivateVPNUITest
             int retries = 0;
 
             // Define retry policy
-            var policy = Policy.HandleResult(condition).WaitAndRetry(5, (count) => TimeSpan.FromSeconds(10));
+            var policy = Policy.HandleResult(condition).WaitAndRetry(RetryTimes, (count) => TimeSpan.FromSeconds(RetryDelayInSeconds));
 
             // Execute the request with policy
             var val = policy.ExecuteAndCapture(() =>

@@ -21,10 +21,8 @@ namespace FirefoxPrivateVPNUITest.Screens
         private AppiumWebElement profileImage;
         private AppiumWebElement userName;
         private AppiumWebElement manageAccountButton;
-        private AppiumWebElement allowAccessCheckbox;
-        private AppiumWebElement allowAccessDescription;
-        private AppiumWebElement allowAccessDisabledMessage;
         private AppiumWebElement launchVPNStartupCheckbox;
+        private AppiumWebElement networkSettingButton;
         private AppiumWebElement notificationButton;
         private AppiumWebElement languageButton;
         private AppiumWebElement aboutButton;
@@ -39,28 +37,23 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public SettingScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            if (this.vpnSession == null)
-            {
-                this.vpnSession = vpnSession;
-            }
-
-            this.backButton = vpnSession.FindElementByName("Back");
-            this.titleText = vpnSession.FindElementByName("Settings");
-            this.signOutButton = vpnSession.FindElementByName("Sign out");
-            this.scrollDownButton = vpnSession.FindElementByAccessibilityId("PART_LineDownButton");
-            this.profileImage = vpnSession.FindElementByAccessibilityId("ProfileImageButton");
-            this.userName = vpnSession.FindElementByName(Environment.GetEnvironmentVariable("EXISTED_USER_NAME"));
-            this.manageAccountButton = vpnSession.FindElementByName("Manage account");
-            this.allowAccessCheckbox = vpnSession.FindElementByAccessibilityId("AllowLocalDeviceAccessCheckBox");
-            this.allowAccessDescription = vpnSession.FindElementByName("Access printers, streaming sticks and all other devices on your local network");
-            this.allowAccessDisabledMessage = vpnSession.FindElementByAccessibilityId("AllowLocalDeviceAccessCheckBoxDisabledMessage");
-            this.launchVPNStartupCheckbox = vpnSession.FindElementByName("Launch VPN app on computer startup");
-            this.notificationButton = vpnSession.FindElementByAccessibilityId("NotificationsNavButton");
-            this.languageButton = vpnSession.FindElementByAccessibilityId("LanguageNavButton");
-            this.aboutButton = vpnSession.FindElementByAccessibilityId("AboutNavButton");
-            this.helpButton = vpnSession.FindElementByAccessibilityId("GetHelpNavButton");
-            this.giveFeedbackText = vpnSession.FindElementByName("Give feedback");
-            this.giveFeedbackLinkButton = vpnSession.FindElementByName("Open link");
+            this.vpnSession = vpnSession;
+            var settingView = vpnSession.FindElementByClassName("SettingsView");
+            this.backButton = settingView.FindElementByName("Back");
+            this.titleText = settingView.FindElementByName("Settings");
+            this.signOutButton = settingView.FindElementByName("Sign out");
+            this.scrollDownButton = settingView.FindElementByAccessibilityId("PART_LineDownButton");
+            this.profileImage = settingView.FindElementByAccessibilityId("ProfileImageButton");
+            this.userName = settingView.FindElementByClassName("ScrollViewer").FindElementsByClassName("TextBlock")[1];
+            this.manageAccountButton = settingView.FindElementByName("Manage account");
+            this.launchVPNStartupCheckbox = settingView.FindElementByName("Launch VPN app on computer startup");
+            this.notificationButton = settingView.FindElementByAccessibilityId("NotificationsNavButton");
+            this.networkSettingButton = settingView.FindElementByAccessibilityId("NetworkSettingsNavButton");
+            this.languageButton = settingView.FindElementByAccessibilityId("LanguageNavButton");
+            this.aboutButton = settingView.FindElementByAccessibilityId("AboutNavButton");
+            this.helpButton = settingView.FindElementByAccessibilityId("GetHelpNavButton");
+            this.giveFeedbackText = settingView.FindElementByName("Give feedback");
+            this.giveFeedbackLinkButton = settingView.FindElementByName("Open link");
         }
 
         /// <summary>
@@ -128,41 +121,6 @@ namespace FirefoxPrivateVPNUITest.Screens
         }
 
         /// <summary>
-        /// Get the text on Allow access checkbox.
-        /// </summary>
-        /// <returns>The text on allow access checkbox.</returns>
-        public string GetAllowAccessText()
-        {
-            return this.allowAccessCheckbox.Text;
-        }
-
-        /// <summary>
-        /// Get the description of the allow access checkbox.
-        /// </summary>
-        /// <returns>The description of the allow access checkbox.</returns>
-        public string GetAllowAccessDescription()
-        {
-            return this.allowAccessDescription.Text;
-        }
-
-        /// <summary>
-        /// Click the Allow Access check box.
-        /// </summary>
-        public void ClickAllowAccessCheckBox()
-        {
-            this.allowAccessCheckbox.Click();
-        }
-
-        /// <summary>
-        /// Get the Allow access disabled message element.
-        /// </summary>
-        /// <returns>The Allow access disabled message element.</returns>
-        public AppiumWebElement GetAllowAccessDisabledMessage()
-        {
-            return this.allowAccessDisabledMessage;
-        }
-
-        /// <summary>
         /// Get the text on Launch VPN on computer startup.
         /// </summary>
         /// <returns>The text on Launch VPN on computer startup.</returns>
@@ -185,6 +143,14 @@ namespace FirefoxPrivateVPNUITest.Screens
         public void ClickNotificationButton()
         {
             this.notificationButton.Click();
+        }
+
+        /// <summary>
+        /// Click the network setting button.
+        /// </summary>
+        public void ClickNetworkSettingButton()
+        {
+            this.networkSettingButton.Click();
         }
 
         /// <summary>
@@ -226,6 +192,15 @@ namespace FirefoxPrivateVPNUITest.Screens
         public string GetNotificationButtonText()
         {
             return this.notificationButton.Text;
+        }
+
+        /// <summary>
+        /// Get the text on network setting button.
+        /// </summary>
+        /// <returns>The text on network setting button.</returns>
+        public string GetNetworkSettingButtonText()
+        {
+            return this.networkSettingButton.Text;
         }
 
         /// <summary>
@@ -271,15 +246,6 @@ namespace FirefoxPrivateVPNUITest.Screens
         public string GetManageAccountButtonText()
         {
             return this.manageAccountButton.Text;
-        }
-
-        /// <summary>
-        /// Get Allow access checkbox.
-        /// </summary>
-        /// <returns>The allow access checkbox.</returns>
-        public AppiumWebElement GetAllowAccessCheckBox()
-        {
-            return this.allowAccessCheckbox;
         }
 
         /// <summary>

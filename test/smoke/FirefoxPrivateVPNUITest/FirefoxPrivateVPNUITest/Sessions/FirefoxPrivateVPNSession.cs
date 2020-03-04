@@ -34,7 +34,7 @@ namespace FirefoxPrivateVPNUITest
 
                 try
                 {
-                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities, TimeSpan.FromSeconds(Constants.SessionTimeoutInSeconds));
                     Assert.IsNotNull(this.Session);
                 }
                 catch (Exception)
@@ -50,7 +50,7 @@ namespace FirefoxPrivateVPNUITest
 
                     appCapabilities.SetCapability("app", null);
                     appCapabilities.SetCapability("appTopLevelWindow", applicationSessionHandle);
-                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities, TimeSpan.FromSeconds(Constants.SessionTimeoutInSeconds));
                     Assert.IsNotNull(this.Session);
                 }
 

@@ -29,7 +29,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public MainScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            this.titleElement = vpnSession.FindElementByClassName("HeroText");
+            this.titleElement = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "HeroText");
             this.subtitleElement = vpnSession.FindElementByClassName("HeroSubText");
             var settingButtons = vpnSession.FindElementsByName("Settings");
             this.vpnOffSettingButton = settingButtons[0];
