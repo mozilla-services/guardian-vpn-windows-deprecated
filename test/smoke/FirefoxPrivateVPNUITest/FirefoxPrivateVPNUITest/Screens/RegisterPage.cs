@@ -4,6 +4,7 @@
 
 namespace FirefoxPrivateVPNUITest.Screens
 {
+    using System;
     using OpenQA.Selenium.Appium.Windows;
 
     /// <summary>
@@ -15,6 +16,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         private WindowsElement repeatPasswordTextBox;
         private WindowsElement createAccountButton;
         private WindowsElement ageTextBox;
+        private WindowsDriver<WindowsElement> browserSession;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegisterPage"/> class.
@@ -22,10 +24,11 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="browserSession">browser session.</param>
         public RegisterPage(WindowsDriver<WindowsElement> browserSession)
         {
-            this.passwordTextBox = browserSession.FindElementByName("Password");
-            this.repeatPasswordTextBox = browserSession.FindElementByName("Repeat password");
-            this.createAccountButton = browserSession.FindElementByName("Create account");
-            this.ageTextBox = browserSession.FindElementByName("How old are you?");
+            this.browserSession = browserSession;
+            this.passwordTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Password");
+            this.repeatPasswordTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Repeat password");
+            this.createAccountButton = Utils.WaitUntilFindElement(browserSession.FindElementByAccessibilityId, "submit-btn");
+            this.ageTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "How old are you?");
         }
 
         /// <summary>
@@ -34,6 +37,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="password">user password.</param>
         public void InputPassword(string password)
         {
+            this.passwordTextBox.Click();
             this.passwordTextBox.Clear();
             this.passwordTextBox.SendKeys(password);
         }
@@ -44,6 +48,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="repeatPassword">user password.</param>
         public void InputRepeatPassword(string repeatPassword)
         {
+            this.repeatPasswordTextBox.Click();
             this.repeatPasswordTextBox.Clear();
             this.repeatPasswordTextBox.SendKeys(repeatPassword);
         }
@@ -53,7 +58,17 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// </summary>
         public void ClickCreateAccountButton()
         {
-            this.createAccountButton.Click();
+            try
+            {
+                this.createAccountButton.Click();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "An element command could not be completed because the element is not pointer- or keyboard interactable.")
+                {
+                    this.browserSession.FindElementByName("Create account").Click();
+                }
+            }
         }
 
         /// <summary>
@@ -62,6 +77,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="age">user age.</param>
         public void InputAge(string age)
         {
+            this.ageTextBox.Click();
             this.ageTextBox.Clear();
             this.ageTextBox.SendKeys(age);
         }

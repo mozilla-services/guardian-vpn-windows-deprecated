@@ -24,6 +24,9 @@ namespace FirefoxPrivateVPNUITest
         private FirefoxPrivateVPNSession vpnClient;
         private BrowserSession browser;
         private DesktopSession desktop;
+        private string folderPath;
+        private string debugFileName;
+        private string logFileName;
 
         /// <summary>
         /// Initialize browser, vpn client, desktop sessions.
@@ -31,10 +34,18 @@ namespace FirefoxPrivateVPNUITest
         [TestInitialize]
         public void TestInitialize()
         {
-            // check the file exists or not. If already existed then delete it.
-            foreach (string fileName in new List<string> { "test.zip", "test.txt" })
+            this.folderPath = "C:/Temp";
+            this.debugFileName = "test.zip";
+            this.logFileName = "test.txt";
+            if (!Directory.Exists(this.folderPath))
             {
-                string fullPath = $"{Environment.CurrentDirectory}/{fileName}";
+                Directory.CreateDirectory(this.folderPath);
+            }
+
+            // check the file exists or not. If already existed then delete it.
+            foreach (string fileName in new List<string> { this.debugFileName, this.logFileName })
+            {
+                string fullPath = Path.Combine(this.folderPath, fileName);
                 if (File.Exists(fullPath))
                 {
                     File.Delete(fullPath);
@@ -74,7 +85,7 @@ namespace FirefoxPrivateVPNUITest
             landingScreen.ClickGetStartedButton();
 
             // User Sign In via web browser
-            UserCommonOperation.UserSignIn(this.vpnClient, this.browser, false);
+            UserCommonOperation.UserSignIn(this.vpnClient, this.browser);
 
             // Main Screen
             this.vpnClient.Session.SwitchTo();
@@ -86,16 +97,13 @@ namespace FirefoxPrivateVPNUITest
             Assert.IsNotNull(settingScreen.GetProfileImage());
             Assert.AreEqual(Environment.GetEnvironmentVariable("EXISTED_USER_NAME"), settingScreen.GetUserName());
             Assert.AreEqual("Manage account", settingScreen.GetManageAccountButtonText());
-            Assert.AreEqual("Allow access to your local network", settingScreen.GetAllowAccessText());
-            Assert.AreEqual("Access printers, streaming sticks and all other devices on your local network", settingScreen.GetAllowAccessDescription());
-            Assert.IsFalse(settingScreen.GetAllowAccessDisabledMessage().Displayed);
             Assert.AreEqual("Launch VPN app on computer startup", settingScreen.GetLaunchVPNStartupText());
             Assert.AreEqual("Notifications", settingScreen.GetNotificationButtonText());
+            Assert.AreEqual("Network settings", settingScreen.GetNetworkSettingButtonText());
             Assert.AreEqual("Language", settingScreen.GetLanguageButtonText());
             Assert.AreEqual("About", settingScreen.GetAboutButtonText());
             Assert.AreEqual("Get help", settingScreen.GetHelpButtonText());
             Assert.AreEqual("Give feedback", settingScreen.GetGiveFeedbackText());
-            Assert.IsTrue(settingScreen.GetAllowAccessCheckBox().Enabled);
             Assert.IsTrue(settingScreen.GetLaunchVPNStartupCheckBox().Enabled);
 
             // Click Manage Account button
@@ -104,11 +112,8 @@ namespace FirefoxPrivateVPNUITest
             Assert.IsTrue(this.browser.GetCurrentUrl().Contains(Constants.ManageAccountUrl));
 
             // Test checkbox state remain after nav
-            bool prevAllowAccessState = settingScreen.GetAllowAccessCheckBox().Selected;
             bool prevLaunchVPNStartupState = settingScreen.GetLaunchVPNStartupCheckBox().Selected;
-            settingScreen.ClickAllowAccessCheckBox();
             settingScreen.ClickLaunchVPNStartupCheckbox();
-            bool expectedCurrentAllowAccessState = !prevAllowAccessState;
             bool expectedCurrentLaunchVPNStartupState = !prevLaunchVPNStartupState;
 
             // Nav back to main screen
@@ -116,25 +121,12 @@ namespace FirefoxPrivateVPNUITest
 
             // nav back to setting screen again to check the state remaining the same
             mainScreen = new MainScreen(this.vpnClient.Session);
-            mainScreen.ToggleVPNSwitch();
             mainScreen.ClickSettingsButton();
 
             // Verify the state
             settingScreen = new SettingScreen(this.vpnClient.Session);
-            bool currentAllowAccessState = settingScreen.GetAllowAccessCheckBox().Selected;
             bool currentLaunchVPNStartupState = settingScreen.GetLaunchVPNStartupCheckBox().Selected;
-            Assert.AreEqual(expectedCurrentAllowAccessState, currentAllowAccessState);
             Assert.AreEqual(expectedCurrentLaunchVPNStartupState, currentLaunchVPNStartupState);
-            Assert.IsFalse(settingScreen.GetAllowAccessCheckBox().Enabled);
-            Assert.IsTrue(settingScreen.GetAllowAccessDisabledMessage().Displayed);
-            Assert.AreEqual($"VPN must be off before {(currentAllowAccessState ? "disabling" : "enabling")}", settingScreen.GetAllowAccessDisabledMessage().Text);
-
-            // Nav back to main screen and turn off vpn
-            settingScreen.ClickBackButton();
-            mainScreen = new MainScreen(this.vpnClient.Session);
-            mainScreen.ToggleVPNSwitch();
-            mainScreen.ClickSettingsButton();
-            settingScreen = new SettingScreen(this.vpnClient.Session);
 
             // Click the notification button
             settingScreen.ScrollDown();
@@ -165,8 +157,63 @@ namespace FirefoxPrivateVPNUITest
             Assert.AreEqual(expectedCurrentGuestWifiPortalAlertState, notificationsScreen.IsGuestWifiPortalAlertChecked());
             notificationsScreen.ClickBackButton();
 
+            // Nav to Network Settings screen
+            settingScreen = new SettingScreen(this.vpnClient.Session);
+            settingScreen.ClickNetworkSettingButton();
+
+            // On network settings screen
+            NetworkSettingsScreen networkSettingsScreen = new NetworkSettingsScreen(this.vpnClient.Session);
+            bool preEnableIPv6 = networkSettingsScreen.IsEnableIPv6Checked();
+            bool preAllowAccess = networkSettingsScreen.IsAllowAccessChecked();
+            Assert.AreEqual("Network settings", networkSettingsScreen.GetTitle());
+            Assert.AreEqual("Enable IPv6", networkSettingsScreen.GetEnableIPv6CheckBoxText());
+            Assert.AreEqual("Push the internet forward with the latest version of the Internet Protocol", networkSettingsScreen.GetEnableIPv6Description());
+            Assert.IsFalse(networkSettingsScreen.IsEnableIPv6DisabledMessageDisplayed());
+            Assert.AreEqual("Allow access to your local network", networkSettingsScreen.GetAllowAccessText());
+            Assert.AreEqual("Access printers, streaming sticks and all other devices on your local network", networkSettingsScreen.GetAllowAccessDescription());
+            Assert.IsFalse(networkSettingsScreen.IsAllowAccessDisabledMessageDisplayed());
+
+            // check the checkbox state after click
+            networkSettingsScreen.ClickAllowAccessCheckBox();
+            networkSettingsScreen.ClickEnableIPv6CheckBox();
+            bool expectedEnableIPv6 = !preEnableIPv6;
+            bool expectedAllowAccess = !preAllowAccess;
+            networkSettingsScreen.ClickBackButton();
+
+            // Back to main screen to turn on vpn
+            settingScreen = new SettingScreen(this.vpnClient.Session);
+            settingScreen.ClickBackButton();
+            mainScreen = new MainScreen(this.vpnClient.Session);
+            mainScreen.ToggleVPNSwitch();
+            mainScreen.ClickSettingsButton();
+
+            // Check Network setting screen again
+            settingScreen = new SettingScreen(this.vpnClient.Session);
+            settingScreen.ScrollDown();
+            settingScreen.ClickNetworkSettingButton();
+            networkSettingsScreen = new NetworkSettingsScreen(this.vpnClient.Session);
+            bool currentAllowAccessState = networkSettingsScreen.IsAllowAccessChecked();
+            bool currentEnableIPv6 = networkSettingsScreen.IsEnableIPv6Checked();
+            Assert.AreEqual(expectedAllowAccess, currentAllowAccessState);
+            Assert.AreEqual(expectedEnableIPv6, currentEnableIPv6);
+            Assert.IsFalse(networkSettingsScreen.IsAllowAccessEnabled());
+            Assert.IsTrue(networkSettingsScreen.IsAllowAccessDisabledMessageDisplayed());
+            Assert.AreEqual($"VPN must be off before {(currentAllowAccessState ? "disabling" : "enabling")}", networkSettingsScreen.GetAllowAccessDisabledMessage());
+            Assert.IsFalse(networkSettingsScreen.IsEnableIPv6Enabled());
+            Assert.IsTrue(networkSettingsScreen.IsEnableIPv6DisabledMessageDisplayed());
+            Assert.AreEqual($"VPN must be off before {(currentEnableIPv6 ? "disabling" : "enabling")}", networkSettingsScreen.GetEnableIPv6DisabledMessage());
+            networkSettingsScreen.ClickBackButton();
+
+            // Back to main screen to turn off vpn
+            settingScreen = new SettingScreen(this.vpnClient.Session);
+            settingScreen.ClickBackButton();
+            mainScreen = new MainScreen(this.vpnClient.Session);
+            mainScreen.ToggleVPNSwitch();
+            mainScreen.ClickSettingsButton();
+
             // Nav to language screen
             settingScreen = new SettingScreen(this.vpnClient.Session);
+            settingScreen.ScrollDown();
             settingScreen.ClickLanguageButton();
 
             // On language screen
@@ -216,8 +263,8 @@ namespace FirefoxPrivateVPNUITest
 
             // Open Export Debug package window
             ExportWindow exportDebugPackageWindow = new ExportWindow(this.vpnClient.Session, "Export debug package");
-            exportDebugPackageWindow.SaveFile(Environment.CurrentDirectory, "test.zip");
-            Assert.IsTrue(Utils.WaitUntilFileExist($"{Environment.CurrentDirectory}/test.zip"));
+            exportDebugPackageWindow.SaveFile(this.folderPath, this.debugFileName);
+            Assert.IsTrue(Utils.WaitUntilFileExist(Path.Combine(this.folderPath, this.debugFileName)));
 
             // Click viewlog button
             aboutScreen.ClickViewLog();
@@ -231,8 +278,8 @@ namespace FirefoxPrivateVPNUITest
 
             // Open SaveLog window
             ExportWindow saveLogWindow = new ExportWindow(this.desktop.Session, "Save log");
-            saveLogWindow.SaveFile(Environment.CurrentDirectory, "test.txt");
-            Assert.IsTrue(Utils.WaitUntilFileExist($"{Environment.CurrentDirectory}/test.txt"));
+            saveLogWindow.SaveFile(this.folderPath, this.logFileName);
+            Assert.IsTrue(Utils.WaitUntilFileExist(Path.Combine(this.folderPath, this.logFileName)));
 
             // Back to setting screen
             logWindow.CloseWindow();

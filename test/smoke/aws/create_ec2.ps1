@@ -15,8 +15,12 @@ $p9 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{Paramet
 $p10 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{ParameterKey="StageUrl"; ParameterValue="$env:STAGE_URL"}
 $p11 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{ParameterKey="TestExistedUserName"; ParameterValue="$env:EXISTED_USER_NAME"}
 $p12 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{ParameterKey="TestExistedPassword"; ParameterValue="$env:EXISTED_PASSWORD"}
+$p13 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{ParameterKey="TestNewUserCardNumber"; ParameterValue="$env:NEW_USER_CARD_NUMBER"}
+$p14 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{ParameterKey="TestNewUserCardExpDate"; ParameterValue="$env:NEW_USER_CARD_EXP_DATE"}
+$p15 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{ParameterKey="TestNewUserCardCVC"; ParameterValue="$env:NEW_USER_CARD_CVC"}
+$p16 = new-object -Type Amazon.CloudFormation.Model.Parameter -Property @{ParameterKey="TestNewUserZipCode"; ParameterValue="$env:NEW_USER_ZIP_CODE"}
 
-$params = @($p1,$p2,$p3,$p4,$p5,$p6,$p7,$p8,$p9,$p10,$p11,$p12)
+$params = @($p1,$p2,$p3,$p4,$p5,$p6,$p7,$p8,$p9,$p10,$p11,$p12,$p13,$p14,$p15,$p16)
 
 $stack = "guardian-stack-$env:CIRCLE_BUILD_NUM"
 # create stack

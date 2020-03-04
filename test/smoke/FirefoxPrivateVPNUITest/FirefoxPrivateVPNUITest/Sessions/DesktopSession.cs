@@ -24,7 +24,7 @@ namespace FirefoxPrivateVPNUITest
             {
                 DesiredCapabilities appCapabilities = new DesiredCapabilities();
                 appCapabilities.SetCapability("app", "Root");
-                this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities, TimeSpan.FromSeconds(10));
+                this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities, TimeSpan.FromSeconds(Constants.SessionTimeoutInSeconds));
                 this.Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);
             }
         }
@@ -57,7 +57,8 @@ namespace FirefoxPrivateVPNUITest
             notification.Click();
             var clientTray = this.Session.FindElementByName("Firefox Private Network VPN - Disconnected");
             this.Session.Mouse.ContextClick(clientTray.Coordinates);
-            var exitItem = this.Session.FindElementByName("E_xit");
+            WindowsElement menu = Utils.WaitUntilFindElement(this.Session.FindElementByClassName, "ContextMenu");
+            var exitItem = menu.FindElementByName("Exit");
             exitItem.Click();
             notification.Click();
         }

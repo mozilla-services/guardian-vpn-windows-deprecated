@@ -44,7 +44,7 @@ namespace FirefoxPrivateVPNUITest.Screens
             var currentDeviceTextBlocks = this.currentDevice.FindElementsByClassName("TextBlock");
             this.currentDeviceName = currentDeviceTextBlocks[0];
             this.currentDeviceStatus = currentDeviceTextBlocks[1];
-            this.currentDeviceRemoveDeviceButton = this.currentDevice.FindElementByAccessibilityId("DeleteButton");
+            this.currentDeviceRemoveDeviceButton = Utils.WaitUntilFindElement(this.currentDevice.FindElementByAccessibilityId, "DeleteButton");
         }
 
         /// <summary>

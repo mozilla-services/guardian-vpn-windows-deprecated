@@ -34,7 +34,7 @@ namespace FirefoxPrivateVPNUITest
                 capabilities.SetCapability("app", BrowserAppId);
                 try
                 {
-                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), capabilities);
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), capabilities, TimeSpan.FromSeconds(Constants.SessionTimeoutInSeconds));
                     Assert.IsNotNull(this.Session);
                 }
                 catch (Exception)
@@ -69,7 +69,7 @@ namespace FirefoxPrivateVPNUITest
                     DesiredCapabilities appCapabilities = new DesiredCapabilities();
                     appCapabilities.SetCapability("deviceName", "WindowsPC");
                     appCapabilities.SetCapability("appTopLevelWindow", applicationSessionHandle);
-                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities);
+                    this.Session = new WindowsDriver<WindowsElement>(new Uri(WindowsApplicationDriverUrl), appCapabilities, TimeSpan.FromSeconds(Constants.SessionTimeoutInSeconds));
                 }
 
                 // Set implicit timeout to 1.5 seconds to make element search to retry every 500 ms for at most three times
@@ -112,7 +112,9 @@ namespace FirefoxPrivateVPNUITest
         public string GetCurrentUrl()
         {
             Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "reload-button");
-            var urlInput = this.Session.FindElementByAccessibilityId("urlbar-input");
+
+            // The browser will redirect url and we need more time to wait
+            var urlInput = Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "urlbar-input", 15000);
             return urlInput.Text;
         }
 
