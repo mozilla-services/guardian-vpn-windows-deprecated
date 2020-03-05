@@ -173,12 +173,8 @@ namespace FirefoxPrivateNetwork.FxA
         /// <returns>Success status of the remote server list retrieval.</returns>
         public bool RetrieveRemoteServerList()
         {
-            var client = new RestClient(ProductConstants.FxAUrl);
-            var request = new RestRequest("/vpn/servers", Method.GET);
-            request.AddParameter("Authorization", "Bearer " + Manager.Account.Config.FxALogin.Token, ParameterType.HttpHeader);
-
-            // Execute the request
-            IRestResponse response = client.Execute(request);
+            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/servers", Method.GET);
+            var response = api.SendRequest();
             var contents = response.Content;
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
