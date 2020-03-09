@@ -57,20 +57,37 @@ var accountDetails = models.AccountDetails{
 	Subscriptions: accountDetailsSubscriptions,
 	MaxDevices:    5,
 }
+var expiredAccountDetails = models.ErrorSchema{
+	Code:  401,
+	Errno: 120,
+	Error: "User doesn't have an active subscription",
+}
 
 // ApiV1VpnAccountGet - Account Information
 func (router *Router) ApiV1VpnAccountGet(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	accountDetails.Devices = devices
-	accountDetails.Subscriptions.Vpn.Active = subscriptionStatus
+	if subscriptionStatus {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusOK)
+		accountDetails.Devices = devices
+		accountDetails.Subscriptions.Vpn.Active = subscriptionStatus
 
-	js, err := json.Marshal(accountDetails)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		js, err := json.Marshal(accountDetails)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Write(js)
+	} else {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusUnauthorized)
+		js, err := json.Marshal(expiredAccountDetails)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.Write(js)
 	}
-	w.Write(js)
+
 }
 
 // ApiV1VpnDevicePost - Add Device
