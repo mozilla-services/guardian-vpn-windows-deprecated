@@ -236,9 +236,6 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             {
                 viewModel.SubscriptionStatus = string.Format("Subscription: {0}", JSONStructures.SubscriptionStatus.Inactive);
 
-                // Log the user out when their subscription is inactive
-                Manager.Account.Logout(removeDevice: false);
-
                 // Navigate the user to the sign in screen and display subscription expired toast
                 Application.Current.Dispatcher.Invoke(() =>
                 {

@@ -158,15 +158,30 @@ namespace FirefoxPrivateNetwork.FxA
             // Execute the request
             var response = api.SendRequest();
 
-            if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response == null)
             {
                 ErrorHandler.Handle("Could not retrieve account info.", LogLevel.Error);
                 return null;
             }
-
-            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
             {
+                JSONStructures.ApiError errorInfo = JsonConvert.DeserializeObject<JSONStructures.ApiError>(response.Content);
+                if (errorInfo.Error == "User doesn't have an active subscription")
+                {
+                    Config.FxALogin.User.Subscriptions.Vpn.Active = false;
+                    ErrorHandler.Handle("User doesn't have an active subscription", LogLevel.Error);
+                }
+                else
+                {
+                    ErrorHandler.Handle("Could not retrieve account info.", LogLevel.Error);
+                }
+
                 Manager.Account.Logout(removeDevice: false);
+                return null;
+            }
+            else if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                ErrorHandler.Handle("Could not retrieve account info.", LogLevel.Error);
                 return null;
             }
 
