@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/bitly/go-simplejson"
-	"github.com/stretchr/testify/assert"
 	"github.com/mozilla-services/guardian-vpn-windows/test/integrations/apimock/server/models"
+	"github.com/stretchr/testify/assert"
 )
 
 func VersionCheck(currentVersion string) (bool, error) {
