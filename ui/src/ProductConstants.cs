@@ -124,6 +124,16 @@ namespace FirefoxPrivateNetwork
         public static readonly string DefaultAllowedIPsLocal = "0.0.0.0/1, 128.0.0.0/1, ::/1, 8000::/1";
 
         /// <summary>
+        /// Catch all IPv4 addresses.
+        /// </summary>
+        public static readonly string DefaultAllowedIPv4s = "0.0.0.0/0";
+
+        /// <summary>
+        /// 0.0.0.0/0 (IPv4) separated into two equally sized subnets for routing, while allowing local network subnets to take precedent in the routing table.
+        /// </summary>
+        public static readonly string DefaultAllowedIPv4sLocal = "0.0.0.0/1, 128.0.0.0/1";
+
+        /// <summary>
         /// Number of seconds without a valid keepalive packet within the tunnel, after which the connection is deemed to be in a "no signal" state.
         /// </summary>
         public static readonly int TunnelNoSignalTimeout = 200;

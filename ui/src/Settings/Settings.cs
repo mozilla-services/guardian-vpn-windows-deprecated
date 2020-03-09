@@ -42,7 +42,14 @@ namespace FirefoxPrivateNetwork
             }
 
             // Configure the VPN allowed IPs
-            ProductConstants.AllowedIPs = network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPsLocal : ProductConstants.DefaultAllowedIPs;
+            if (network.EnableIPv6)
+            {
+                ProductConstants.AllowedIPs = network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPsLocal : ProductConstants.DefaultAllowedIPs;
+            }
+            else
+            {
+                ProductConstants.AllowedIPs = network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPv4sLocal : ProductConstants.DefaultAllowedIPv4s;
+            }
         }
 
         /// <summary>

@@ -61,6 +61,15 @@ namespace FirefoxPrivateNetwork.UI
             var networkSettings = Manager.Settings.Network;
             networkSettings.EnableIPv6 = enableIPv6CheckBox.IsChecked ?? false;
             Manager.Settings.Network = networkSettings;
+
+            if (Manager.Settings.Network.EnableIPv6)
+            {
+                ProductConstants.AllowedIPs = Manager.Settings.Network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPsLocal : ProductConstants.DefaultAllowedIPs;
+            }
+            else
+            {
+                ProductConstants.AllowedIPs = Manager.Settings.Network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPv4sLocal : ProductConstants.DefaultAllowedIPv4s;
+            }
         }
 
         private void AllowLocalDeviceAccessCheckBox_Click(object sender, RoutedEventArgs e)
@@ -73,7 +82,14 @@ namespace FirefoxPrivateNetwork.UI
             Manager.Settings.Network = networkSettings;
 
             // Reconfigure the VPN allowed IPs
-            ProductConstants.AllowedIPs = Manager.Settings.Network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPsLocal : ProductConstants.DefaultAllowedIPs;
+            if (Manager.Settings.Network.EnableIPv6)
+            {
+                ProductConstants.AllowedIPs = Manager.Settings.Network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPsLocal : ProductConstants.DefaultAllowedIPs;
+            }
+            else
+            {
+                ProductConstants.AllowedIPs = Manager.Settings.Network.AllowLocalDeviceAccess ? ProductConstants.DefaultAllowedIPv4sLocal : ProductConstants.DefaultAllowedIPv4s;
+            }
         }
     }
 }
