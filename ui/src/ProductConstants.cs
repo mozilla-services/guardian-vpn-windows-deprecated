@@ -265,7 +265,7 @@ namespace FirefoxPrivateNetwork
         {
             var osVersion = Environment.OSVersion.ToString();
             var osBits = Environment.Is64BitOperatingSystem ? "x64" : "x86";
-            return string.Format("{0}/{1} ({2}; {3})", ProductName, GetVersion(), osVersion, osBits);
+            return string.Format("{0}/{1} ({2}; {3})", InternalAppName, GetVersion(), osVersion, osBits);
         }
 
         /// <summary>
