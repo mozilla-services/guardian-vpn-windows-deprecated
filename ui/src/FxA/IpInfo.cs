@@ -13,22 +13,23 @@ namespace FirefoxPrivateNetwork.FxA
     /// <summary>
     /// Gets the IP info for the client.
     /// </summary>
-    internal class IpInfo
+    internal static class IpInfo
     {
         /// <summary>
-        /// Gets the IP information.
+        /// Detects the currently used public IP address and ISP location.
         /// </summary>
-        public void RetreiveIpInfo()
+        /// <returns>IP address and location info.</returns>
+        public static Models.IpInfo RetrieveIpInfo()
         {
             Models.IpInfo ipInfo = new Models.IpInfo();
 
-            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/ipinfo", RestSharp.Method.GET);
+            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/ipinfo", RestSharp.Method.GET, false);
             var response = api.SendRequest();
 
             if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 ErrorHandler.Handle("Could not retrieve IP info.", LogLevel.Error);
-                return;
+                return null;
             }
 
             try
@@ -39,14 +40,14 @@ namespace FirefoxPrivateNetwork.FxA
                 ipInfo.Ip = info.Ip;
                 ipInfo.Subregion = info.Subregion;
 
-                Manager.MainWindowViewModel.IpInfo = ipInfo;
-                Manager.MainWindowViewModel.IpAddressString = "IP: " + ipInfo.Ip;
-                return;
+                return ipInfo;
             }
             catch (Exception e)
             {
                 ErrorHandler.Handle(e, LogLevel.Error);
             }
+
+            return null;
         }
     }
 }

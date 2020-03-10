@@ -141,6 +141,9 @@ namespace FirefoxPrivateNetwork.WireGuard
                     {
                         throw new Exception("Set request UAPI error " + errno);
                     }
+
+                    // Update IP info.
+                    Manager.IPInfoUpdater.ForceUpdate();
                 }
             }
             catch (Exception e)
@@ -187,6 +190,12 @@ namespace FirefoxPrivateNetwork.WireGuard
             if (Service.IsTunnelServiceRunning())
             {
                 // Service is now running, clear transitioning states and query statistics
+                if (IsConnecting)
+                {
+                    // Update IP info.
+                    Manager.IPInfoUpdater.ForceUpdate();
+                }
+
                 ClearConnectionTransitionState();
 
                 // Sends the connection statistics request to the broker

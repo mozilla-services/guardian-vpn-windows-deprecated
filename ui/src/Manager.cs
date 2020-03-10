@@ -194,8 +194,7 @@ namespace FirefoxPrivateNetwork
         /// </summary>
         public static void InitializeIpInfo()
         {
-            var ipInfo = new FxA.IpInfo();
-            ipInfo.RetreiveIpInfo();
+            IPInfoUpdater = new UIUpdaters.IpInfoUpdater();
         }
 
         /// <summary>
