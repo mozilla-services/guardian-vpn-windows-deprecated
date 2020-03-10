@@ -13,10 +13,9 @@ tasks:
               repository:
                   name: mpd001
                   description: Project VPN Client
-                  ssh_secret_name: "project/releng/callek/mpd001-deploykey"
               treeherder: false
           trustDomain: mpd001
-          canonicalRepo: git@github.com:mozilla-services/guardian-vpn-windows.git
+          canonicalRepo: https://github.com/mozilla-services/guardian-vpn-windows
       in:
           $if: 'tasks_for in ["github-pull-request", "github-push", "action", "cron"]'
           then:
@@ -34,10 +33,10 @@ tasks:
                               then: '${tasks_for}@noreply.mozilla.org'
                   baseRepoUrl:
                       $if: 'tasks_for == "github-push"'
-                      then: '${event.repository.ssh_url}'
+                      then: '${event.repository.html_url}'
                       else:
                           $if: 'tasks_for == "github-pull-request"'
-                          then: '${event.pull_request.base.repo.ssh_url}'
+                          then: '${event.pull_request.base.repo.html_url}'
                           else:
                               $if: 'tasks_for in ["cron", "action"]'
                               then: '${repository.url}'
@@ -53,10 +52,10 @@ tasks:
                               then: '${repository.url[19:]}'
                   repoUrl:
                       $if: 'tasks_for == "github-push"'
-                      then: '${event.repository.ssh_url}'
+                      then: '${event.repository.html_url}'
                       else:
                           $if: 'tasks_for == "github-pull-request"'
-                          then: '${event.pull_request.base.repo.ssh_url}'
+                          then: '${event.pull_request.base.repo.html_url}'
                           else:
                               $if: 'tasks_for in ["cron", "action"]'
                               then: '${repository.url}'
@@ -153,7 +152,6 @@ tasks:
                                     - "tc-treeherder.v2.${project}.${head_sha}"
                                 else: []
                       scopes:
-                          # `ssh://` is 8 characters so, ${repoUrl[8:]} is the repository without the protocol.
                           $if: 'tasks_for == "github-push"'
                           then:
                             $let:
@@ -199,9 +197,6 @@ tasks:
                                     REPOSITORIES: {$json: {'${taskgraph.repository.name}': '${taskgraph.repository.description}', taskgraph: "Taskgraph"}}
                                     HG_STORE_PATH: /builds/worker/checkouts/hg-store
                                     ANDROID_SDK_ROOT: /builds/worker/android-sdk
-                                  - $if: '"ssh_secret_name" in taskgraph.repository'
-                                    then:
-                                        '${repositoryPrefix}_SSH_SECRET_NAME': '${taskgraph.repository.ssh_secret_name}'
                                   - $if: 'tasks_for in ["github-pull-request"]'
                                     then:
                                         '${repositoryPrefix}_PULL_REQUEST_NUMBER': '${event.pull_request.number}'
