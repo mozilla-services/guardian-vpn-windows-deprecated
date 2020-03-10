@@ -7,7 +7,6 @@ taskgraph:
     repositories:
         vcs:
             name: "Project VPN Client"
-            ssh-secret-name: project/releng/callek/mpd001-deploykey
 
 workers:
     aliases:
