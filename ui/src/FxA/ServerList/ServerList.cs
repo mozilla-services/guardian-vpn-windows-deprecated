@@ -175,6 +175,11 @@ namespace FirefoxPrivateNetwork.FxA
         {
             var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/servers", Method.GET);
             var response = api.SendRequest();
+            if (response == null)
+            {
+                return false;
+            }
+
             var contents = response.Content;
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)

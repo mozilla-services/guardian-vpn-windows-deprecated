@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Cache;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -23,11 +24,20 @@ namespace FirefoxPrivateNetwork.FxA
         /// <param name="token">Access token to API.</param>
         /// <param name="url">API endpoint.</param>
         /// <param name="method">HTTP method.</param>
-        public ApiRequest(string token, string url, RestSharp.Method method = RestSharp.Method.GET)
+        /// <param name="caching">Indicates whether caching is enabled for requests.</param>
+        public ApiRequest(string token, string url, RestSharp.Method method = RestSharp.Method.GET, bool caching = true)
         {
             client = new RestClient(ProductConstants.FxAUrl);
-            client.UserAgent = ProductConstants.GetUserAgent();
             request = new RestRequest(url, method);
+
+            client.UserAgent = ProductConstants.GetUserAgent();
+
+            if (!caching)
+            {
+                client.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.Revalidate);
+                request.AddHeader("Connection", "close");
+            }
+
             request.AddParameter("Authorization", "Bearer " + token, ParameterType.HttpHeader);
             request.RequestFormat = DataFormat.Json;
         }

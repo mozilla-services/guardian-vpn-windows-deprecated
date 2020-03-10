@@ -40,6 +40,42 @@ namespace FirefoxPrivateNetwork.UIUpdaters
         }
 
         /// <summary>
+        /// Speed units.
+        /// </summary>
+        public enum TransferSpeedUnit
+        {
+            /// <summary>
+            /// No/default unit.
+            /// </summary>
+            None = -1,
+
+            /// <summary>
+            /// Bytes per second.
+            /// </summary>
+            Bytes,
+
+            /// <summary>
+            /// Kilobits per second.
+            /// </summary>
+            Kbps,
+
+            /// <summary>
+            /// Megabits per second.
+            /// </summary>
+            Mbps,
+
+            /// <summary>
+            /// Gigabits per second.
+            /// </summary>
+            Gbps,
+
+            /// <summary>
+            /// Terabits per second.
+            /// </summary>
+            Tbps,
+        }
+
+        /// <summary>
         /// Gets the latest connection status received.
         /// </summary>
         public Models.ConnectionStatus LastConnectionStatus { get; private set; } = new Models.ConnectionStatus() { Status = Models.ConnectionState.Protected, ConnectionStability = Models.ConnectionStability.Stable };
@@ -286,20 +322,31 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             Manager.MainWindowViewModel.DownloadSpeedHistoryString = string.Join(",", speeds);
             Manager.MainWindowViewModel.IsDownloadIdle = GetIsIdle(speeds);
 
-            Tuple<string, string> lastDownloadSpeed = GetNetworkSpeedUnits(curDownloadSpeed);
-            Manager.MainWindowViewModel.LastDownloadSpeed = lastDownloadSpeed.Item1;
-            Manager.MainWindowViewModel.LastDownloadSpeedUnits = lastDownloadSpeed.Item2;
+            Tuple<string, TransferSpeedUnit> lastDownloadSpeed = GetNetworkSpeedUnits(curDownloadSpeed);
+            Tuple<string, TransferSpeedUnit> lastUploadSpeed = GetNetworkSpeedUnits(curUploadSpeed);
+
+            // Align speed units
+            if (lastDownloadSpeed.Item2 > lastUploadSpeed.Item2)
+            {
+                lastUploadSpeed = GetNetworkSpeedUnits(curUploadSpeed, forcedUnit: lastDownloadSpeed.Item2);
+            }
+            else if (lastDownloadSpeed.Item2 < lastUploadSpeed.Item2)
+            {
+                lastDownloadSpeed = GetNetworkSpeedUnits(curDownloadSpeed, forcedUnit: lastUploadSpeed.Item2);
+            }
 
             speeds = Manager.MainWindowViewModel.UploadSpeedHistory;
             speeds.Enqueue(curUploadSpeed);
             RemoveOldData(speeds);
+
             Manager.MainWindowViewModel.UploadSpeedHistory = speeds;
             Manager.MainWindowViewModel.UploadSpeedHistoryString = string.Join(",", speeds);
             Manager.MainWindowViewModel.IsUploadIdle = GetIsIdle(speeds);
 
-            Tuple<string, string> lastUploadSpeed = GetNetworkSpeedUnits(curUploadSpeed);
             Manager.MainWindowViewModel.LastUploadSpeed = lastUploadSpeed.Item1;
-            Manager.MainWindowViewModel.LastUploadSpeedUnits = lastUploadSpeed.Item2;
+            Manager.MainWindowViewModel.LastUploadSpeedUnits = lastUploadSpeed.Item2.ToString();
+            Manager.MainWindowViewModel.LastDownloadSpeed = lastDownloadSpeed.Item1;
+            Manager.MainWindowViewModel.LastDownloadSpeedUnits = lastDownloadSpeed.Item2.ToString();
         }
 
         private void RemoveOldData(Queue<double> dataList)
@@ -310,26 +357,36 @@ namespace FirefoxPrivateNetwork.UIUpdaters
             }
         }
 
-        private Tuple<string, string> GetNetworkSpeedUnits(double speedInBytes)
+        private Tuple<string, TransferSpeedUnit> GetNetworkSpeedUnits(double speedInBytes, TransferSpeedUnit forcedUnit = TransferSpeedUnit.None)
         {
-            string[] units = new string[] { "Kbps", "Mbps", "Gbps", "Tbps" };
-            string unit = units[0];
-            var value = speedInBytes / 1000;
+            var unit = TransferSpeedUnit.Kbps;
+            var value = speedInBytes;
 
-            for (var i = 0; i < units.Length; i++)
+            if (forcedUnit == TransferSpeedUnit.None)
             {
-                unit = units[i];
-
-                if (value < 1000)
+                for (var i = 0; i < Enum.GetNames(typeof(TransferSpeedUnit)).Length; i++)
                 {
-                    break;
-                }
+                    value /= 1000;
+                    unit = (TransferSpeedUnit)(i + 1);
 
-                value /= 1000;
+                    if (value < 1000)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Forced unit calculation
+                if (forcedUnit != TransferSpeedUnit.None)
+                {
+                    unit = forcedUnit;
+                    value /= Math.Pow(1000, (double)forcedUnit);
+                }
             }
 
             value = Math.Round(value, 1);
-            return new Tuple<string, string>(value.ToString(), unit);
+            return new Tuple<string, TransferSpeedUnit>(value.ToString(), unit);
         }
 
         private bool GetIsIdle(Queue<double> speeds)

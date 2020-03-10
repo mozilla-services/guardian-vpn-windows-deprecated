@@ -149,7 +149,17 @@ namespace FirefoxPrivateNetwork
         public static readonly int TunnelInitialGracePeriodTimeout = 10;
 
         /// <summary>
-        /// Number of minutes to wait after refreshing IP information bfore refreshing again.
+        /// Number of seconds to wait before initiating an IP info request, providing enough time for the network to settle.
+        /// </summary>
+        public static readonly int IpInfoRefreshGracePeriod = 10;
+
+        /// <summary>
+        /// Maximum number of IP request retries. Will retry if new IP is equal to old one after connection/disconnection (which should not be the case).
+        /// </summary>
+        public static readonly int IpInfoRefreshGraceRetries = 3;
+
+        /// <summary>
+        /// Number of minutes to wait after refreshing IP information before refreshing again.
         /// </summary>
         public static readonly int IpInfoRefreshPeriod = 10;
 
