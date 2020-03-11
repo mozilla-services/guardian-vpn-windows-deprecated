@@ -169,7 +169,7 @@ namespace FirefoxPrivateVPNUITest
             Assert.AreEqual("Enable IPv6", networkSettingsScreen.GetEnableIPv6CheckBoxText());
             Assert.AreEqual("Push the internet forward with the latest version of the Internet Protocol", networkSettingsScreen.GetEnableIPv6Description());
             Assert.IsFalse(networkSettingsScreen.IsEnableIPv6DisabledMessageDisplayed());
-            Assert.AreEqual("Allow access to your local network", networkSettingsScreen.GetAllowAccessText());
+            Assert.AreEqual("Local network access", networkSettingsScreen.GetAllowAccessText());
             Assert.AreEqual("Access printers, streaming sticks and all other devices on your local network", networkSettingsScreen.GetAllowAccessDescription());
             Assert.IsFalse(networkSettingsScreen.IsAllowAccessDisabledMessageDisplayed());
 
