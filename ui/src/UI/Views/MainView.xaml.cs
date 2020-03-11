@@ -24,6 +24,7 @@ namespace FirefoxPrivateNetwork.UI
         {
             InitializeComponent();
             DataContext = Manager.MainWindowViewModel;
+            ConfigureDataContextChangedHandler();
 
             // Reinitialize UI values
             ReinitializeUI();
@@ -32,8 +33,17 @@ namespace FirefoxPrivateNetwork.UI
         private void ReinitializeUI()
         {
             InitializeConnectionNavButton();
-
             Manager.AccountInfoUpdater.RefreshDeviceList();
+        }
+
+        private void ConfigureDataContextChangedHandler()
+        {
+            DataContextChanged += new DependencyPropertyChangedEventHandler((sender, e) =>
+            {
+                // Update the data context of the card within the main view
+                MainCard.DataContext = null;
+                MainCard.DataContext = Manager.MainWindowViewModel;
+            });
         }
 
         private void InitializeConnectionNavButton()
