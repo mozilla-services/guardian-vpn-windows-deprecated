@@ -21,6 +21,7 @@ if exist .deps\prepared goto :build
 	call :download mingw-amd64.zip https://download.wireguard.com/windows-toolchain/distfiles/x86_64-w64-mingw32-native-20190903.zip 15cf5596ece5394be0d71c22f586ef252e0390689ef6526f990a262f772aecf8 || goto :error
 	copy /y NUL prepared > NUL || goto :error
 	cd .. || goto :error
+	goto :build
 
 :build
 	set GOOS=windows
@@ -43,7 +44,7 @@ if exist .deps\prepared goto :build
 	echo [+] Verifying %1
 	for /f %%a in ('CertUtil -hashfile %1 SHA256 ^| findstr /r "^[0-9a-f]*$"') do if not "%%a"=="%~3" exit /b 1
 	echo [+] Extracting %1
-	tar -xf %1 %~4 || exit /b 1
+	unzip %1 || exit /b 1
 	echo [+] Cleaning up %1
 	del %1 || exit /b 1
 	goto :eof
