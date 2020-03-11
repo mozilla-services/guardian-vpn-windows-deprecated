@@ -26,6 +26,8 @@ job-template:
             - type: file
               path: "build/src/installer/x64/FirefoxPrivateNetworkVPN.msi"
               name: project/mpd001/installer/FirefoxPrivateNetworkVPN.msi
+        env:
+            MOZ_TC_AUTOMATION: '1'
     fetches:
         build-ui-signing:
             - artifact: ui/FirefoxPrivateNetworkVPN.zip
