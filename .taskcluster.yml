@@ -97,7 +97,7 @@ tasks:
                   $let:
                       level:
                           $if: 'tasks_for in ["github-push"] && repoUrl == canonicalRepo'
-                          then: '1'
+                          then: '3'
                           else:
                               $if: 'tasks_for in ["cron", "action"]'
                               then: '${repository.level}'
