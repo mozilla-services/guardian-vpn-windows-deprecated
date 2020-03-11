@@ -29,6 +29,8 @@ from taskgraph.transforms.task import payload_builder
                 Required("paths"): [text_type],
                 # Signing formats to use on each of the paths
                 Required("formats"): [text_type],
+                # Comment for autograph signing
+                Optional("authenticode_comment"): text_type,
             }
         ],
     },

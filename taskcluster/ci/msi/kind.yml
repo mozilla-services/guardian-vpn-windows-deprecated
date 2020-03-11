@@ -1,0 +1,44 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: guardian_taskgraph.loader.single_dep:loader
+transforms:
+    - guardian_taskgraph.transforms.ui:transforms
+    - taskgraph.transforms.job:transforms
+    - taskgraph.transforms.task:transforms
+
+kind-dependencies:
+    - build-ui-signing
+
+job-template:
+    attributes:
+        artifact_prefix: project/mpd001
+    worker-type: windows
+    description: "Builds the ui"
+    dependencies: {'wix': 'fetch-wix-wix-3.14.0'}
+    scopes:
+        - queue:get-artifact:project/mpd001/ui/*
+    worker:
+        max-run-time: 3600
+        chain-of-trust: true
+        artifacts:
+            - type: file
+              path: "build/src/installer/x64/FirefoxPrivateNetworkVPN.msi"
+              name: project/mpd001/installer/FirefoxPrivateNetworkVPN.msi
+    fetches:
+        build-ui-signing:
+            - artifact: ui/FirefoxPrivateNetworkVPN.zip
+              dest: ../build/src/ui/bin/
+              extract: true
+        wix:
+            - artifact: /public/wix314-binaries.zip
+              extract: true
+    run:
+        using: run-task
+        use-caches: false
+        cwd: '{checkout}/installer'
+        command:
+            - 'cmd.exe' 
+            - '/c'
+            - 'build.cmd'
