@@ -20,7 +20,7 @@ workers:
             provisioner: scriptworker-k8s
             implementation: scriptworker-signing
             os: scriptworker
-            worker-type: mpd001-1-signing
+            worker-type: mpd001-t-signing
         signing:
             provisioner: scriptworker-k8s
             implementation: scriptworker-signing
