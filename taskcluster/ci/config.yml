@@ -4,14 +4,28 @@ trust-domain: mpd001
 task-priority: lowest
 
 taskgraph:
+    register: guardian_taskgraph:register
     repositories:
-        vcs:
+        mpd001:
             name: "Project VPN Client"
 
 workers:
     aliases:
         windows:
-            provisioner: aws-provisioner-v1
+            provisioner: 'mpd001-{level}'
             implementation: generic-worker
             os: windows
-            worker-type: 'mpd001-{level}-b-win2012'
+            worker-type: 'b-win2012'
+        dep-signing:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-signing
+            os: scriptworker
+            worker-type: mpd001-1-signing
+        signing:
+            provisioner: scriptworker-k8s
+            implementation: scriptworker-signing
+            os: scriptworker
+            worker-type: mpd001-3-signing
+
+scriptworker:
+    scope-prefix: project:mpd001:releng

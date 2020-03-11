@@ -1,0 +1,36 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+transforms:
+    - taskgraph.transforms.job:transforms
+    - taskgraph.transforms.task:transforms
+
+job-defaults:
+    worker-type: windows
+    description: ""
+    worker:
+        max-run-time: 3600
+        chain-of-trust: true
+    run:
+        using: run-task
+
+jobs:
+    windows-tunnel:
+        description: "Builds the tunnel"
+        worker:
+            artifacts:
+                - type: file
+                  path: "build/src/tunnel/x64/tunnel.dll"
+                  name: project/mpd001/tunnel/x64/tunnel.dll
+                - type: file
+                  path: "build/src/tunnel/x86/tunnel.dll"
+                  name: project/mpd001/tunnel/x86/tunnel.dll
+        run:
+            use-caches: false
+            cwd: '{checkout}/tunnel'
+            command:
+                - 'cmd.exe' 
+                - '/c'
+                - 'build.cmd'
