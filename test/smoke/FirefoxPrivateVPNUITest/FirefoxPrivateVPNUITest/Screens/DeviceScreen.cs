@@ -4,6 +4,7 @@
 
 namespace FirefoxPrivateVPNUITest.Screens
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Linq;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,9 +40,11 @@ namespace FirefoxPrivateVPNUITest.Screens
             var devicePanel = deviceView.FindElementByClassName("ScrollViewer");
             this.devicePanelTitle = devicePanel.FindElementByClassName("TextBlock");
             this.deviceList = devicePanel.FindElementByAccessibilityId("DeviceList");
-            var deviceListItems = this.deviceList.FindElementsByClassName("ListBoxItem");
+            ReadOnlyCollection<AppiumWebElement> deviceListItems = null;
+            Utils.WaitUntil(ref deviceListItems, this.deviceList.FindElementsByClassName, "ListBoxItem", (list) => list.Count > 0);
             this.currentDevice = deviceListItems[0];
-            var currentDeviceTextBlocks = this.currentDevice.FindElementsByClassName("TextBlock");
+            ReadOnlyCollection<AppiumWebElement> currentDeviceTextBlocks = null;
+            Utils.WaitUntil(ref currentDeviceTextBlocks, this.currentDevice.FindElementsByClassName, "TextBlock", (list) => list.Count > 1);
             this.currentDeviceName = currentDeviceTextBlocks[0];
             this.currentDeviceStatus = currentDeviceTextBlocks[1];
             this.currentDeviceRemoveDeviceButton = Utils.WaitUntilFindElement(this.currentDevice.FindElementByAccessibilityId, "DeleteButton");

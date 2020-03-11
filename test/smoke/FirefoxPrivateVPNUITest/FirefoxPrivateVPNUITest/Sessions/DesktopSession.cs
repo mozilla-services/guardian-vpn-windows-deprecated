@@ -11,7 +11,7 @@ namespace FirefoxPrivateVPNUITest
     /// <summary>
     /// Firefox Browser session.
     /// </summary>
-    public class DesktopSession
+    public class DesktopSession : BaseSession
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
 
@@ -28,11 +28,6 @@ namespace FirefoxPrivateVPNUITest
                 this.Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);
             }
         }
-
-        /// <summary>
-        /// Gets or sets Session.
-        /// </summary>
-        public WindowsDriver<WindowsElement> Session { get; set; }
 
         /// <summary>
         /// Dispose the desktop session.
@@ -53,11 +48,11 @@ namespace FirefoxPrivateVPNUITest
         /// </summary>
         public void CloseVPNClient()
         {
-            var notification = Utils.WaitUntilFindElement(this.Session.FindElementByName, "Notification Chevron");
+            var notification = Utils.WaitUntilFindElement(this.Session.FindElementByName, "Notification Chevron", 15000);
             notification.Click();
             var clientTray = this.Session.FindElementByName("Firefox Private Network VPN - Disconnected");
             this.Session.Mouse.ContextClick(clientTray.Coordinates);
-            WindowsElement menu = Utils.WaitUntilFindElement(this.Session.FindElementByClassName, "ContextMenu");
+            WindowsElement menu = Utils.WaitUntilFindElement(this.Session.FindElementByClassName, "ContextMenu", 15000);
             var exitItem = menu.FindElementByName("Exit");
             exitItem.Click();
             notification.Click();

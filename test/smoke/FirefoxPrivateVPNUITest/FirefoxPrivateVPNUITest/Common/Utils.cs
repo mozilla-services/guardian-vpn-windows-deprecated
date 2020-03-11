@@ -83,7 +83,7 @@ namespace FirefoxPrivateVPNUITest
         /// <param name="selector">The selector used in the findMethod.</param>
         /// <param name="timeOut">Time out in milliseconds. Default is 10000 milliseconds.</param>
         /// <returns>Windows element.</returns>
-        public static WindowsElement WaitUntilFindElement(Func<string, WindowsElement> findMethod, string selector, double timeOut = 10000)
+        public static WindowsElement WaitUntilFindElement(Func<string, WindowsElement> findMethod, string selector, double timeOut = 15000)
         {
             WindowsElement element = null;
             Utils.WaitUntil(ref element, findMethod, selector, (ele) => ele != null, timeOut);
@@ -97,7 +97,7 @@ namespace FirefoxPrivateVPNUITest
         /// <param name="selector">The selector used in the findMethod.</param>
         /// <param name="timeOut">Time out in milliseconds. Default is 10000 milliseconds.</param>
         /// <returns>Appium Web Element.</returns>
-        public static AppiumWebElement WaitUntilFindElement(Func<string, AppiumWebElement> findMethod, string selector, double timeOut = 10000)
+        public static AppiumWebElement WaitUntilFindElement(Func<string, AppiumWebElement> findMethod, string selector, double timeOut = 15000)
         {
             AppiumWebElement element = null;
             Utils.WaitUntil(ref element, findMethod, selector, (ele) => ele != null, timeOut);
@@ -113,7 +113,7 @@ namespace FirefoxPrivateVPNUITest
         /// <param name="param">The parameter passed to func.</param>
         /// <param name="condition">A function which takes result as parameter and return bool.</param>
         /// <param name="timeOut">The time out, default 10000 ms.</param>
-        public static void WaitUntil<T>(ref T result, Func<string, T> func, string param, Func<T, bool> condition, double timeOut = 10000)
+        public static void WaitUntil<T>(ref T result, Func<string, T> func, string param, Func<T, bool> condition, double timeOut = 15000)
         {
             Stopwatch time = new Stopwatch();
             time.Start();
@@ -213,6 +213,20 @@ namespace FirefoxPrivateVPNUITest
             };
             IRestResponse response = RetryExecute(client, request, condition);
             return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        /// <summary>
+        /// Re-arrange the position and size of vpn client and browser windows to prevent overlap.
+        /// </summary>
+        /// <param name="vpnClient">VPN client session.</param>
+        /// <param name="browser">Browser session.</param>
+        public static void RearrangeWindows(BaseSession vpnClient, BaseSession browser)
+        {
+            vpnClient.SetWindowPosition(0, 0);
+            var vpnClientPosition = vpnClient.Session.Manage().Window.Position;
+            var vpnClientSize = vpnClient.Session.Manage().Window.Size;
+            browser.SetWindowPosition(vpnClientPosition.X + vpnClientSize.Width, 0);
+            browser.SetWindowSize(600, 650);
         }
 
         /// <summary>
