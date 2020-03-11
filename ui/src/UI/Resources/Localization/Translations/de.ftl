@@ -5,16 +5,16 @@ application-description =
    (Virtuelles Privates Netzwerk).
 
 ## Navigation
-navigation-close = Close
-navigation-back = Back
-navigation-open-link
-navigation-open-contact-link
-navigation-open-support-link
-navigation-open-terms-of-service
-navigation-open-privacy-policy
-navigation-open-debug
-navigation-open-log
-navigation-open-data-usage
+navigation-close = Schließen
+navigation-back = Schließen
+navigation-open-link = Öffnen
+navigation-open-contact-link = Öffnen Sie Kontakt Link
+navigation-open-support-link = Öffnen Sie den Link zu Hilfe und Support
+navigation-open-terms-of-service = Link zu den Nutzungsbedingungen öffnen
+navigation-open-privacy-policy = Öffnen Sie Datenschutz Link
+navigation-open-debug = Öffnen Sie den Debug-Link
+navigation-open-log = Öffnen Sie den Protokollverbindung
+navigation-open-data-usage = Öffnen Datenverbrauch
 
 ## Pages
 connection-page-title = Verbindungen
@@ -41,16 +41,16 @@ hero-text-vpn-on = VPN ist an
 hero-text-connecting = Verbinden...
 hero-text-disconnecting = Trennen...
 hero-text-switching = Wechselt...
-hero-image-vpn-status
-dev-mode-on
-toggle-vpn
-decoration-image
-shadow-image
-connection-navigation-button
-vpn-status-image
-data-usage-download
-data-usage-upload
-data-usage-idle
+hero-image-vpn-status = VPN status
+dev-mode-on = Entwicklermodus ein
+toggle-vpn = Umschalten VPN
+decoration-image = Dekoration
+shadow-image = Schatten
+connection-navigation-button = Verbindungsnavigation
+vpn-status-image = VPN status
+data-usage-download = Herunterladen
+data-usage-upload = Hochladen
+data-usage-idle = untätig
 
 hero-subtext-unstable = Instabil
 hero-subtext-no-signal = Kein Signal
@@ -90,10 +90,10 @@ settings-local-device-access-title = Zugriff zum lokalen Netzwerk erlauben
 settings-local-device-access-content = Zugriff auf Drucker, Streaming und alle anderen Geräte im lokalen Netzwerk
 settings-local-device-access-checked-disabled-message = VPN muss vor der Deaktivierung ausgeschaltet werden
 settings-local-device-access-unchecked-disabled-message = VPN muss vor der Aktivierung ausgeschaltet werden
-settings-captive-portal-title = Guest Wi-Fi portal alert
-settings-captive-portal-content = Get notified if a guest Wi-Fi portal is blocked due to VPN connection
-settings-enable-IPv6-title
-settings-enable-IPv6-content
+settings-captive-portal-title = Gast Wi-Fi Portalalarm
+settings-captive-portal-content = Benachrichtigen Sie mich, wenn das Gast-WLAN-Portal aufgrund des VPN blockiert ist
+settings-enable-IPv6-title = Aktivieren IPv6
+settings-enable-IPv6-content = Schieben Sie das Internet mit der neuesten Version des Internetprotokolls vorwärts
 settings-enable-IPv6-checked-disabled-message = VPN muss vor der Deaktivierung ausgeschaltet werden
 settings-enable-IPv6-unchecked-disabled-message = VPN muss vor der Aktivierung ausgeschaltet werden
 
@@ -202,10 +202,10 @@ windows-notification-vpn-turn-on-title = VPN anschalten?
 windows-notification-vpn-turn-on-content = Wir verbinden dich mit deinem letzten Standort: {$serverCity}
 windows-notification-unsecure-network-title = Unsicheres Netzwerk erkannt
 windows-notification-unsecure-network-content = "{$wifiName}" ist nicht sicher. Du solltest Dein VPN einschalten.
-windows-notification-captive-portal-blocked-title = Guest Wi-Fi portal blocked
-windows-notification-captive-portal-blocked-content = The guest Wi-Fi network you're connected to requires action. Click to turn off VPN to see the portal.
-windows-notification-captive-portal-detected-title = Guest Wi-Fi portal detected
-windows-notification-captive-portal-detected-content = {$networkName} may not be secure. Click to turn on VPN to secure your device.
+windows-notification-captive-portal-blocked-title = Gastportal Wi-Fi blockiert
+windows-notification-captive-portal-blocked-content = Gastportal blockiert Das Gast-WLAN-Netzwerk, mit dem Sie verbunden sind, erfordert Maßnahmen. Klicken Sie hier, um VPN zu deaktivieren und das Portal anzuzeigen.
+windows-notification-captive-portal-detected-title = Gast-WLAN erkannt
+windows-notification-captive-portal-detected-content = "{$wifiName}" ist möglicherweise nicht sicher. Klicken Sie hier, um VPN zu aktivieren und Ihr Gerät zu sichern.
 
 ## In-app toasts
 toast-debug-export-error = Wir sind beim Export Ihrer Debug-Informationen auf einen Fehler gestoßen.
@@ -228,9 +228,9 @@ toast-unable-to-connect = Verbindung kann nicht hergestellt werden.{" "}
 toast-try-again = Nochmal versuchen
 toast-feedback-submitted = Feedback abgeschickt!{" "}
 toast-feedback-undo = Rückgängig
-toast-service-communication-error = Unable to communicate with the {application-name} background service. Click to restart.
-toast-service-restart-error = We couldn't restart the background service. Please repair your installation of {application-name}.
-toast-service-restart-success = The {application-name} background service has been restored.
+toast-service-communication-error = Kommunikation mit dem Hintergrunddienst {application-name} nicht möglich. Klicken Sie zum Neustart.
+toast-service-restart-error = Wir konnten den Hintergrunddienst nicht neu starten. Bitte erneut installieren {application-name}.
+toast-service-restart-success = Der Hintergrunddienst, {application-name}, wurde wiederhergestellt.
 
 ## ViewLog window
 viewlog-save-button = Speichern
