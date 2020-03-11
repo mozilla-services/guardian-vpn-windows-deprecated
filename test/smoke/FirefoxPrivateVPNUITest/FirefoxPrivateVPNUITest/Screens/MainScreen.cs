@@ -29,15 +29,17 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public MainScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            this.titleElement = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "HeroText");
-            this.subtitleElement = vpnSession.FindElementByClassName("HeroSubText");
-            var settingButtons = vpnSession.FindElementsByName("Settings");
+            var mainView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "MainView");
+            var mainCard = mainView.FindElementByAccessibilityId("MainCard");
+            this.titleElement = mainCard.FindElementByClassName("HeroText");
+            this.subtitleElement = mainCard.FindElementByClassName("HeroSubText");
+            var settingButtons = mainCard.FindElementsByName("Settings");
             this.vpnOffSettingButton = settingButtons[0];
             this.vpnOnSettingButton = settingButtons[1];
-            this.vpnSwitch = vpnSession.FindElementByName("Toggle");
-            this.serverListButton = vpnSession.FindElementByAccessibilityId("ConnectionNavButton");
-            this.deviceListButton = vpnSession.FindElementByName("My devices");
-            this.vpnStatus = vpnSession.FindElementByName("VPN status");
+            this.vpnSwitch = mainCard.FindElementByName("Toggle");
+            this.serverListButton = mainView.FindElementByAccessibilityId("ConnectionNavButton");
+            this.deviceListButton = mainView.FindElementByName("My devices");
+            this.vpnStatus = mainCard.FindElementByName("VPN status");
         }
 
         /// <summary>

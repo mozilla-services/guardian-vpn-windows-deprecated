@@ -5,7 +5,6 @@
 namespace FirefoxPrivateVPNUITest
 {
     using System;
-    using System.Net;
     using FirefoxPrivateVPNUITest.Screens;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -28,11 +27,7 @@ namespace FirefoxPrivateVPNUITest
             this.browser = new BrowserSession();
             this.vpnClient = new FirefoxPrivateVPNSession();
             this.desktop = new DesktopSession();
-
-            // Resize browser to make vpn client and browser are not overlapped
-            var vpnClientPosition = this.vpnClient.Session.Manage().Window.Position;
-            var vpnClientSize = this.vpnClient.Session.Manage().Window.Size;
-            this.browser.SetWindowPosition(vpnClientPosition.X + vpnClientSize.Width, 0);
+            Utils.RearrangeWindows(this.vpnClient, this.browser);
         }
 
         /// <summary>
@@ -83,9 +78,6 @@ namespace FirefoxPrivateVPNUITest
             serverListScreen.RandomSelectDifferentCityServer("Atlanta");
             string currentCity = serverListScreen.GetSelectedCity();
             Console.WriteLine("After switching: the selected city is {0}", currentCity);
-
-            // Check the subtitle
-            Assert.AreEqual(string.Format("From {0} to {1}", prevCity, currentCity), mainScreen.GetSubtitle());
 
             // Check the windows notification again
             this.desktop.Session.SwitchTo();

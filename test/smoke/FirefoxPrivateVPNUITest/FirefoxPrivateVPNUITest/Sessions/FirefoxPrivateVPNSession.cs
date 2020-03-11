@@ -15,7 +15,7 @@ namespace FirefoxPrivateVPNUITest
     /// <summary>
     /// Firefox Private VPN session.
     /// </summary>
-    public class FirefoxPrivateVPNSession : IDisposable
+    public class FirefoxPrivateVPNSession : BaseSession
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
         private const string FirefoxPrivateVPNAppId = @"C:\Program Files\Mozilla\Firefox Private Network VPN\FirefoxPrivateNetworkVPN.exe";
@@ -60,11 +60,6 @@ namespace FirefoxPrivateVPNUITest
         }
 
         /// <summary>
-        /// Gets session.
-        /// </summary>
-        public WindowsDriver<WindowsElement> Session { get; private set; }
-
-        /// <summary>
         /// Dispose the VPN session and close the app.
         /// </summary>
         public void Dispose()
@@ -79,7 +74,6 @@ namespace FirefoxPrivateVPNUITest
                 }
                 catch (InvalidOperationException)
                 {
-                    MainScreen mainScreen = new MainScreen(this.Session);
                     UserCommonOperation.UserSignOut(this);
                 }
 

@@ -139,7 +139,7 @@ jobs:
           name: Wait for Smoke Test result
           command: |
             New-Item -Path ./test/result/ -Name "smoketest" -ItemType "directory"
-            $timeout = new-timespan -Minutes 20
+            $timeout = new-timespan -Minutes 30
             $sw = [diagnostics.stopwatch]::StartNew()
             while ($sw.elapsed -lt $timeout){
               If(Test-S3Bucket -BucketName $env:S3_BUCKET) {

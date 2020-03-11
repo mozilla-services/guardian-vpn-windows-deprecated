@@ -28,11 +28,7 @@ namespace FirefoxPrivateVPNUITest
             this.browser = new BrowserSession();
             this.vpnClient = new FirefoxPrivateVPNSession();
             this.desktop = new DesktopSession();
-
-            // Resize browser to make vpn client and browser are not overlapped
-            var vpnClientPosition = this.vpnClient.Session.Manage().Window.Position;
-            var vpnClientSize = this.vpnClient.Session.Manage().Window.Size;
-            this.browser.SetWindowPosition(vpnClientPosition.X + vpnClientSize.Width, 0);
+            Utils.RearrangeWindows(this.vpnClient, this.browser);
         }
 
         /// <summary>
@@ -70,7 +66,8 @@ namespace FirefoxPrivateVPNUITest
             Assert.AreEqual("My devices", deviceScreen.GetTitle());
             Regex rgx = new Regex(@"^[1-5] of 5$");
             Assert.IsTrue(rgx.IsMatch(deviceScreen.GetDeviceSummary()));
-            Assert.AreEqual("Devices with Firefox Private Network installed using your account. Connect up to 5 devices.", deviceScreen.GetDevicePanelTitle());
+            rgx = new Regex(@"^Devices with Firefox Private Network installed using your account. Connect up to [0-9] devices.$");
+            Assert.IsTrue(rgx.IsMatch(deviceScreen.GetDevicePanelTitle()));
             Assert.IsTrue(deviceScreen.GetCurrentDeviceName().Contains(Environment.MachineName));
             Assert.AreEqual("Current device", deviceScreen.GetCurrentDeviceStatus());
             Assert.IsFalse(deviceScreen.GetCurrentDeviceRemoveButton().Displayed);

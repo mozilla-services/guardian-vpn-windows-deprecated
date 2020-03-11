@@ -87,6 +87,7 @@ namespace FirefoxPrivateVPNUITest
             mainScreen.ToggleVPNSwitch();
 
             // Verify the windows notification
+            desktop.Session.SwitchTo();
             WindowsNotificationScreen windowsNotificationScreen = new WindowsNotificationScreen(desktop.Session);
             Assert.AreEqual("VPN is on", windowsNotificationScreen.GetTitleText());
             Assert.AreEqual("You're secure and protected.", windowsNotificationScreen.GetMessageText());

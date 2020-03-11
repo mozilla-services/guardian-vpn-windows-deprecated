@@ -13,6 +13,7 @@ namespace FirefoxPrivateVPNUITest.Screens
     /// </summary>
     internal class WindowsNotificationScreen
     {
+        private static readonly int TimeOut = 20000;
         private AppiumWebElement titleText;
         private AppiumWebElement messageText;
         private AppiumWebElement dismissButton;
@@ -32,8 +33,8 @@ namespace FirefoxPrivateVPNUITest.Screens
             }
             catch (Exception)
             {
-                Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Action Center").Click();
-                var notification = Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Notifications from Firefox Private Network VPN");
+                Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Action Center", TimeOut).Click();
+                var notification = Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Notifications from Firefox Private Network VPN", TimeOut);
                 var latestNotification = notification.FindElementByClassName("ListViewItem");
                 this.titleText = latestNotification.FindElementByAccessibilityId("Title");
                 this.messageText = latestNotification.FindElementByAccessibilityId("Content");

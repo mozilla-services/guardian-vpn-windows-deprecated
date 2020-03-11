@@ -28,7 +28,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         public ExportWindow(WindowsDriver<WindowsElement> session, string windowName)
         {
             this.session = session;
-            this.exportWindow = session.FindElementByName(windowName);
+            this.exportWindow = Utils.WaitUntilFindElement(session.FindElementByName, windowName);
             this.toolBar = this.exportWindow.FindElementByClassName("Breadcrumb Parent");
             var fileInputComboBox = this.exportWindow.FindElementByAccessibilityId("FileNameControlHost");
             this.fileInput = fileInputComboBox.FindElementByName("File name:");

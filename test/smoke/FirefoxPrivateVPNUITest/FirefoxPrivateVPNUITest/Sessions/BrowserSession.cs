@@ -16,7 +16,7 @@ namespace FirefoxPrivateVPNUITest
     /// <summary>
     /// Firefox Browser session.
     /// </summary>
-    public class BrowserSession
+    public class BrowserSession : BaseSession
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
         private const string BrowserAppId = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
@@ -78,11 +78,6 @@ namespace FirefoxPrivateVPNUITest
         }
 
         /// <summary>
-        /// Gets or sets Session.
-        /// </summary>
-        public WindowsDriver<WindowsElement> Session { get; set; }
-
-        /// <summary>
         /// Dispose the browser session and close the browser.
         /// </summary>
         public void Dispose()
@@ -116,21 +111,6 @@ namespace FirefoxPrivateVPNUITest
             // The browser will redirect url and we need more time to wait
             var urlInput = Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "urlbar-input", 15000);
             return urlInput.Text;
-        }
-
-        /// <summary>
-        /// Set windows to a new postion.
-        /// </summary>
-        /// <param name="x">The x position.</param>
-        /// <param name="y">The y position.</param>
-        public void SetWindowPosition(int x, int y)
-        {
-            int offset = 100;
-            this.Session.Manage().Window.Position = new Point(x + offset, y + offset);
-            var windowPosition = this.Session.Manage().Window.Position;
-            Assert.IsNotNull(windowPosition);
-            Assert.AreEqual(x + offset, windowPosition.X);
-            Assert.AreEqual(y + offset, windowPosition.Y);
         }
     }
 }
