@@ -26,7 +26,7 @@ about-page-title = Über
 feedback-page-title = Feedback
 language-page-title = Sprache
 notifications-page-title = Mitteilungen
-network-settings-page-title
+network-settings-page-title = Netzwerkeinstellungen
 
 ## Urls
 terms-service-url-title = Nutzungsbedingungen
