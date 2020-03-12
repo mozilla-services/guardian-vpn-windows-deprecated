@@ -96,8 +96,8 @@
             </Grid>
         </Grid>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
+            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
                 <StackPanel>
                     <!-- Devices view description -->
                     <TextBlock Grid.Row="0" Grid.Column="0" Margin="16,16,16,10" Foreground="{StaticResource 'Grey/Grey 40'}" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:DevicesView}}, Path=DevicesPageDescription}">
