@@ -1,0 +1,15 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: taskgraph.loader.transform:loader
+transforms:
+    - taskgraph.transforms.index_search:transforms
+    - taskgraph.transforms.task:transforms
+
+jobs:
+    wix-3.14.0:
+        # This would ideally be fetched/specified in our task here.
+        description: "Gecko fetched wix toolchain"
+        index-search:
+            - gecko.cache.level-3.content.v1.wix-3.14.0.hash.ebad617355ce7e084f7c45400914a10425fff35b76bf67b4f1ffb4468a82b84b

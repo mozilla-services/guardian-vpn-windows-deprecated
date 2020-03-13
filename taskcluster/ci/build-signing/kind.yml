@@ -1,0 +1,29 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: guardian_taskgraph.loader.single_dep:loader
+transforms:
+    - guardian_taskgraph.transforms.signing:transforms
+    - taskgraph.transforms.task:transforms
+
+kind-dependencies:
+    - build
+
+job-template:
+    description: Sign Tunnel
+    worker-type:
+        by-level:
+            '3': signing
+            default: dep-signing
+    worker:
+        signing-type:
+            by-level:
+                '3': release-signing
+                default: dep-signing
+        upstream-artifacts:
+            - taskId: {task-reference: "<build>"}
+              taskType: build
+              paths: ["project/mpd001/tunnel/x86/tunnel.dll", "project/mpd001/tunnel/x64/tunnel.dll"]
+              formats: [autograph_authenticode_ev]
+

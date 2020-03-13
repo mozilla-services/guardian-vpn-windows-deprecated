@@ -1,0 +1,44 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+---
+loader: guardian_taskgraph.loader.single_dep:loader
+transforms:
+    - guardian_taskgraph.transforms.ui:transforms
+    - taskgraph.transforms.job:transforms
+    - taskgraph.transforms.task:transforms
+
+kind-dependencies:
+    - build-signing
+
+job-template:
+    attributes:
+        artifact_prefix: project/mpd001
+    worker-type: windows
+    description: "Builds the ui"
+    scopes:
+        - queue:get-artifact:project/mpd001/tunnel/*
+    worker:
+        max-run-time: 3600
+        chain-of-trust: true
+        artifacts:
+            - type: file
+              # build\src\ui\bin\x64\Release
+              path: "build/src/ui/bin/FirefoxPrivateNetworkVPN.zip"
+              name: project/mpd001/ui/FirefoxPrivateNetworkVPN.zip
+    fetches:
+        build-signing:
+            - artifact: tunnel/x86/tunnel.dll
+              dest: ../build/src/tunnel/x86/
+              extract: false
+            - artifact: tunnel/x64/tunnel.dll
+              dest: ../build/src/tunnel/x64/
+              extract: false
+    run:
+        using: run-task
+        use-caches: false
+        cwd: '{checkout}/ui'
+        command:
+            - 'cmd.exe' 
+            - '/c'
+            - 'build.cmd'
