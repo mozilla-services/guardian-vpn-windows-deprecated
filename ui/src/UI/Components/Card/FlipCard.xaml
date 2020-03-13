@@ -101,13 +101,13 @@
 
                                 <!-- Data stats button-->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    <Button AutomationProperties.Name="{Binding Path=[navigation-open-data-usage]}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" ui:ButtonExtensions.IconUri="{StaticResource 'info-white'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="Flip">
+                                    <Button AutomationProperties.Name="{Binding Path=[navigation-open-data-usage]}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" ui:ButtonExtensions.IconUri="{StaticResource 'info-grey-white'}" ui:ButtonExtensions.HoverIconUri="{StaticResource 'info-white'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="Flip">
                                         <Button.Style>
                                             <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}">
-                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Setter Property="Visibility" Value="Collapsed" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="0">
-                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    <DataTrigger Binding="{Binding Status}" Value="1">
+                                                        <Setter Property="Visibility" Value="Visible" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -235,7 +235,7 @@
 
                         <!-- Navigate back button -->
                         <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">
-                            <Button AutomationProperties.Name="{Binding Path=[navigation-back]}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" ui:ButtonExtensions.IconUri="{StaticResource 'close-white'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="Flip">
+                            <Button AutomationProperties.Name="{Binding Path=[navigation-back]}" Width="40" Height="40" Margin="8,0,8,0" VerticalAlignment="Center" ui:ButtonExtensions.IconUri="{StaticResource 'close-grey-white'}" ui:ButtonExtensions.HoverIconUri="{StaticResource 'close-white'}" ui:ButtonExtensions.HoverBackground="{StaticResource 'Grey/White 20'}" ui:ButtonExtensions.PressedBackground="{StaticResource 'Grey/White 40'}" Click="Flip">
                                 <Button.Style>
                                     <Style BasedOn="{StaticResource 'Icon'}" TargetType="{x:Type Button}"/>
                                 </Button.Style>
