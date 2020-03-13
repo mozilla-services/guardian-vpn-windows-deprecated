@@ -1126,6 +1126,8 @@
     <Content Include="FirefoxPrivateNetworkVPN.visualelementsmanifest.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="UI\Resources\Icons\Generic\close-grey-white.svg" />
+    <Resource Include="UI\Resources\Icons\Generic\info-grey-white.svg" />
     <Resource Include="UI\Resources\Icons\Generic\info-white.svg" />
     <Resource Include="UI\Resources\Icons\Generic\default-avatar.png" />
     <Resource Include="UI\Resources\Icons\Generic\dev.png" />
