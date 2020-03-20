@@ -38,22 +38,23 @@ namespace FirefoxPrivateVPNUITest.Screens
         public SettingScreen(WindowsDriver<WindowsElement> vpnSession)
         {
             this.vpnSession = vpnSession;
-            var settingView = vpnSession.FindElementByClassName("SettingsView");
-            this.backButton = settingView.FindElementByName("Back");
-            this.titleText = settingView.FindElementByName("Settings");
-            this.signOutButton = settingView.FindElementByName("Sign out");
-            this.scrollDownButton = settingView.FindElementByAccessibilityId("PART_LineDownButton");
-            this.profileImage = settingView.FindElementByAccessibilityId("ProfileImageButton");
-            this.userName = settingView.FindElementByClassName("ScrollViewer").FindElementsByClassName("TextBlock")[1];
-            this.manageAccountButton = settingView.FindElementByName("Manage account");
-            this.launchVPNStartupCheckbox = settingView.FindElementByName("Launch VPN app on computer startup");
-            this.notificationButton = settingView.FindElementByAccessibilityId("NotificationsNavButton");
-            this.networkSettingButton = settingView.FindElementByAccessibilityId("NetworkSettingsNavButton");
-            this.languageButton = settingView.FindElementByAccessibilityId("LanguageNavButton");
-            this.aboutButton = settingView.FindElementByAccessibilityId("AboutNavButton");
-            this.helpButton = settingView.FindElementByAccessibilityId("GetHelpNavButton");
-            this.giveFeedbackText = settingView.FindElementByName("Give feedback");
-            this.giveFeedbackLinkButton = settingView.FindElementByName("Open link");
+            var settingView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "SettingsView");
+            this.backButton = Utils.WaitUntilFindElement(settingView.FindElementByName, "Back");
+            this.titleText = Utils.WaitUntilFindElement(settingView.FindElementByName, "Settings");
+            this.signOutButton = Utils.WaitUntilFindElement(settingView.FindElementByName, "Sign out");
+            this.scrollDownButton = Utils.WaitUntilFindElement(settingView.FindElementByAccessibilityId, "PART_LineDownButton");
+            this.profileImage = Utils.WaitUntilFindElement(settingView.FindElementByAccessibilityId, "ProfileImageButton");
+            var scrollViewer = Utils.WaitUntilFindElement(settingView.FindElementByClassName, "ScrollViewer");
+            this.userName = Utils.WaitUntilFindElements(scrollViewer.FindElementsByClassName, "TextBlock")[1];
+            this.manageAccountButton = Utils.WaitUntilFindElement(settingView.FindElementByName, "Manage account");
+            this.launchVPNStartupCheckbox = Utils.WaitUntilFindElement(settingView.FindElementByName, "Launch VPN app on computer startup");
+            this.notificationButton = Utils.WaitUntilFindElement(settingView.FindElementByAccessibilityId, "NotificationsNavButton");
+            this.networkSettingButton = Utils.WaitUntilFindElement(settingView.FindElementByAccessibilityId, "NetworkSettingsNavButton");
+            this.languageButton = Utils.WaitUntilFindElement(settingView.FindElementByAccessibilityId, "LanguageNavButton");
+            this.aboutButton = Utils.WaitUntilFindElement(settingView.FindElementByAccessibilityId, "AboutNavButton");
+            this.helpButton = Utils.WaitUntilFindElement(settingView.FindElementByAccessibilityId, "GetHelpNavButton");
+            this.giveFeedbackText = Utils.WaitUntilFindElement(settingView.FindElementByName, "Give feedback");
+            this.giveFeedbackLinkButton = Utils.WaitUntilFindElement(settingView.FindElementByName, "Open link");
         }
 
         /// <summary>

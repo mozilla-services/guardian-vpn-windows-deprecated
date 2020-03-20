@@ -20,8 +20,8 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="browserSession">browser session.</param>
         public PasswordInputPage(WindowsDriver<WindowsElement> browserSession)
         {
-            this.passwordTextBox = browserSession.FindElementByName("Password");
-            this.signInButton = browserSession.FindElementByName("Sign in");
+            this.passwordTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Password");
+            this.signInButton = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Sign in");
         }
 
         /// <summary>

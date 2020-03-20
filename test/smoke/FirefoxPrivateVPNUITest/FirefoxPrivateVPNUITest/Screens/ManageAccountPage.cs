@@ -46,10 +46,10 @@ namespace FirefoxPrivateVPNUITest.Screens
             Utils.WaitUntilFindElement(this.browserSession.FindElementByAccessibilityId, "delete-account-saved-info").Click();
             Utils.WaitUntilFindElement(this.browserSession.FindElementByAccessibilityId, "delete-account-reactivate").Click();
 
-            var passwordInput = this.browserSession.FindElementByName("Password");
+            var passwordInput = Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Password");
             passwordInput.SendKeys(password);
 
-            this.browserSession.FindElementByName("Delete account").Click();
+            Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Delete account").Click();
         }
     }
 }

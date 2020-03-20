@@ -23,12 +23,12 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public LandingScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            WindowsElement landingView = vpnSession.FindElementByClassName("LandingView");
-            var titles = landingView.FindElementsByClassName("TextBlock");
+            WindowsElement landingView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "LandingView");
+            var titles = Utils.WaitUntilFindElements(landingView.FindElementsByClassName, "TextBlock");
             this.titleElement = titles[0];
             this.subTitleElement = titles[1];
-            this.getStartedButton = landingView.FindElementByName("Get started");
-            this.learnMoreHyperlink = landingView.FindElementByName("Learn more");
+            this.getStartedButton = Utils.WaitUntilFindElement(landingView.FindElementByName, "Get started");
+            this.learnMoreHyperlink = Utils.WaitUntilFindElement(landingView.FindElementByName, "Learn more");
         }
 
         /// <summary>

@@ -20,8 +20,8 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="browserSession">browser session.</param>
         public VerificationCodePage(WindowsDriver<WindowsElement> browserSession)
         {
-            this.verificationCodeInput = browserSession.FindElementByName("Enter 6-digit code");
-            this.verifyButton = browserSession.FindElementByName("Verify");
+            this.verificationCodeInput = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Enter 6-digit code");
+            this.verifyButton = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Verify");
         }
 
         /// <summary>

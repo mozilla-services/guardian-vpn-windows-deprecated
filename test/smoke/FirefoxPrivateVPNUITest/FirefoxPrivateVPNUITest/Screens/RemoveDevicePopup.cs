@@ -23,11 +23,11 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="desktopSession">VPN session.</param>
         public RemoveDevicePopup(WindowsDriver<WindowsElement> desktopSession)
         {
-            var removeDevicePopup = desktopSession.FindElementByClassName("Popup");
-            this.removeButton = removeDevicePopup.FindElementByName("Remove");
-            this.cancelButton = removeDevicePopup.FindElementByName("Ok");
-            this.title = removeDevicePopup.FindElementByAccessibilityId("Title");
-            this.message = removeDevicePopup.FindElementByAccessibilityId("Message");
+            var removeDevicePopup = Utils.WaitUntilFindElement(desktopSession.FindElementByClassName, "Popup");
+            this.removeButton = Utils.WaitUntilFindElement(removeDevicePopup.FindElementByName, "Remove");
+            this.cancelButton = Utils.WaitUntilFindElement(removeDevicePopup.FindElementByName, "Ok");
+            this.title = Utils.WaitUntilFindElement(removeDevicePopup.FindElementByAccessibilityId, "Title");
+            this.message = Utils.WaitUntilFindElement(removeDevicePopup.FindElementByAccessibilityId, "Message");
         }
 
         /// <summary>

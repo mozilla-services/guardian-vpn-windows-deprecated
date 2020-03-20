@@ -27,16 +27,16 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public NetworkSettingsScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            var networkSettingsView = vpnSession.FindElementByClassName("NetworkSettingsView");
-            this.backButton = networkSettingsView.FindElementByName("Back");
-            this.title = networkSettingsView.FindElementByName("Network settings");
-            var networkSettingsPanel = networkSettingsView.FindElementByClassName("ScrollViewer");
-            this.allowAccessCheckbox = networkSettingsPanel.FindElementByAccessibilityId("AllowLocalDeviceAccessCheckBox");
-            this.allowAccessDescription = networkSettingsPanel.FindElementByName("Access printers, streaming sticks and all other devices on your local network");
-            this.allowAccessDisabledMessage = networkSettingsPanel.FindElementByAccessibilityId("AllowLocalDeviceAccessCheckBoxDisabledMessage");
-            this.enableIPv6CheckBox = networkSettingsPanel.FindElementByAccessibilityId("EnableIPv6CheckBox");
-            this.enableIPv6Description = networkSettingsPanel.FindElementByName("Push the internet forward with the latest version of the Internet Protocol");
-            this.enableIPv6DisabledMessage = networkSettingsPanel.FindElementByAccessibilityId("EnableIPv6CheckBoxDisabledMessage");
+            var networkSettingsView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "NetworkSettingsView");
+            this.backButton = Utils.WaitUntilFindElement(networkSettingsView.FindElementByName, "Back");
+            this.title = Utils.WaitUntilFindElement(networkSettingsView.FindElementByName, "Network settings");
+            var networkSettingsPanel = Utils.WaitUntilFindElement(networkSettingsView.FindElementByClassName, "ScrollViewer");
+            this.allowAccessCheckbox = Utils.WaitUntilFindElement(networkSettingsPanel.FindElementByAccessibilityId, "AllowLocalDeviceAccessCheckBox");
+            this.allowAccessDescription = Utils.WaitUntilFindElement(networkSettingsPanel.FindElementByName, "Access printers, streaming sticks and all other devices on your local network");
+            this.allowAccessDisabledMessage = Utils.WaitUntilFindElement(networkSettingsPanel.FindElementByAccessibilityId, "AllowLocalDeviceAccessCheckBoxDisabledMessage");
+            this.enableIPv6CheckBox = Utils.WaitUntilFindElement(networkSettingsPanel.FindElementByAccessibilityId, "EnableIPv6CheckBox");
+            this.enableIPv6Description = Utils.WaitUntilFindElement(networkSettingsPanel.FindElementByName, "Push the internet forward with the latest version of the Internet Protocol");
+            this.enableIPv6DisabledMessage = Utils.WaitUntilFindElement(networkSettingsPanel.FindElementByAccessibilityId, "EnableIPv6CheckBoxDisabledMessage");
         }
 
         /// <summary>

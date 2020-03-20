@@ -23,11 +23,11 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public VerifyAccountScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            WindowsElement landingView = vpnSession.FindElementByClassName("VerifyAccountView");
-            var titles = landingView.FindElementsByClassName("TextBlock");
+            WindowsElement landingView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "VerifyAccountView");
+            var titles = Utils.WaitUntilFindElements(landingView.FindElementsByClassName, "TextBlock");
             this.titleElement = titles[0];
             this.cancelTryAgainButton = titles[1];
-            this.spinner = landingView.FindElementByClassName("Spinner");
+            this.spinner = Utils.WaitUntilFindElement(landingView.FindElementByClassName, "Spinner");
             Assert.IsNotNull(this.spinner);
         }
 

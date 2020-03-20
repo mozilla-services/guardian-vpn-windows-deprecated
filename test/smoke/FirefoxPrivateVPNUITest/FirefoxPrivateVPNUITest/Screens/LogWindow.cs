@@ -28,13 +28,13 @@ namespace FirefoxPrivateVPNUITest.Screens
         public LogWindow(WindowsDriver<WindowsElement> desktopSession)
         {
             this.desktopSession = desktopSession;
-            this.logWindow = desktopSession.FindElementByName("Log");
-            this.datagrid = this.logWindow.FindElementByAccessibilityId("logView");
-            this.saveButton = this.logWindow.FindElementByName("Save");
-            var datagridColumns = this.datagrid.FindElementsByClassName("GridViewColumnHeader");
+            this.logWindow = Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Log");
+            this.datagrid = Utils.WaitUntilFindElement(this.logWindow.FindElementByAccessibilityId, "logView");
+            this.saveButton = Utils.WaitUntilFindElement(this.logWindow.FindElementByName, "Save");
+            var datagridColumns = Utils.WaitUntilFindElements(this.datagrid.FindElementsByClassName, "GridViewColumnHeader");
             this.timeStampColumn = datagridColumns[0];
             this.messageColumn = datagridColumns[1];
-            this.logRows = this.datagrid.FindElementsByClassName("ListViewItem");
+            this.logRows = Utils.WaitUntilFindElements(this.datagrid.FindElementsByClassName, "ListViewItem");
         }
 
         /// <summary>
@@ -77,9 +77,9 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// </summary>
         public void CloseWindow()
         {
-            var titleBar = this.logWindow.FindElementByXPath("//TitleBar");
+            var titleBar = Utils.WaitUntilFindElement(this.logWindow.FindElementByXPath, "//TitleBar");
             this.desktopSession.Mouse.ContextClick(titleBar.Coordinates);
-            var closeItem = this.desktopSession.FindElementByName("Close");
+            var closeItem = Utils.WaitUntilFindElement(this.desktopSession.FindElementByName, "Close");
             closeItem.Click();
         }
     }

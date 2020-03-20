@@ -41,27 +41,7 @@ namespace FirefoxPrivateVPNUITest
                 {
                     // 1. Creating a Desktop session
                     var desktopSession = new DesktopSession();
-                    bool retry = true;
-                    int retryTimes = 0;
-                    IWebElement firefoxWindows = null;
-                    while (retry)
-                    {
-                        retryTimes += 1;
-                        WebDriverWait wait = new WebDriverWait(desktopSession.Session, TimeSpan.FromSeconds(60));
-                        firefoxWindows = wait.Until(ExpectedConditions.ElementExists(By.ClassName("MozillaWindowClass")));
-                        if (firefoxWindows == null)
-                        {
-                            retry = true;
-                            if (retryTimes == 5)
-                            {
-                                throw new Exception("Unable to launch firefox browser");
-                            }
-                        }
-                        else
-                        {
-                            retry = false;
-                        }
-                    }
+                    var firefoxWindows = Utils.WaitUntilFindElement(desktopSession.Session.FindElementByClassName, "MozillaWindowClass");
 
                     // 2. Attaching to existing firefox Window
                     string applicationSessionHandle = firefoxWindows.GetAttribute("NativeWindowHandle");
@@ -109,7 +89,7 @@ namespace FirefoxPrivateVPNUITest
             Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "reload-button");
 
             // The browser will redirect url and we need more time to wait
-            var urlInput = Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "urlbar-input", 15000);
+            var urlInput = Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "urlbar-input");
             return urlInput.Text;
         }
     }
