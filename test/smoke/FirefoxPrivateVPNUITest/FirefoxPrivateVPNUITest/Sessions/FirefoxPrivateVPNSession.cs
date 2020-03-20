@@ -41,8 +41,7 @@ namespace FirefoxPrivateVPNUITest
                 {
                     // 1. Creating a Desktop session
                     var desktopSession = new DesktopSession();
-                    WebDriverWait wait = new WebDriverWait(desktopSession.Session, TimeSpan.FromSeconds(30));
-                    var firefoxVPN = wait.Until(ExpectedConditions.ElementExists(By.Name("Firefox Private Network VPN")));
+                    var firefoxVPN = Utils.WaitUntilFindElement(desktopSession.Session.FindElementByName, "Firefox Private Network VPN");
 
                     // 2. Attaching to existing firefox Window
                     string applicationSessionHandle = firefoxVPN.GetAttribute("NativeWindowHandle");
@@ -78,8 +77,6 @@ namespace FirefoxPrivateVPNUITest
                 }
 
                 this.Session.Quit();
-                var desktopSession = new DesktopSession();
-                desktopSession.CloseVPNClient();
                 this.Session = null;
             }
         }

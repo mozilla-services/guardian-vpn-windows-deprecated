@@ -33,22 +33,22 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public AboutScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            var aboutView = vpnSession.FindElementByClassName("AboutView");
-            this.backButton = aboutView.FindElementByName("Back");
-            this.title = aboutView.FindElementByName("About");
-            var textBlocks = aboutView.FindElementsByClassName("TextBlock");
+            var aboutView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "AboutView");
+            this.backButton = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Back");
+            this.title = Utils.WaitUntilFindElement(aboutView.FindElementByName, "About");
+            var textBlocks = Utils.WaitUntilFindElements(aboutView.FindElementsByClassName, "TextBlock");
             this.fpnTitle = textBlocks[1];
             this.fpnSubtitle = textBlocks[2];
             this.releaseTitle = textBlocks[3];
             this.releaseVersion = textBlocks[4];
-            this.termsOfService = aboutView.FindElementByName("Terms of Service");
-            this.termsOfServiceButton = aboutView.FindElementByName("Open Terms of Service link");
-            this.privacyPolicy = aboutView.FindElementByName("Privacy Policy");
-            this.privacyPolicyButton = aboutView.FindElementByName("Open Privacy Policy link");
-            this.debug = aboutView.FindElementByName("Debug");
-            this.debugButton = aboutView.FindElementByName("Open Debug link");
-            this.viewLog = aboutView.FindElementByName("View Log");
-            this.viewLogButton = aboutView.FindElementByName("Open View log link");
+            this.termsOfService = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Terms of Service");
+            this.termsOfServiceButton = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Open Terms of Service link");
+            this.privacyPolicy = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Privacy Policy");
+            this.privacyPolicyButton = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Open Privacy Policy link");
+            this.debug = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Debug");
+            this.debugButton = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Open Debug link");
+            this.viewLog = Utils.WaitUntilFindElement(aboutView.FindElementByName, "View Log");
+            this.viewLogButton = Utils.WaitUntilFindElement(aboutView.FindElementByName, "Open View log link");
         }
 
         /// <summary>

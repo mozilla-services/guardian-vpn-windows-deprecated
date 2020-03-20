@@ -25,13 +25,13 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public NotificationsScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            var notificationsView = vpnSession.FindElementByClassName("NotificationsView");
-            this.backButton = notificationsView.FindElementByName("Back");
-            this.title = notificationsView.FindElementByName("Notifications");
-            var notificationsPane = notificationsView.FindElementByClassName("ScrollViewer");
-            this.unsecuredNetworkAlertCheckBox = notificationsPane.FindElementByName("Unsecured network alert");
-            this.guestWifiPortalAlertCheckBox = notificationsPane.FindElementByName("Guest Wi-Fi portal alert");
-            var textBlocks = notificationsPane.FindElementsByClassName("TextBlock");
+            var notificationsView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "NotificationsView");
+            this.backButton = Utils.WaitUntilFindElement(notificationsView.FindElementByName, "Back");
+            this.title = Utils.WaitUntilFindElement(notificationsView.FindElementByName, "Notifications");
+            var notificationsPane = Utils.WaitUntilFindElement(notificationsView.FindElementByClassName, "ScrollViewer");
+            this.unsecuredNetworkAlertCheckBox = Utils.WaitUntilFindElement(notificationsPane.FindElementByName, "Unsecured network alert");
+            this.guestWifiPortalAlertCheckBox = Utils.WaitUntilFindElement(notificationsPane.FindElementByName, "Guest Wi-Fi portal alert");
+            var textBlocks = Utils.WaitUntilFindElements(notificationsPane.FindElementsByClassName, "TextBlock");
             this.unsecuredNetworkAlertDescription = textBlocks[0];
             this.guestWifiPortalAlertDescription = textBlocks[1];
         }

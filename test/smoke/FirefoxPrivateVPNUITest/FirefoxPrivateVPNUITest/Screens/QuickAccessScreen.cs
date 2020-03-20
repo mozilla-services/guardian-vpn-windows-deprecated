@@ -24,9 +24,9 @@ namespace FirefoxPrivateVPNUITest.Screens
         public QuickAccessScreen(WindowsDriver<WindowsElement> vpnSession)
         {
             this.titleElement = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "Quick access");
-            this.subTitleElement = vpnSession.FindElementByName("You can quickly access Firefox Private Network from your taskbar tray");
-            this.descriptionElement = vpnSession.FindElementByName("Located next to the clock at the bottom right of your screen");
-            this.continueButton = vpnSession.FindElementByName("Continue");
+            this.subTitleElement = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "You can quickly access Firefox Private Network from your taskbar tray");
+            this.descriptionElement = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "Located next to the clock at the bottom right of your screen");
+            this.continueButton = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "Continue");
         }
 
         /// <summary>

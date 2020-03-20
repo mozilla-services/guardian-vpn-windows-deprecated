@@ -33,18 +33,16 @@ namespace FirefoxPrivateVPNUITest.Screens
         public DeviceScreen(WindowsDriver<WindowsElement> vpnSession)
         {
             var deviceView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "DevicesView");
-            this.backButton = deviceView.FindElementByName("Back");
-            var textBlocks = deviceView.FindElementsByClassName("TextBlock");
+            this.backButton = Utils.WaitUntilFindElement(deviceView.FindElementByName, "Back");
+            var textBlocks = Utils.WaitUntilFindElements(deviceView.FindElementsByClassName, "TextBlock");
             this.title = textBlocks[0];
             this.deviceSummary = textBlocks[1];
-            var devicePanel = deviceView.FindElementByClassName("ScrollViewer");
-            this.devicePanelTitle = devicePanel.FindElementByClassName("TextBlock");
-            this.deviceList = devicePanel.FindElementByAccessibilityId("DeviceList");
-            ReadOnlyCollection<AppiumWebElement> deviceListItems = null;
-            Utils.WaitUntil(ref deviceListItems, this.deviceList.FindElementsByClassName, "ListBoxItem", (list) => list.Count > 0);
+            var devicePanel = Utils.WaitUntilFindElement(deviceView.FindElementByClassName, "ScrollViewer");
+            this.devicePanelTitle = Utils.WaitUntilFindElement(devicePanel.FindElementByClassName, "TextBlock");
+            this.deviceList = Utils.WaitUntilFindElement(devicePanel.FindElementByAccessibilityId, "DeviceList");
+            ReadOnlyCollection<AppiumWebElement> deviceListItems = Utils.WaitUntilFindElements(this.deviceList.FindElementsByClassName, "ListBoxItem");
             this.currentDevice = deviceListItems[0];
-            ReadOnlyCollection<AppiumWebElement> currentDeviceTextBlocks = null;
-            Utils.WaitUntil(ref currentDeviceTextBlocks, this.currentDevice.FindElementsByClassName, "TextBlock", (list) => list.Count > 1);
+            ReadOnlyCollection<AppiumWebElement> currentDeviceTextBlocks = Utils.WaitUntilFindElements(this.currentDevice.FindElementsByClassName, "TextBlock");
             this.currentDeviceName = currentDeviceTextBlocks[0];
             this.currentDeviceStatus = currentDeviceTextBlocks[1];
             this.currentDeviceRemoveDeviceButton = Utils.WaitUntilFindElement(this.currentDevice.FindElementByAccessibilityId, "DeleteButton");
@@ -118,13 +116,13 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="desktopSession">Desktop session.</param>
         public void RandomDeleteOneDevice(WindowsDriver<WindowsElement> desktopSession)
         {
-            var deviceListItems = this.deviceList.FindElementsByClassName("ListBoxItem");
+            var deviceListItems = Utils.WaitUntilFindElements(this.deviceList.FindElementsByClassName, "ListBoxItem");
             int originalCount = deviceListItems.Count;
             if (originalCount > 1)
             {
                 int randomIndex = Utils.RandomSelectIndex(Enumerable.Range(0, deviceListItems.Count), (i) => i != 0);
                 AppiumWebElement randomDevice = deviceListItems[randomIndex];
-                AppiumWebElement deleteButton = randomDevice.FindElementByAccessibilityId("DeleteButton");
+                AppiumWebElement deleteButton = Utils.WaitUntilFindElement(randomDevice.FindElementByAccessibilityId, "DeleteButton");
                 deleteButton.Click();
 
                 RemoveDevicePopup removeDevicePopup = new RemoveDevicePopup(desktopSession);
@@ -147,7 +145,7 @@ namespace FirefoxPrivateVPNUITest.Screens
             ReadOnlyCollection<AppiumWebElement> deviceListItems = null;
             if (expectedCount == null)
             {
-                deviceListItems = this.deviceList.FindElementsByClassName("ListBoxItem");
+                deviceListItems = Utils.WaitUntilFindElements(this.deviceList.FindElementsByClassName, "ListBoxItem");
             }
             else
             {

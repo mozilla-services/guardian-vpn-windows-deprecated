@@ -114,7 +114,7 @@ namespace FirefoxPrivateVPNUITest.Screens
             {
                 if (ex.Message == "An element command could not be completed because the element is not pointer- or keyboard interactable.")
                 {
-                    this.browserSession.FindElementByName("Submit").Click();
+                    Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Submit").Click();
                 }
             }
         }

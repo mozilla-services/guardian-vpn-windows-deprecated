@@ -25,13 +25,13 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public GetHelpScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            var getHelpView = vpnSession.FindElementByClassName("GetHelpView");
-            this.backButton = getHelpView.FindElementByName("Back");
-            this.title = getHelpView.FindElementByName("Get help");
-            this.contactUs = getHelpView.FindElementByName("Contact us");
-            this.contactUsButton = getHelpView.FindElementByName("Open Contact us link");
-            this.helpSupport = getHelpView.FindElementByName("Help & Support");
-            this.helpSupportButton = getHelpView.FindElementByName("Open Help & Support link");
+            var getHelpView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "GetHelpView");
+            this.backButton = Utils.WaitUntilFindElement(getHelpView.FindElementByName, "Back");
+            this.title = Utils.WaitUntilFindElement(getHelpView.FindElementByName, "Get help");
+            this.contactUs = Utils.WaitUntilFindElement(getHelpView.FindElementByName, "Contact us");
+            this.contactUsButton = Utils.WaitUntilFindElement(getHelpView.FindElementByName, "Open Contact us link");
+            this.helpSupport = Utils.WaitUntilFindElement(getHelpView.FindElementByName, "Help & Support");
+            this.helpSupportButton = Utils.WaitUntilFindElement(getHelpView.FindElementByName, "Open Help & Support link");
         }
 
         /// <summary>

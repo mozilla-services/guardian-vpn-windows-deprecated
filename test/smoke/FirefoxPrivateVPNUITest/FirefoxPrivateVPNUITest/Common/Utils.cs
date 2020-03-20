@@ -6,6 +6,7 @@ namespace FirefoxPrivateVPNUITest
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
@@ -79,29 +80,31 @@ namespace FirefoxPrivateVPNUITest
         /// <summary>
         /// Wait for {timeOut} milliseconds until find element.
         /// </summary>
+        /// <typeparam name="T">Generic type.</typeparam>
         /// <param name="findMethod">The method used to find element.</param>
         /// <param name="selector">The selector used in the findMethod.</param>
-        /// <param name="timeOut">Time out in milliseconds. Default is 10000 milliseconds.</param>
-        /// <returns>Windows element.</returns>
-        public static WindowsElement WaitUntilFindElement(Func<string, WindowsElement> findMethod, string selector, double timeOut = 15000)
+        /// <param name="timeOut">Time out in milliseconds. Default is 60000 milliseconds.</param>
+        /// <returns>Generic Element.</returns>
+        public static T WaitUntilFindElement<T>(Func<string, T> findMethod, string selector, double timeOut = 60000)
         {
-            WindowsElement element = null;
+            T element = default(T);
             Utils.WaitUntil(ref element, findMethod, selector, (ele) => ele != null, timeOut);
             return element;
         }
 
         /// <summary>
-        /// Wait for {timeOut} milliseconds until find element.
+        /// Wait for {timeOut} milliseconds until find elements.
         /// </summary>
+        /// <typeparam name="T">Generic type.</typeparam>
         /// <param name="findMethod">The method used to find element.</param>
         /// <param name="selector">The selector used in the findMethod.</param>
-        /// <param name="timeOut">Time out in milliseconds. Default is 10000 milliseconds.</param>
-        /// <returns>Appium Web Element.</returns>
-        public static AppiumWebElement WaitUntilFindElement(Func<string, AppiumWebElement> findMethod, string selector, double timeOut = 15000)
+        /// <param name="timeOut">Time out in milliseconds. Default is 60000 milliseconds.</param>
+        /// <returns>Read Only collection of T.</returns>
+        public static ReadOnlyCollection<T> WaitUntilFindElements<T>(Func<string, ReadOnlyCollection<T>> findMethod, string selector, double timeOut = 60000)
         {
-            AppiumWebElement element = null;
-            Utils.WaitUntil(ref element, findMethod, selector, (ele) => ele != null, timeOut);
-            return element;
+            ReadOnlyCollection<T> elements = null;
+            Utils.WaitUntil(ref elements, findMethod, selector, (ele) => ele != null && ele.Count > 0, timeOut);
+            return elements;
         }
 
         /// <summary>
@@ -112,8 +115,8 @@ namespace FirefoxPrivateVPNUITest
         /// <param name="func">A function which takes string as parameter and return T.</param>
         /// <param name="param">The parameter passed to func.</param>
         /// <param name="condition">A function which takes result as parameter and return bool.</param>
-        /// <param name="timeOut">The time out, default 10000 ms.</param>
-        public static void WaitUntil<T>(ref T result, Func<string, T> func, string param, Func<T, bool> condition, double timeOut = 15000)
+        /// <param name="timeOut">The time out, default 60000 ms.</param>
+        public static void WaitUntil<T>(ref T result, Func<string, T> func, string param, Func<T, bool> condition, double timeOut = 60000)
         {
             Stopwatch time = new Stopwatch();
             time.Start();

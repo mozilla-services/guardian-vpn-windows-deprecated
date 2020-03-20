@@ -25,10 +25,10 @@ namespace FirefoxPrivateVPNUITest.Screens
         public RegisterPage(WindowsDriver<WindowsElement> browserSession)
         {
             this.browserSession = browserSession;
-            this.passwordTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Password");
-            this.repeatPasswordTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Repeat password");
+            this.passwordTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByAccessibilityId, "password");
+            this.repeatPasswordTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByAccessibilityId, "vpassword");
             this.createAccountButton = Utils.WaitUntilFindElement(browserSession.FindElementByAccessibilityId, "submit-btn");
-            this.ageTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByName, "How old are you?");
+            this.ageTextBox = Utils.WaitUntilFindElement(browserSession.FindElementByAccessibilityId, "age");
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace FirefoxPrivateVPNUITest.Screens
             {
                 if (ex.Message == "An element command could not be completed because the element is not pointer- or keyboard interactable.")
                 {
-                    this.browserSession.FindElementByName("Create account").Click();
+                    Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Create account").Click();
                 }
             }
         }
