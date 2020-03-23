@@ -1,6 +1,8 @@
-# Firefox Private Network VPN for Windows v<version number> Release Notes
+# v<version number> Release Notes
 
-<release date>
+### Firefox Private Network VPN for Windows
+
+#### <release date>
 
 ## :star2: New
 
@@ -8,11 +10,15 @@
 
 <item description>
 
+---
+
 ## :bug: Fixed
 
 ### <item title>
 
 <item description>
+
+---
 
 ## :butterfly: Changed
 
