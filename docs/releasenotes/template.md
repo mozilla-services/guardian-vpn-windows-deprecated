@@ -4,6 +4,8 @@
 
 #### <release date>
 
+---
+
 ## :star2: New
 
 ### <item title>
