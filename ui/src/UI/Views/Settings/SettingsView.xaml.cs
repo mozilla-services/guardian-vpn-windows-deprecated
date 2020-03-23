@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -56,7 +58,14 @@ namespace FirefoxPrivateNetwork.UI
             get
             {
                 RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                return registryKey.GetValue(ProductConstants.ProductName) != null;
+                if (registryKey.GetValue(ProductConstants.ProductName) == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return registryKey.GetValue(ProductConstants.ProductName).ToString().Contains(" -s");
+                }
             }
 
             set
@@ -69,7 +78,64 @@ namespace FirefoxPrivateNetwork.UI
                 }
                 else
                 {
-                    registryKey.DeleteValue(ProductConstants.ProductName);
+                    string productName = registryKey.GetValue(ProductConstants.ProductName).ToString();
+                    if (productName.Contains(" -s") && productName.Contains(" -c"))
+                    {
+                        productName = productName.Remove(productName.IndexOf(" -s"), 3);
+                        registryKey.SetValue(ProductConstants.ProductName, productName);
+                    }
+                    else if (productName.Contains(" -s"))
+                    {
+                        registryKey.DeleteValue(ProductConstants.ProductName);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the application is set to connect at app launch.
+        /// </summary>
+        public bool ConnectOnStartup
+        {
+            get
+            {
+                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                if (registryKey.GetValue(ProductConstants.ProductName) == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return registryKey.GetValue(ProductConstants.ProductName).ToString().Contains(" -c");
+                }
+            }
+
+            set
+            {
+                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+                if (value)
+                {
+                    string currentProductName = registryKey.GetValue(ProductConstants.ProductName) == null ? System.Reflection.Assembly.GetExecutingAssembly().Location : registryKey.GetValue(ProductConstants.ProductName).ToString();
+                    registryKey.SetValue(ProductConstants.ProductName, string.Concat(currentProductName, " -c"));
+                }
+                else
+                {
+                    // THIS ISN'T GOOD ENOUGH! IF ITS THE ONLY FLAG THEN DO REGISTRY.DELETEVALUE()...
+                    if (registryKey.GetValue(ProductConstants.ProductName) != null)
+                    {
+                        string productName = registryKey.GetValue(ProductConstants.ProductName).ToString();
+
+                        if (productName.Contains(" -s") && productName.Contains(" -c"))
+                        {
+                            productName = productName.Remove(productName.IndexOf(" -c"), 3);
+                            registryKey.SetValue(ProductConstants.ProductName, productName);
+                        }
+                    }
+                    else
+                    {
+                        registryKey.DeleteValue(ProductConstants.ProductName);
+                    }
                 }
             }
         }
@@ -116,6 +182,12 @@ namespace FirefoxPrivateNetwork.UI
         {
             CheckBox runOnStartupCheckBox = sender as CheckBox;
             RunOnStartup = runOnStartupCheckBox.IsChecked ?? false;
+        }
+
+        private void ConnectOnStartup_Click(object sender, RoutedEventArgs e)
+        {
+            CheckBox connectOnLaunchCheckBox = sender as CheckBox;
+            ConnectOnStartup = connectOnLaunchCheckBox.IsChecked ?? false;
         }
 
         private void Feedback_Click(object sender, RoutedEventArgs e)

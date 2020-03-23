@@ -66,6 +66,7 @@ namespace FirefoxPrivateNetwork.ViewModels
 
         // Indicates whether the application has ran on startup
         private bool ranOnStartup;
+        private bool connectOnStartup;
 
         private bool newUserSignIn;
 
@@ -213,6 +214,22 @@ namespace FirefoxPrivateNetwork.ViewModels
             set
             {
                 ranOnStartup = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the application has been run on startup.
+        /// </summary>
+        public bool ConnectOnStartup
+        {
+            get
+            {
+                return connectOnStartup;
+            }
+
+            set
+            {
+                connectOnStartup = value;
             }
         }
 

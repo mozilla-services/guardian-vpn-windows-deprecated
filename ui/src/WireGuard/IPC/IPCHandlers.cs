@@ -4,9 +4,14 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Pipes;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 
 namespace FirefoxPrivateNetwork.WireGuard
 {
@@ -94,6 +99,22 @@ namespace FirefoxPrivateNetwork.WireGuard
 
                 case IPCCommand.IpcDetectCaptivePortalReply:
                     ClientHandleIPCDetectCaptivePortalReply(cmd);
+                    break;
+
+                case IPCCommand.IpcApplyNetworkFilters:
+                    BrokerHandleApplyNetworkFilters(ipc);
+                    break;
+
+                case IPCCommand.IpcApplyNetworkFiltersReply:
+                    ClientHandleApplyNetworkFiltersReply(cmd);
+                    break;
+
+                case IPCCommand.IpcRemoveNetworkFilters:
+                    BrokerHandleRemoveNetworkFilters(ipc, cmd);
+                    break;
+
+                case IPCCommand.IpcRemoveNetworkFiltersReply:
+                    ClientHandleRemoveNetworkFiltersReply();
                     break;
             }
         }
@@ -211,6 +232,179 @@ namespace FirefoxPrivateNetwork.WireGuard
             {
                 Manager.CaptivePortalDetector.CaptivePortalDetected = false;
             }
+        }
+
+        private static void BrokerHandleApplyNetworkFilters(IPC ipc)
+        {
+            // Open a session to the filter engine
+            IntPtr engineHandle = IntPtr.Zero;
+            Windows.Fwpuclnt.FWPM_SESSION0_ session = default;
+            IntPtr sessionPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(Windows.Fwpuclnt.FWPM_SESSION0_)));
+            Marshal.StructureToPtr(session, sessionPtr, false);
+
+            var applyNetworkFiltersReply = new IPCMessage(IPCCommand.IpcApplyNetworkFiltersReply);
+
+            try
+            {
+                var error = Windows.Fwpuclnt.NativeMethods.FwpmEngineOpen0(null, 10, IntPtr.Zero, sessionPtr, ref engineHandle);
+                Marshal.ThrowExceptionForHR(error);
+
+                Guid sublayerKey = Guid.NewGuid();
+
+                Windows.Fwpuclnt.FWPM_SUBLAYER0_ sublayer = new Windows.Fwpuclnt.FWPM_SUBLAYER0_
+                {
+                    subLayerKey = sublayerKey,
+                    displayData = new Windows.Fwpuclnt.FWPM_DISPLAY_DATA0_
+                    {
+                        name = "Firefox Private Network Sublayer",
+                        description = "Sublayer for IPv4 and IPv6 filters",
+                    },
+                    weight = 0,
+                };
+
+                error = Windows.Fwpuclnt.NativeMethods.FwpmSubLayerAdd0(engineHandle, ref sublayer, IntPtr.Zero);
+                Marshal.ThrowExceptionForHR(error);
+
+                applyNetworkFiltersReply.AddAttribute("sublayerKey", sublayerKey.ToString());
+
+                Guid ipv4FilterKey = Guid.NewGuid();
+                var ipv4Filter = GetBlockingFilter(ipv4FilterKey, sublayerKey, Windows.Fwpuclnt.FWPM_LAYER_ALE_AUTH_CONNECT_V4);
+                error = Windows.Fwpuclnt.NativeMethods.FwpmFilterAdd0(engineHandle, ref ipv4Filter, IntPtr.Zero, ref ipv4Filter.filterId);
+                Marshal.ThrowExceptionForHR(error);
+
+                applyNetworkFiltersReply.AddAttribute("ipv4FilterKey", ipv4FilterKey.ToString());
+
+                Guid ipv6FilterKey = Guid.NewGuid();
+                var ipv6Filter = GetBlockingFilter(ipv6FilterKey, sublayerKey, Windows.Fwpuclnt.FWPM_LAYER_ALE_AUTH_CONNECT_V6);
+                error = Windows.Fwpuclnt.NativeMethods.FwpmFilterAdd0(engineHandle, ref ipv6Filter, IntPtr.Zero, ref ipv6Filter.filterId);
+                Marshal.ThrowExceptionForHR(error);
+
+                applyNetworkFiltersReply.AddAttribute("ipv6FilterKey", ipv6FilterKey.ToString());
+
+                error = Windows.Fwpuclnt.NativeMethods.FwpmEngineClose0(engineHandle);
+                Marshal.ThrowExceptionForHR(error);
+            }
+            catch
+            {
+            }
+            finally
+            {
+                ipc.WriteToPipe(applyNetworkFiltersReply);
+            }
+        }
+
+        private static Windows.Fwpuclnt.FWPM_FILTER0_ GetBlockingFilter(Guid filterKey, Guid sublayerKey, Guid layerKey)
+        {
+            string displayDataName = string.Empty;
+            string displayDataDescription = string.Empty;
+
+            if (layerKey == Windows.Fwpuclnt.FWPM_LAYER_ALE_AUTH_CONNECT_V4)
+            {
+                displayDataName = "IPv4 filter";
+                displayDataDescription = "Blocks all network traffic using IPv4";
+            }
+            else if (layerKey == Windows.Fwpuclnt.FWPM_LAYER_ALE_AUTH_CONNECT_V6)
+            {
+                displayDataName = "IPv6 filter";
+                displayDataDescription = "Blocks all network traffic using IPv6";
+            }
+
+            var filter = new Windows.Fwpuclnt.FWPM_FILTER0_
+            {
+                filterKey = filterKey,
+                layerKey = layerKey,
+                subLayerKey = sublayerKey,
+                displayData = new Windows.Fwpuclnt.FWPM_DISPLAY_DATA0_
+                {
+                    name = displayDataName,
+                    description = displayDataDescription,
+                },
+                action = new Windows.Fwpuclnt.FWPM_ACTION0_
+                {
+                    type = Windows.Fwpuclnt.FWP_ACTION_BLOCK,
+                },
+                weight = new Windows.Fwpuclnt.FWP_VALUE0_
+                {
+                    type = Windows.Fwpuclnt.FWP_DATA_TYPE_.FWP_EMPTY,
+                },
+            };
+            return filter;
+        }
+
+        private static void ClientHandleApplyNetworkFiltersReply(IPCMessage cmd)
+        {
+            List<string> key = cmd["sublayerKey"];
+            if (key.Count > 0)
+            {
+                Guid.TryParse(key.FirstOrDefault(), out Guid sublayerKeyGuid);
+                Manager.SublayerKey = sublayerKeyGuid;
+            }
+
+            key = cmd["ipv4FilterKey"];
+            if (key.Count > 0)
+            {
+                Guid.TryParse(key.FirstOrDefault(), out Guid ipv4FilterKeyGuid);
+                Manager.Ipv4FilterKey = ipv4FilterKeyGuid;
+            }
+
+            key = cmd["ipv6FilterKey"];
+            if (key.Count > 0)
+            {
+                Guid.TryParse(key.FirstOrDefault(), out Guid ipv6FilterKeyGuid);
+                Manager.Ipv6FilterKey = ipv6FilterKeyGuid;
+            }
+        }
+
+        private static void BrokerHandleRemoveNetworkFilters(IPC ipc, IPCMessage cmd)
+        {
+            bool removeSublayer = Guid.TryParse(cmd["sublayerKey"].FirstOrDefault(), out var sublayerKey);
+            bool removeIpv4Filter = Guid.TryParse(cmd["ipv4FilterKey"].FirstOrDefault(), out var ipv4FilterKey);
+            bool removeIpv6Filter = Guid.TryParse(cmd["ipv6FilterKey"].FirstOrDefault(), out var ipv6FilterKey);
+
+            IntPtr engineHandle = IntPtr.Zero;
+            Windows.Fwpuclnt.FWPM_SESSION0_ session = default;
+            IntPtr sessionPtr = Marshal.AllocCoTaskMem(Marshal.SizeOf(typeof(Windows.Fwpuclnt.FWPM_SESSION0_)));
+            Marshal.StructureToPtr(session, sessionPtr, false);
+
+            try
+            {
+                var error = Windows.Fwpuclnt.NativeMethods.FwpmEngineOpen0(null, 10, IntPtr.Zero, sessionPtr, ref engineHandle);
+                Marshal.ThrowExceptionForHR(error);
+
+                if (removeIpv6Filter)
+                {
+                    error = Windows.Fwpuclnt.NativeMethods.FwpmFilterDeleteByKey0(engineHandle, ref ipv6FilterKey);
+                    Marshal.ThrowExceptionForHR(error);
+                }
+
+                if (removeIpv4Filter)
+                {
+                    error = Windows.Fwpuclnt.NativeMethods.FwpmFilterDeleteByKey0(engineHandle, ref ipv4FilterKey);
+                    Marshal.ThrowExceptionForHR(error);
+                }
+
+                if (removeSublayer)
+                {
+                    error = Windows.Fwpuclnt.NativeMethods.FwpmSubLayerDeleteByKey0(engineHandle, ref sublayerKey);
+                    Marshal.ThrowExceptionForHR(error);
+                }
+
+                error = Windows.Fwpuclnt.NativeMethods.FwpmEngineClose0(engineHandle);
+                Marshal.ThrowExceptionForHR(error);
+            }
+            catch
+            {
+            }
+
+            var removeNetworkFiltersReply = new IPCMessage(IPCCommand.IpcRemoveNetworkFiltersReply);
+            ipc.WriteToPipe(removeNetworkFiltersReply);
+        }
+
+        private static void ClientHandleRemoveNetworkFiltersReply()
+        {
+            Manager.SublayerKey = Guid.Empty;
+            Manager.Ipv4FilterKey = Guid.Empty;
+            Manager.Ipv6FilterKey = Guid.Empty;
         }
 
         /// <summary>

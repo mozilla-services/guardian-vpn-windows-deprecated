@@ -70,6 +70,35 @@ namespace FirefoxPrivateNetwork.WireGuard
         }
 
         /// <summary>
+        /// Send an Apply Network Filters command to the Broker.
+        /// </summary>
+        /// <returns>True if successfully sent Apply Network Filters command.</returns>
+        public bool ApplyNetworkFilters()
+        {
+            var filterMessage = new IPCMessage(IPCCommand.IpcApplyNetworkFilters);
+
+            var writeToPipeResult = brokerIPC.WriteToPipe(filterMessage);
+
+            return writeToPipeResult;
+        }
+
+        /// <summary>
+        /// Send a Remove Network Filters command to the Broker.
+        /// </summary>
+        /// <returns>True if successfully sent Remove Network Filters command.</returns>
+        public bool RemoveNetworkFilters()
+        {
+            var filterMessage = new IPCMessage(IPCCommand.IpcRemoveNetworkFilters);
+            filterMessage.AddAttribute("sublayerKey", Manager.SublayerKey.ToString());
+            filterMessage.AddAttribute("ipv4FilterKey", Manager.Ipv4FilterKey.ToString());
+            filterMessage.AddAttribute("ipv6FilterKey", Manager.Ipv6FilterKey.ToString());
+
+            var writeToPipeResult = brokerIPC.WriteToPipe(filterMessage);
+
+            return writeToPipeResult;
+        }
+
+        /// <summary>
         /// Saves a config file to the users' AppData folder and sends a connect command to the Broker.
         /// </summary>
         /// <returns>True if successfully sent connection command.</returns>
