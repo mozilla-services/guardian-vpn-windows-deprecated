@@ -31,30 +31,36 @@ namespace FirefoxPrivateNetwork
         public static void Main(string[] args)
         {
             bool ranOnStartup = false;
+            bool connectOnStartup = false;
 
-            if (args.Count() == 1)
+            foreach (var arg in args)
             {
                 // Run the broker child process, skip the UI
-                if (args.First().ToLower() == "broker")
+                if (arg.ToLower() == "broker")
                 {
                     RunBroker();
                     return;
                 }
-
-                // Run the UI minimized
-                if (args.First().ToLower() == "-s")
-                {
-                    ranOnStartup = true;
-                }
-            }
-
-            if (args.Count() == 2)
-            {
-                // Run the tunnel service, skip the UI
-                if (args.First().ToLower() == "tunnel")
+                else if (arg.ToLower() == "tunnel")
                 {
                     RunTunnelService(args);
                     return;
+                }
+
+                // Run the UI minimized
+                else if (arg.ToLower() == "-s")
+                {
+                    ranOnStartup = true;
+                }
+
+                // Block all traffic until secure connection is made.
+                else if (arg.ToLower() == "-c")
+                {
+                    connectOnStartup = true;
+
+                    // Block connection
+                    Manager.InitializeTunnel();
+                    Manager.InitializeNetworkFilters();
                 }
             }
 
@@ -80,11 +86,20 @@ namespace FirefoxPrivateNetwork
                 var app = new App();
                 app.InitializeComponent();
 
+                if (!connectOnStartup)
+                {
+                    Manager.InitializeTunnel();
+                }
+
                 // Initialize interfaces
                 Manager.Initialize();
 
                 // Has the app just been launched at Windows startup?
                 Manager.MainWindowViewModel.RanOnStartup = ranOnStartup;
+                Manager.MainWindowViewModel.ConnectOnStartup = connectOnStartup;
+
+                // Initialize connection on startup if option is selected
+                Manager.InitializeConnectionOnStartup();
 
                 // Run the application
                 app.Run();

@@ -54,6 +54,26 @@ namespace FirefoxPrivateNetwork.WireGuard
         public const string IpcConnectionStatusReply = "ipcconnectionstatusreply=1";
 
         /// <summary>
+        /// Apply network filters request.
+        /// </summary>
+        public const string IpcApplyNetworkFilters = "ipcapplynetworkfilters=1";
+
+        /// <summary>
+        /// Apply network filters reply.
+        /// </summary>
+        public const string IpcApplyNetworkFiltersReply = "ipcapplynetworkfiltersreply=1";
+
+        /// <summary>
+        /// Remove network filters request.
+        /// </summary>
+        public const string IpcRemoveNetworkFilters = "ipcremovenetworkfilters=1";
+
+        /// <summary>
+        /// Remove network filters reply.
+        /// </summary>
+        public const string IpcRemoveNetworkFiltersReply = "ipcremovenetworkfiltersreply=1";
+
+        /// <summary>
         /// Unknown IPC command.
         /// </summary>
         public const string IpcUnknown = "ipcunknown=1";

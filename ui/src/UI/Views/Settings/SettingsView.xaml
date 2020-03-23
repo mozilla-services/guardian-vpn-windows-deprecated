@@ -40,6 +40,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="48" />
                     <RowDefinition Height="48" />
                     <RowDefinition Height="48" />
@@ -98,33 +99,52 @@
                     </StackPanel>
                 </Grid>
 
-                <!-- Notifications view navigation button -->
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="2" Grid.Column="0">
-                    <uc:PageNavigation x:Name="NotificationsNavButton" Title="{Binding Path=[notifications-page-title]}" TitleIconUrl="{StaticResource 'notifications'}" Click="NavigateNotifications" />
+                <!-- Connect VPN on startup setting -->
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0">
+                    <StackPanel Margin="0,0,0,8">
+                        <CheckBox Margin="18" Content="Connect VPN on startup" Click="ConnectOnStartup_Click">
+                            <CheckBox.Style>
+                                <Style BasedOn="{StaticResource Checkbox}" TargetType="{x:Type CheckBox}">
+                                    <Setter Property="IsChecked" Value="False" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:SettingsView}}, Path=ConnectOnStartup}" Value="True">
+                                            <Setter Property="IsChecked" Value="True" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </CheckBox.Style>
+                        </CheckBox>
+                        <Separator VerticalAlignment="Bottom" Width="288" Margin="55,0,16,0" BorderThickness="1" BorderBrush="{StaticResource 'Grey/Grey 10'}" />
+                    </StackPanel>
                 </Grid>
 
                 <!-- Notifications view navigation button -->
                 <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="3" Grid.Column="0">
+                    <uc:PageNavigation x:Name="NotificationsNavButton" Title="{Binding Path=[notifications-page-title]}" TitleIconUrl="{StaticResource 'notifications'}" Click="NavigateNotifications" />
+                </Grid>
+
+                <!-- Notifications view navigation button -->
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="4" Grid.Column="0">
                     <uc:PageNavigation x:Name="NetworkSettingsNavButton" Title="{Binding Path=[network-settings-page-title]}" TitleIconUrl="{StaticResource 'wifi'}" Click="NavigateNetworkSettings" />
                 </Grid>
 
                 <!-- Language view navigation button -->
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0">
                     <uc:PageNavigation x:Name="LanguageNavButton" Title="{Binding Path=[language-page-title]}" TitleIconUrl="{StaticResource 'languages'}" Click="NavigateLanguage" />
                 </Grid>
 
                 <!-- Language view navigation button -->
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="5" Grid.Column="0">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0">
                     <uc:PageNavigation x:Name="AboutNavButton" Title="{Binding Path=[about-page-title]}" TitleIconUrl="{StaticResource 'info'}" Click="NavigateAbout" />
                 </Grid>
                 
                 <!-- Get help view navigation button -->
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="6" Grid.Column="0">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="7" Grid.Column="0">
                     <uc:PageNavigation x:Name="GetHelpNavButton" Title="{Binding Path=[get-help-page-title]}" TitleIconUrl="{StaticResource 'chat'}" Click="NavigateGetHelp" />
                 </Grid>
 
                 <!-- Give feedback link -->
-                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="7" Grid.Column="0">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Row="8" Grid.Column="0">
                     <DockPanel Margin="8,0,7,0">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,2,0,0">
                             <Image Source="{svgc:SvgImage Source={StaticResource 'bug'}}" VerticalAlignment="Center" Width="20" Height="15" Margin="10,0" />
@@ -137,7 +157,7 @@
                 </Grid>
 
                 <!-- Sign out button -->
-                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="8" Grid.Column="0">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="9" Grid.Column="0">
                     <Button AutomationProperties.Name="{Binding Path=[avatar-menu-sign-out]}" Margin="0,32,0,40" Background="Transparent" Cursor="Hand" Click="Signout_Click">
                         <Button.Template>
                             <ControlTemplate>
