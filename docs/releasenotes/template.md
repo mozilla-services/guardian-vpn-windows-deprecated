@@ -2,19 +2,19 @@
 
 <release date>
 
-## New
+## :star2: New
 
 ### <item title>
 
 <item description>
 
-## Fixed
+## :bug: Fixed
 
 ### <item title>
 
 <item description>
 
-## Changed
+## :butterfly: Changed
 
 ### <item title>
 
