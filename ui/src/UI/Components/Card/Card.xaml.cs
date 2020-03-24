@@ -14,9 +14,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
-using LottieSharp;
 using Microsoft.Win32;
-using SharpDX;
 
 namespace FirefoxPrivateNetwork.UI.Components
 {
@@ -40,10 +38,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         /// </summary>
         public static readonly DependencyProperty IsCardShownProperty = DependencyProperty.Register("IsCardShown", typeof(bool), typeof(Card), new PropertyMetadata(OnIsCardShownChangedCallBack));
 
-        private const int SharpDxAvailabilityMaxRetries = 10;
-        private Windows.SessionMonitor sessionMonitor;
         private bool active = false;
-        private LottieAnimationView rippleAnimation = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Card"/> class.
@@ -51,7 +46,6 @@ namespace FirefoxPrivateNetwork.UI.Components
         public Card()
         {
             InitializeComponent();
-            StartSessionMonitor();
         }
 
         /// <inheritdoc/>
@@ -165,51 +159,11 @@ namespace FirefoxPrivateNetwork.UI.Components
             return Status == Models.ConnectionState.Protected && IsCardShown && IsStable;
         }
 
-        private void StartSessionMonitor()
-        {
-            sessionMonitor = new Windows.SessionMonitor((object sender, SessionSwitchEventArgs args) =>
-            {
-                switch (args.Reason)
-                {
-                    case SessionSwitchReason.SessionUnlock:
-                    case SessionSwitchReason.SessionLogon:
-                        if (Status == Models.ConnectionState.Protected)
-                        {
-                            ConstructRippleAnimation().ContinueWith(task => StartRippleAnimation());
-                        }
-
-                        break;
-
-                    case SessionSwitchReason.SessionLock:
-                    case SessionSwitchReason.SessionLogoff:
-                        if (Status == Models.ConnectionState.Protected)
-                        {
-                            StopRippleAnimation();
-                            Application.Current.Dispatcher.Invoke(() =>
-                            {
-                                rippleAnimation = null;
-                            });
-                        }
-
-                        break;
-                }
-            });
-
-            sessionMonitor.StartMonitor();
-        }
-
         private void SetRippleAnimation()
         {
             if (ShouldAnimateRipple())
             {
-                if (rippleAnimation == null)
-                {
-                    ConstructRippleAnimation().ContinueWith(task => StartRippleAnimation());
-                }
-                else
-                {
-                    StartRippleAnimation();
-                }
+                StartRippleAnimation();
             }
             else
             {
@@ -217,94 +171,14 @@ namespace FirefoxPrivateNetwork.UI.Components
             }
         }
 
-        private bool WaitForSharpDXAvailability()
-        {
-            var sharpDxAvailable = false;
-            var retries = 0;
-            while (retries < SharpDxAvailabilityMaxRetries)
-            {
-                using (var direct3DEx = new SharpDX.Direct3D9.Direct3DEx())
-                {
-                    if (direct3DEx.AdapterCount > 0)
-                    {
-                        sharpDxAvailable = true;
-                        break;
-                    }
-                }
-
-                Task.Delay(TimeSpan.FromSeconds(1));
-            }
-
-            return sharpDxAvailable;
-        }
-
-        private Task<bool> ConstructRippleAnimation()
-        {
-            var waitForSharpDXAvailabilityTask = Task.Run(() =>
-            {
-                return WaitForSharpDXAvailability();
-            });
-
-            var constructRippleAnimationTask = waitForSharpDXAvailabilityTask.ContinueWith(task =>
-            {
-                if (!task.Result)
-                {
-                    return false;
-                }
-
-                try
-                {
-                    var animationResourceKey = "ripple";
-                    var animationFileName = Application.Current.Resources[animationResourceKey].ToString();
-                    string animationJson;
-
-                    using (var sr = new StreamReader(Application.GetResourceStream(new Uri(animationFileName)).Stream))
-                    {
-                        animationJson = sr.ReadToEnd();
-                    }
-
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        rippleAnimation = new LottieAnimationView
-                        {
-                            Name = "RippleAnimation",
-                            DefaultCacheStrategy = LottieAnimationView.CacheStrategy.Strong,
-                            Speed = 0.5,
-                            AutoPlay = false,
-                            VerticalAlignment = VerticalAlignment.Center,
-                            HorizontalAlignment = HorizontalAlignment.Center,
-                        };
-
-                        rippleAnimation.SetAnimationFromJsonAsync(animationJson, animationResourceKey);
-                    });
-                }
-                catch (Exception)
-                {
-                    ErrorHandling.ErrorHandler.WriteToLog("Failed to construct Lottie animation.", ErrorHandling.LogLevel.Error);
-                    return false;
-                }
-
-                return true;
-            });
-
-            return constructRippleAnimationTask;
-        }
-
         private void StartRippleAnimation()
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (rippleAnimation == null)
-                {
-                    return;
-                }
-
                 var mainWindow = Application.Current.MainWindow;
                 if (mainWindow != null && mainWindow.GetType() == typeof(UI.MainWindow))
                 {
-                    CardBorder.Child = rippleAnimation;
-                    rippleAnimation.Visibility = Visibility.Visible;
-                    rippleAnimation.PlayAnimation();
+                    RippleAnimation.Running = true;
                 }
             });
         }
@@ -313,14 +187,11 @@ namespace FirefoxPrivateNetwork.UI.Components
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if (rippleAnimation == null)
+                var mainWindow = Application.Current.MainWindow;
+                if (mainWindow != null && mainWindow.GetType() == typeof(UI.MainWindow))
                 {
-                    return;
+                    RippleAnimation.Running = false;
                 }
-
-                CardBorder.Child = null;
-                rippleAnimation.Visibility = Visibility.Hidden;
-                rippleAnimation.PauseAnimation();
             });
         }
 
@@ -365,28 +236,18 @@ namespace FirefoxPrivateNetwork.UI.Components
 
         private void Card_Unloaded(object sender, RoutedEventArgs e)
         {
-            sessionMonitor.StopMonitor();
-
-            if (rippleAnimation != null)
-            {
-                StopRippleAnimation();
-                rippleAnimation = null;
-            }
+            StopRippleAnimation();
         }
 
         private void Card_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue)
             {
-                RedrawRippleAnimation();
+                SetRippleAnimation();
             }
-        }
-
-        private void RedrawRippleAnimation()
-        {
-            if (ShouldAnimateRipple())
+            else
             {
-                ConstructRippleAnimation().ContinueWith(task => StartRippleAnimation());
+                StopRippleAnimation();
             }
         }
     }

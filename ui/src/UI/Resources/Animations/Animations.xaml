@@ -2,7 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
 
-    <system:String x:Key="ripple">pack://application:,,,/UI/Resources/Animations/Lottie/ripple.json</system:String>
-    <system:String x:Key="globe">pack://application:,,,/UI/Resources/Animations/Lottie/globe.json</system:String>
-    
+    <ImageSource x:Key="ripple">pack://application:,,,/UI/Resources/Animations/Ripple/ripple.png</ImageSource>
+
 </ResourceDictionary>

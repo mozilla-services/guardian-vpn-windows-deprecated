@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:lottieSharp="clr-namespace:LottieSharp;assembly=LottieSharp"
              xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI.Components"
              mc:Ignorable="d" 
              Unloaded="Card_Unloaded"
@@ -45,6 +44,7 @@
                     <Setter Property="Background" Value="White" />
                 </Style>
             </Border.Style>
+            <local:Ripple x:Name="RippleAnimation" Running="False" />
         </Border>
     </Grid>
 </UserControl>
