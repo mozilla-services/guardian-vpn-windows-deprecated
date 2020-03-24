@@ -19,11 +19,6 @@ namespace FirefoxPrivateNetwork
     internal class Manager
     {
         /// <summary>
-        /// Gets or sets cache for avatar image.
-        /// </summary>
-        public static ObjectCache Cache { get; set; }
-
-        /// <summary>
         /// Gets or sets the application tray icon handler.
         /// </summary>
         public static NotificationArea.Tray TrayIcon { get; set; }
@@ -124,7 +119,6 @@ namespace FirefoxPrivateNetwork
             InitializeCaptivePortalDetector();
             InitializeIpInfo();
             InitializeUIUpdaters();
-            InitializeCache();
         }
 
         /// <summary>
@@ -260,85 +254,6 @@ namespace FirefoxPrivateNetwork
             var migSettings = new Migrations.Settings();
             migSettings.MigrateConfigAddressToSettingsFile();
             Settings = new Settings(ProductConstants.SettingsFile);
-        }
-
-        /// <summary>
-        /// Gets the default avatar image.
-        /// </summary>
-        /// <returns>
-        /// Default avatar image.
-        /// </returns>
-        public static BitmapImage GetDefaultAvatarImage()
-        {
-            return new BitmapImage(new Uri("pack://application:,,,/UI/Resources/Icons/Generic/default-avatar.png"));
-        }
-
-        /// <summary>
-        /// Gets the avatar image from Url.
-        /// </summary>
-        /// <returns>
-        /// User's avatar image.
-        /// </returns>
-        public static BitmapImage GetAvatarImageWithURL()
-        {
-            var image = new BitmapImage();
-
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Account.Config.FxALogin.User.Avatar);
-
-            try
-            {
-                using (HttpWebResponse response = (HttpWebResponse)req.GetResponse())
-                {
-                    image = new BitmapImage(new Uri(Account.Config.FxALogin.User.Avatar));
-                }
-            }
-            catch (Exception e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Debug);
-                image = GetDefaultAvatarImage();
-            }
-
-            return image;
-        }
-
-        /// <summary>
-        /// Initializes cache.
-        /// </summary>
-        public static void InitializeCache()
-        {
-            Cache = MemoryCache.Default;
-
-            if (Account.LoginState == FxA.LoginState.LoggedIn)
-            {
-                CacheItemPolicy policy = new CacheItemPolicy();
-
-                Task.Run(() =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var image = new BitmapImage();
-
-                        if (Account.Config.FxALogin.User.Avatar != null)
-                        {
-                            image = GetAvatarImageWithURL();
-                        }
-                        else
-                        {
-                            image = GetDefaultAvatarImage();
-                        }
-
-                        Cache.Set("avatarImage", image, policy);
-                    });
-                });
-            }
-        }
-
-        /// <summary>
-        /// Clears cache.
-        /// </summary>
-        public static void ClearCache()
-        {
-            Cache.Remove("avatarImage");
         }
     }
 }

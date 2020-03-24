@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -38,7 +39,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         public Avatar()
         {
             InitializeComponent();
-            AvatarImage = GetProfileImage();
+            InitializeProfileImage();
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         {
             get
             {
-                return GetProfileImage();
+                return (ImageSource)GetValue(AvatarImageProperty);
             }
 
             set
@@ -85,29 +86,33 @@ namespace FirefoxPrivateNetwork.UI.Components
         }
 
         /// <summary>
-        /// Gets or sets the avatar image.
+        /// Initializes the avatar image based on the cache.
         /// </summary>
-        /// <returns>Image source.</returns>
-        public ImageSource GetProfileImage()
+        public void InitializeProfileImage()
         {
-            if (Manager.Account.LoginState == FxA.LoginState.LoggedIn)
+            var image = Manager.Account.Avatar.Cache.Get("avatarImage");
+            AvatarImage = (BitmapImage)image;
+
+            if (Manager.Account.Config.FxALogin.User.Avatar != null && Manager.Account.Avatar.DefaultImage == true)
             {
-                if (Manager.Account.Config.FxALogin.User.Avatar != null)
+                var avatarDownloadTask = Manager.Account.Avatar.InitializeCache(avatarUrl: Manager.Account.Config.FxALogin.User.Avatar);
+
+                if (avatarDownloadTask != null)
                 {
-                    var image = Manager.Cache.Get("avatarImage");
-
-                    if (image == null)
+                    avatarDownloadTask.ContinueWith(task =>
                     {
-                        CacheItemPolicy policy = new CacheItemPolicy();
-                        image = Manager.GetAvatarImageWithURL();
-                        Manager.Cache.Set("avatarImage", image, policy);
-                    }
-
-                    return (BitmapImage)image;
+                        if (task.Result != null)
+                        {
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                AvatarImage = task.Result;
+                                ImageBrush profileImage = (ImageBrush)ProfileImageButton.Template.FindName("ProfileImage", ProfileImageButton);
+                                profileImage.ImageSource = AvatarImage;
+                            });
+                        }
+                    });
                 }
             }
-
-            return Manager.GetDefaultAvatarImage();
         }
 
         private void NavigateSettings(object sender, RoutedEventArgs e)
