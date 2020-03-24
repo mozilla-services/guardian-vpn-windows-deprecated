@@ -39,9 +39,9 @@ namespace FirefoxPrivateNetwork.FxA
         public ObjectCache Cache { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the default avatar image is used.
+        /// Gets or sets the url of the avatar image.
         /// </summary>
-        public bool DefaultImage { get; set; } = true;
+        public string Url { get; set; }
 
         /// <summary>
         /// Initializes cache.
@@ -73,12 +73,13 @@ namespace FirefoxPrivateNetwork.FxA
 
                 if (image != null)
                 {
+                    Url = avatarUrl;
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         Cache.Set("avatarImage", image, policy);
                     });
 
-                    DefaultImage = false;
                     return image;
                 }
 
