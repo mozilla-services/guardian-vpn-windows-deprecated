@@ -33,13 +33,15 @@ namespace FirefoxPrivateNetwork.UI.Components
         /// </summary>
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(double), typeof(Avatar));
 
+        private bool initialLoad = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Avatar"/> class.
         /// </summary>
         public Avatar()
         {
             InitializeComponent();
-            InitializeProfileImage();
+            ConfigureProfileImage();
         }
 
         /// <summary>
@@ -75,32 +77,49 @@ namespace FirefoxPrivateNetwork.UI.Components
         }
 
         /// <summary>
-        /// Initializes the avatar image based on the cache.
+        /// Configures the avatar image based on the cache.
         /// </summary>
-        public void InitializeProfileImage()
+        public void ConfigureProfileImage()
         {
+            // Initialize profile image with the avatar cache
             var image = Manager.Account.Avatar.Cache.Get("avatarImage");
             AvatarImage = (BitmapImage)image;
 
-            if (Manager.Account.Config.FxALogin.User.Avatar != null && Manager.Account.Avatar.DefaultImage == true)
+            // Fetch the latest account info, and re-download the avatar image if out of sync with the cache
+            Manager.AccountInfoUpdater.ForcePollAccountInfo().ContinueWith(_ =>
             {
-                var avatarDownloadTask = Manager.Account.Avatar.InitializeCache(avatarUrl: Manager.Account.Config.FxALogin.User.Avatar);
-
-                if (avatarDownloadTask != null)
+                if (Manager.Account.Config.FxALogin.User.Avatar != null && Manager.Account.Config.FxALogin.User.Avatar != Manager.Account.Avatar.Url)
                 {
-                    avatarDownloadTask.ContinueWith(task =>
+                    var avatarDownloadTask = Manager.Account.Avatar.InitializeCache(avatarUrl: Manager.Account.Config.FxALogin.User.Avatar);
+
+                    if (avatarDownloadTask != null)
                     {
-                        if (task.Result != null)
+                        avatarDownloadTask.ContinueWith(task =>
                         {
-                            Application.Current.Dispatcher.Invoke(() =>
+                            if (task.Result != null)
                             {
-                                AvatarImage = task.Result;
-                                ImageBrush profileImage = (ImageBrush)ProfileImageButton.Template.FindName("ProfileImage", ProfileImageButton);
-                                profileImage.ImageSource = AvatarImage;
-                            });
-                        }
-                    });
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    AvatarImage = task.Result;
+                                    ImageBrush profileImage = (ImageBrush)ProfileImageButton.Template.FindName("ProfileImage", ProfileImageButton);
+                                    profileImage.ImageSource = AvatarImage;
+                                });
+                            }
+                        });
+                    }
                 }
+            });
+        }
+
+        private void Avatar_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (!initialLoad)
+            {
+                initialLoad = true;
+            }
+            else
+            {
+                ConfigureProfileImage();
             }
         }
     }
