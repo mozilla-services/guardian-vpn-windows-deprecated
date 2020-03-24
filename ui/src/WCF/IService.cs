@@ -22,7 +22,7 @@ namespace FirefoxPrivateNetwork.WCF
         /// </summary>
         /// <returns>WCF response.</returns>
         [OperationContract]
-        [WebInvoke(Method = "GET", UriTemplate ="/", ResponseFormat = WebMessageFormat.Json)]
+        [WebInvoke(Method = "GET", UriTemplate = "/", ResponseFormat = WebMessageFormat.Json)]
         Response Index();
 
         /// <summary>
