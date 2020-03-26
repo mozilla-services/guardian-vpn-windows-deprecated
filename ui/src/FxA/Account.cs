@@ -46,6 +46,7 @@ namespace FirefoxPrivateNetwork.FxA
             if (Config.LoadFxAToken() && Config.LoadFxAUserFromFile(ProductConstants.FxAUserFile))
             {
                 LoginState = LoginState.LoggedIn;
+                Avatar.InitializeCache(avatarUrl: Config.FxALogin.User.Avatar);
             }
         }
 
@@ -53,6 +54,11 @@ namespace FirefoxPrivateNetwork.FxA
         /// Gets or sets the config structure associated with this account.
         /// </summary>
         public Config Config { get; set; } = new Config();
+
+        /// <summary>
+        /// Gets or sets the avatar associated with this account.
+        /// </summary>
+        public Avatar Avatar { get; set; } = new Avatar();
 
         /// <summary>
         /// Gets or sets the current login state indicating whether the user is logged in, is in the process of logging in or logged out.
@@ -84,7 +90,7 @@ namespace FirefoxPrivateNetwork.FxA
             Manager.Account.LoginState = FxA.LoginState.LoggedIn;
 
             // Initialize cache for avatar image
-            Manager.InitializeCache();
+            Manager.Account.Avatar.InitializeCache(avatarUrl: Config.FxALogin.User.Avatar);
 
             // Added a new account device through the FxA API, using the newly generated keypair
             var devices = new FxA.Devices();
@@ -139,7 +145,7 @@ namespace FirefoxPrivateNetwork.FxA
                 File.Delete(ProductConstants.FirefoxPrivateNetworkConfFile);
 
                 // Clear the cache for avatar image
-                Manager.ClearCache();
+                Manager.Account.Avatar.ClearCache();
 
                 // Set logged out state and terminate UI Updater threads
                 LoginState = LoginState.LoggedOut;

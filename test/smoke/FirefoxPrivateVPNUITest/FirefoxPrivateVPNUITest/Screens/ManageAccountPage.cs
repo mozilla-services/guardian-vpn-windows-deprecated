@@ -30,7 +30,8 @@ namespace FirefoxPrivateVPNUITest.Screens
         public void ClickDeleteButton()
         {
             this.browserSession.Keyboard.SendKeys(Keys.PageDown);
-            var deleteButton = Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Delete…");
+            WindowsElement deleteButton = null;
+            Utils.WaitUntil(ref deleteButton, this.browserSession.FindElementByName, "Delete…", (result) => result != null && result.Displayed);
             deleteButton.Click();
         }
 
@@ -41,14 +42,14 @@ namespace FirefoxPrivateVPNUITest.Screens
         public void ConfirmDeleteAccount(string password)
         {
             this.browserSession.Keyboard.SendKeys(Keys.PageDown);
-            this.browserSession.FindElementByAccessibilityId("delete-account-subscriptions").Click();
-            this.browserSession.FindElementByAccessibilityId("delete-account-saved-info").Click();
-            this.browserSession.FindElementByAccessibilityId("delete-account-reactivate").Click();
+            Utils.WaitUntilFindElement(this.browserSession.FindElementByAccessibilityId, "delete-account-subscriptions").Click();
+            Utils.WaitUntilFindElement(this.browserSession.FindElementByAccessibilityId, "delete-account-saved-info").Click();
+            Utils.WaitUntilFindElement(this.browserSession.FindElementByAccessibilityId, "delete-account-reactivate").Click();
 
-            var passwordInput = this.browserSession.FindElementByName("Password");
+            var passwordInput = Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Password");
             passwordInput.SendKeys(password);
 
-            this.browserSession.FindElementByName("Delete account").Click();
+            Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Delete account").Click();
         }
     }
 }

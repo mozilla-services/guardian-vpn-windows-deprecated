@@ -8,6 +8,7 @@
     <system:String x:Key="bug">pack://application:,,,/UI/Resources/Icons/Generic/bug.svg</system:String>
     <system:String x:Key="chat">pack://application:,,,/UI/Resources/Icons/Generic/chat.svg</system:String>
     <system:String x:Key="chevron">pack://application:,,,/UI/Resources/Icons/Generic/chevron.svg</system:String>
+    <system:String x:Key="close-grey-white">pack://application:,,,/UI/Resources/Icons/Generic/close-grey-white.svg</system:String>
     <system:String x:Key="close-small">pack://application:,,,/UI/Resources/Icons/Generic/close-small.svg</system:String>
     <system:String x:Key="close-white">pack://application:,,,/UI/Resources/Icons/Generic/close-white.svg</system:String>
     <system:String x:Key="close">pack://application:,,,/UI/Resources/Icons/Generic/close.svg</system:String>
@@ -18,6 +19,7 @@
     <system:String x:Key="drop-closed">pack://application:,,,/UI/Resources/Icons/Generic/drop-closed.svg</system:String>
     <system:String x:Key="drop-open">pack://application:,,,/UI/Resources/Icons/Generic/drop-open.svg</system:String>
     <system:String x:Key="dev">pack://application:,,,/UI/Resources/Icons/Generic/dev.png</system:String>
+    <system:String x:Key="info-grey-white">pack://application:,,,/UI/Resources/Icons/Generic/info-grey-white.svg</system:String>
     <system:String x:Key="info-red">pack://application:,,,/UI/Resources/Icons/Generic/info-red.svg</system:String>
     <system:String x:Key="info-white">pack://application:,,,/UI/Resources/Icons/Generic/info-white.svg</system:String>
     <system:String x:Key="info">pack://application:,,,/UI/Resources/Icons/Generic/info.svg</system:String>

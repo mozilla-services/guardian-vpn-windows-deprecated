@@ -16,7 +16,7 @@ namespace FirefoxPrivateVPNUITest
     /// <summary>
     /// Firefox Browser session.
     /// </summary>
-    public class BrowserSession
+    public class BrowserSession : BaseSession
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
         private const string BrowserAppId = "C:\\Program Files\\Mozilla Firefox\\firefox.exe";
@@ -41,27 +41,7 @@ namespace FirefoxPrivateVPNUITest
                 {
                     // 1. Creating a Desktop session
                     var desktopSession = new DesktopSession();
-                    bool retry = true;
-                    int retryTimes = 0;
-                    IWebElement firefoxWindows = null;
-                    while (retry)
-                    {
-                        retryTimes += 1;
-                        WebDriverWait wait = new WebDriverWait(desktopSession.Session, TimeSpan.FromSeconds(60));
-                        firefoxWindows = wait.Until(ExpectedConditions.ElementExists(By.ClassName("MozillaWindowClass")));
-                        if (firefoxWindows == null)
-                        {
-                            retry = true;
-                            if (retryTimes == 5)
-                            {
-                                throw new Exception("Unable to launch firefox browser");
-                            }
-                        }
-                        else
-                        {
-                            retry = false;
-                        }
-                    }
+                    var firefoxWindows = Utils.WaitUntilFindElement(desktopSession.Session.FindElementByClassName, "MozillaWindowClass");
 
                     // 2. Attaching to existing firefox Window
                     string applicationSessionHandle = firefoxWindows.GetAttribute("NativeWindowHandle");
@@ -76,11 +56,6 @@ namespace FirefoxPrivateVPNUITest
                 this.Session.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(1.5);
             }
         }
-
-        /// <summary>
-        /// Gets or sets Session.
-        /// </summary>
-        public WindowsDriver<WindowsElement> Session { get; set; }
 
         /// <summary>
         /// Dispose the browser session and close the browser.
@@ -114,23 +89,8 @@ namespace FirefoxPrivateVPNUITest
             Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "reload-button");
 
             // The browser will redirect url and we need more time to wait
-            var urlInput = Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "urlbar-input", 15000);
+            var urlInput = Utils.WaitUntilFindElement(this.Session.FindElementByAccessibilityId, "urlbar-input");
             return urlInput.Text;
-        }
-
-        /// <summary>
-        /// Set windows to a new postion.
-        /// </summary>
-        /// <param name="x">The x position.</param>
-        /// <param name="y">The y position.</param>
-        public void SetWindowPosition(int x, int y)
-        {
-            int offset = 100;
-            this.Session.Manage().Window.Position = new Point(x + offset, y + offset);
-            var windowPosition = this.Session.Manage().Window.Position;
-            Assert.IsNotNull(windowPosition);
-            Assert.AreEqual(x + offset, windowPosition.X);
-            Assert.AreEqual(y + offset, windowPosition.Y);
         }
     }
 }

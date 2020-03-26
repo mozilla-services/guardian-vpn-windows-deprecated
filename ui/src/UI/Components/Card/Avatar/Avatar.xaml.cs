@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -32,24 +33,15 @@ namespace FirefoxPrivateNetwork.UI.Components
         /// </summary>
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register("Size", typeof(double), typeof(Avatar));
 
+        private bool initialLoad = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Avatar"/> class.
         /// </summary>
         public Avatar()
         {
             InitializeComponent();
-            AvatarImage = GetProfileImage();
-        }
-
-        /// <summary>
-        /// Gets the application version.
-        /// </summary>
-        public string ApplicationVersion
-        {
-            get
-            {
-                return ProductConstants.GetVersion();
-            }
+            ConfigureProfileImage();
         }
 
         /// <summary>
@@ -59,7 +51,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         {
             get
             {
-                return GetProfileImage();
+                return (ImageSource)GetValue(AvatarImageProperty);
             }
 
             set
@@ -85,107 +77,50 @@ namespace FirefoxPrivateNetwork.UI.Components
         }
 
         /// <summary>
-        /// Gets or sets the avatar image.
+        /// Configures the avatar image based on the cache.
         /// </summary>
-        /// <returns>Image source.</returns>
-        public ImageSource GetProfileImage()
+        public void ConfigureProfileImage()
         {
-            if (Manager.Account.LoginState == FxA.LoginState.LoggedIn)
+            // Initialize profile image with the avatar cache
+            var image = Manager.Account.Avatar.Cache.Get("avatarImage");
+            AvatarImage = (BitmapImage)image;
+
+            // Fetch the latest account info, and re-download the avatar image if out of sync with the cache
+            Manager.AccountInfoUpdater.ForcePollAccountInfo().ContinueWith(_ =>
             {
-                if (Manager.Account.Config.FxALogin.User.Avatar != null)
+                if (Manager.Account.Config.FxALogin.User.Avatar != null && Manager.Account.Config.FxALogin.User.Avatar != Manager.Account.Avatar.Url)
                 {
-                    var image = Manager.Cache.Get("avatarImage");
+                    var avatarDownloadTask = Manager.Account.Avatar.InitializeCache(avatarUrl: Manager.Account.Config.FxALogin.User.Avatar);
 
-                    if (image == null)
+                    if (avatarDownloadTask != null)
                     {
-                        CacheItemPolicy policy = new CacheItemPolicy();
-                        image = Manager.GetAvatarImageWithURL();
-                        Manager.Cache.Set("avatarImage", image, policy);
-                    }
-
-                    return (BitmapImage)image;
-                }
-            }
-
-            return Manager.GetDefaultAvatarImage();
-        }
-
-        private void NavigateSettings(object sender, RoutedEventArgs e)
-        {
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-
-            var parentView = this.Parent;
-            while (!(parentView is UserControl))
-            {
-                parentView = LogicalTreeHelper.GetParent(parentView);
-            }
-
-            mainWindow.NavigateToView(new SettingsView(parentView as UserControl), MainWindow.SlideDirection.Left);
-        }
-
-        private void ButtonViewLogClick(object sender, RoutedEventArgs e)
-        {
-            LogWindow.ShowLog();
-            AvatarMenu.IsOpen = false;
-        }
-
-        private void ButtonFeedbackClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start(ProductConstants.FeedbackFormUrl);
-            AvatarMenu.IsOpen = false;
-        }
-
-        private void ButtonManageAccountClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start(ProductConstants.FxAAccountManagementUrl);
-            AvatarMenu.IsOpen = false;
-        }
-
-        private void ButtonSettingsClick(object sender, RoutedEventArgs e)
-        {
-            AvatarMenu.IsOpen = false;
-            NavigateSettings(sender, e);
-        }
-
-        private void ButtonDebugClick(object sender, RoutedEventArgs e)
-        {
-            AvatarMenu.IsOpen = false;
-
-            using (var saveDialog = new System.Windows.Forms.SaveFileDialog
-            {
-                Filter = "ZIP Archive|*.zip",
-                Title = "Export debug package",
-            })
-            {
-                if (MessageBox.Show("Thank you for debugging the Firefox Private Network VPN client!\n\nThis utility will export a ZIP file to a directory of your choosing." +
-                    " This file will contain the following:\n\n- A list of your running processes\n- A list of your devices and device drivers\n" +
-                    "- Information about your network interfaces\n- Your computer hardware information\n\n" +
-                    "Along with the VPN tunnel log, the currently available list of VPN servers will also be included.\n" +
-                    "Your Firefox account information and any of your VPN credentials will not be exported.\n\n" +
-                    "Do you wish to proceed?",
-                    "Privacy notice",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question
-                    ) == MessageBoxResult.Yes)
-                {
-                    saveDialog.ShowDialog();
-
-                    if (saveDialog.FileName != string.Empty)
-                    {
-                        ErrorHandling.DebugDump.CreateDump(saveDialog.FileName);
+                        avatarDownloadTask.ContinueWith(task =>
+                        {
+                            if (task.Result != null)
+                            {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    AvatarImage = task.Result;
+                                    ImageBrush profileImage = (ImageBrush)ProfileImageButton.Template.FindName("ProfileImage", ProfileImageButton);
+                                    profileImage.ImageSource = AvatarImage;
+                                });
+                            }
+                        });
                     }
                 }
-            }
+            });
         }
 
-        private void ButtonSignOutClick(object sender, RoutedEventArgs e)
+        private void Avatar_Loaded(object sender, RoutedEventArgs e)
         {
-            Manager.Account.Logout(removeDevice: true);
-
-            AvatarMenu.IsOpen = false;
-
-            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.NavigateToView(new LandingView(), MainWindow.SlideDirection.Right);
+            if (!initialLoad)
+            {
+                initialLoad = true;
+            }
+            else
+            {
+                ConfigureProfileImage();
+            }
         }
     }
 }

@@ -27,15 +27,15 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="viewClassName">onboarding screen view class name.</param>
         public OnboardingScreen(WindowsDriver<WindowsElement> vpnSession, string viewClassName)
         {
-            var onboardingView = vpnSession.FindElementByClassName(viewClassName);
-            var textBlocks = onboardingView.FindElementsByClassName("TextBlock");
+            var onboardingView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, viewClassName);
+            var textBlocks = Utils.WaitUntilFindElements(onboardingView.FindElementsByClassName, "TextBlock");
             Assert.IsTrue(textBlocks.Count > 3);
-            this.closeButton = vpnSession.FindElementByName("Close");
+            this.closeButton = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "Close");
             this.skip = textBlocks[0];
-            this.image = vpnSession.FindElementByClassName("Image");
+            this.image = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "Image");
             this.title = textBlocks[1];
             this.subtitle = textBlocks[2];
-            this.nextButton = vpnSession.FindElementByName("Next");
+            this.nextButton = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "Next");
             Assert.IsNotNull(this.closeButton);
             Assert.IsNotNull(this.skip);
             Assert.IsNotNull(this.image);

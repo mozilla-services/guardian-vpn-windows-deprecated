@@ -13,6 +13,7 @@ namespace FirefoxPrivateVPNUITest.Screens
     /// </summary>
     internal class WindowsNotificationScreen
     {
+        private static readonly int TimeOut = 30000;
         private AppiumWebElement titleText;
         private AppiumWebElement messageText;
         private AppiumWebElement dismissButton;
@@ -26,18 +27,18 @@ namespace FirefoxPrivateVPNUITest.Screens
             try
             {
                 WindowsElement notification = Utils.WaitUntilFindElement(desktopSession.FindElementByAccessibilityId, "NormalToastView");
-                this.titleText = notification.FindElementByAccessibilityId("TitleText");
-                this.messageText = notification.FindElementByAccessibilityId("MessageText");
-                this.dismissButton = notification.FindElementByAccessibilityId("DismissButton");
+                this.titleText = Utils.WaitUntilFindElement(notification.FindElementByAccessibilityId, "TitleText");
+                this.messageText = Utils.WaitUntilFindElement(notification.FindElementByAccessibilityId, "MessageText");
+                this.dismissButton = Utils.WaitUntilFindElement(notification.FindElementByAccessibilityId, "DismissButton");
             }
             catch (Exception)
             {
-                Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Action Center").Click();
-                var notification = Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Notifications from Firefox Private Network VPN");
-                var latestNotification = notification.FindElementByClassName("ListViewItem");
-                this.titleText = latestNotification.FindElementByAccessibilityId("Title");
-                this.messageText = latestNotification.FindElementByAccessibilityId("Content");
-                this.dismissButton = latestNotification.FindElementByAccessibilityId("DismissButton");
+                Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Action Center", TimeOut).Click();
+                var notification = Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Notifications from Firefox Private Network VPN", TimeOut);
+                var latestNotification = Utils.WaitUntilFindElement(notification.FindElementByClassName, "ListViewItem");
+                this.titleText = Utils.WaitUntilFindElement(latestNotification.FindElementByAccessibilityId, "Title");
+                this.messageText = Utils.WaitUntilFindElement(latestNotification.FindElementByAccessibilityId, "Content");
+                this.dismissButton = Utils.WaitUntilFindElement(latestNotification.FindElementByAccessibilityId, "DismissButton");
             }
         }
 

@@ -88,6 +88,6 @@ Do you wish to proceed?";
         /// <summary>
         /// The default session timeout in seconds.
         /// </summary>
-        public static readonly int SessionTimeoutInSeconds = 5;
+        public static readonly int SessionTimeoutInSeconds = 15;
     }
 }

@@ -28,12 +28,12 @@ namespace FirefoxPrivateVPNUITest.Screens
         public ExportWindow(WindowsDriver<WindowsElement> session, string windowName)
         {
             this.session = session;
-            this.exportWindow = session.FindElementByName(windowName);
-            this.toolBar = this.exportWindow.FindElementByClassName("Breadcrumb Parent");
-            var fileInputComboBox = this.exportWindow.FindElementByAccessibilityId("FileNameControlHost");
-            this.fileInput = fileInputComboBox.FindElementByName("File name:");
-            this.saveButton = this.exportWindow.FindElementByName("Save");
-            this.cancelButton = this.exportWindow.FindElementByName("Cancel");
+            this.exportWindow = Utils.WaitUntilFindElement(session.FindElementByName, windowName);
+            this.toolBar = Utils.WaitUntilFindElement(this.exportWindow.FindElementByClassName, "Breadcrumb Parent");
+            var fileInputComboBox = Utils.WaitUntilFindElement(this.exportWindow.FindElementByAccessibilityId, "FileNameControlHost");
+            this.fileInput = Utils.WaitUntilFindElement(fileInputComboBox.FindElementByName, "File name:");
+            this.saveButton = Utils.WaitUntilFindElement(this.exportWindow.FindElementByName, "Save");
+            this.cancelButton = Utils.WaitUntilFindElement(this.exportWindow.FindElementByName, "Cancel");
         }
 
         /// <summary>
@@ -44,8 +44,8 @@ namespace FirefoxPrivateVPNUITest.Screens
         public void SaveFile(string destination, string fileName)
         {
             // enable the toolbar to be editable
-            this.toolBar.FindElementByXPath("//SplitButton").Click();
-            var address = this.exportWindow.FindElementByName("Address");
+            Utils.WaitUntilFindElement(this.toolBar.FindElementByXPath, "//SplitButton").Click();
+            var address = Utils.WaitUntilFindElement(this.exportWindow.FindElementByName, "Address");
             address.Clear();
             address.SendKeys(destination);
             this.session.Keyboard.SendKeys(Keys.Enter);

@@ -4,103 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI.Components"
-             xmlns:extension="clr-namespace:FirefoxPrivateNetwork.UI"
-             xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
-             xmlns:uc="clr-namespace:FirefoxPrivateNetwork.UI.Components"
              mc:Ignorable="d" 
+             Loaded="Avatar_Loaded"
              d:DesignHeight="450" d:DesignWidth="800">
-    <UserControl.Resources>
-        <uc:VpnNotUnprotectedConverter x:Key="VpnNotUnprotectedConverter"></uc:VpnNotUnprotectedConverter>
-        <Style x:Key="BorderInnerStyle" TargetType="{x:Type Border}">
-            <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus), Converter={StaticResource VpnNotUnprotectedConverter}}" Value="False"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsMouseOver}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/Grey 10'}" />
-                </MultiDataTrigger>
-
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus), Converter={StaticResource VpnNotUnprotectedConverter}}" Value="False"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsPressed}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/Grey 20'}" />
-                </MultiDataTrigger>
-
-                <DataTrigger Binding="{Binding ElementName=ProfileImageButton, Path=IsChecked}" Value="True">
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Blue/Blue 50'}" />
-                </DataTrigger>
-
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus), Converter={StaticResource VpnNotUnprotectedConverter}}" Value="True"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsMouseOver}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/White 20'}" />
-                </MultiDataTrigger>
-
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus), Converter={StaticResource VpnNotUnprotectedConverter}}" Value="True"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsPressed}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/White 40'}" />
-                </MultiDataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="BorderOuterStyle" TargetType="{x:Type Border}">
-            <Style.Triggers>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus)}" Value="False"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsMouseOver}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/Grey 10'}" />
-                </MultiDataTrigger>
-
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus)}" Value="False"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsPressed}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/Grey 20'}" />
-                </MultiDataTrigger>
-
-                <DataTrigger Binding="{Binding ElementName=ProfileImageButton, Path=IsChecked}" Value="True">
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Blue/Blue 50.30'}" />
-                </DataTrigger>
-
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus)}" Value="True"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsMouseOver}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/White 20'}" />
-                </MultiDataTrigger>
-
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=(extension:CardExtensions.VpnStatus)}" Value="True"/>
-                        <Condition Binding="{Binding ElementName=ProfileImageButton, Path=IsPressed}" Value="True"/>
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="BorderBrush" Value="{StaticResource 'Grey/White 40'}" />
-                </MultiDataTrigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
-
+    
     <Grid>
-        <Border Style="{StaticResource BorderOuterStyle}" BorderThickness="3" CornerRadius="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}">
-            <Border Style="{StaticResource BorderInnerStyle}" BorderThickness="2" CornerRadius="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}">
+        <Border BorderThickness="3" CornerRadius="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}" Width="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}" Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}">
+            <Border BorderThickness="2" CornerRadius="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=Size}">
                 <ToggleButton x:Name="ProfileImageButton">
                     <ToggleButton.Template>
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                             <Ellipse>
                                 <Ellipse.Fill>
-                                    <ImageBrush RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased" Stretch="Uniform" ImageSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=AvatarImage, TargetNullValue={x:Null}}"/>
+                                    <ImageBrush x:Name="ProfileImage" RenderOptions.BitmapScalingMode="HighQuality" RenderOptions.EdgeMode="Aliased" Stretch="Uniform" ImageSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}, Path=AvatarImage, TargetNullValue={x:Null}}"/>
                                 </Ellipse.Fill>
                             </Ellipse>
                         </ControlTemplate>
@@ -108,51 +24,5 @@
                 </ToggleButton>
             </Border>
         </Border>
-
-        <Popup x:Name="AvatarMenu" Placement="MousePoint" StaysOpen="False" IsOpen="{Binding IsChecked, ElementName=ProfileImageButton, Mode=TwoWay}" AllowsTransparency="True" PopupAnimation="Slide">
-            <Border Style="{StaticResource ContextMenuStyle}">
-                <DockPanel x:Name="MenuDockPanel">
-                    <Button Style="{StaticResource ContextMenuItemStyle}" Click="ButtonSettingsClick">
-                        <StackPanel Style="{StaticResource ContextMenuItemStackPanelStyle}">
-                            <Image Source="{svgc:SvgImage Source={StaticResource 'settings'}}" Style="{StaticResource ContextMenuItemImageStyle}" />
-                            <TextBlock Style="{StaticResource ContextMenuItemTextWithImage}" Text="{Binding Path=[avatar-menu-settings]}" />
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ContextMenuItemStyle}" Click="ButtonManageAccountClick">
-                        <StackPanel Style="{StaticResource ContextMenuItemStackPanelStyle}">
-                            <Image Source="{svgc:SvgImage Source={StaticResource 'account'}}" Style="{StaticResource ContextMenuItemImageStyle}" />
-                            <TextBlock Style="{StaticResource ContextMenuItemTextWithImage}" Text="{Binding Path=[avatar-menu-manage-account]}" />
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ContextMenuItemStyle}" Click="ButtonViewLogClick">
-                        <StackPanel Style="{StaticResource ContextMenuItemStackPanelStyle}">
-                            <TextBlock Style="{StaticResource ContextMenuItemText}" Text="{Binding Path=[avatar-menu-view-log]}" />
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ContextMenuItemStyle}" Click="ButtonFeedbackClick">
-                        <StackPanel Style="{StaticResource ContextMenuItemStackPanelStyle}">
-                            <TextBlock Style="{StaticResource ContextMenuItemText}" Text="{Binding Path=[avatar-menu-feedback]}" />
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ContextMenuItemStyle}" Click="ButtonDebugClick">
-                        <StackPanel Style="{StaticResource ContextMenuItemStackPanelStyle}">
-                            <TextBlock Style="{StaticResource ContextMenuItemText}">
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0} ({1})">
-                                        <Binding Path="[avatar-menu-debug]" />
-                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:Avatar}}" Path="ApplicationVersion" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource ContextMenuItemStyle}" Click="ButtonSignOutClick">
-                        <StackPanel Style="{StaticResource ContextMenuItemStackPanelStyle}">
-                            <TextBlock Style="{StaticResource ContextMenuItemText}" Text="{Binding Path=[avatar-menu-sign-out]}" />
-                        </StackPanel>
-                    </Button>
-                </DockPanel>
-            </Border>
-        </Popup>
     </Grid>
 </UserControl>

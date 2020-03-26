@@ -15,7 +15,7 @@ namespace FirefoxPrivateVPNUITest
     /// <summary>
     /// Firefox Private VPN session.
     /// </summary>
-    public class FirefoxPrivateVPNSession : IDisposable
+    public class FirefoxPrivateVPNSession : BaseSession
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
         private const string FirefoxPrivateVPNAppId = @"C:\Program Files\Mozilla\Firefox Private Network VPN\FirefoxPrivateNetworkVPN.exe";
@@ -41,8 +41,7 @@ namespace FirefoxPrivateVPNUITest
                 {
                     // 1. Creating a Desktop session
                     var desktopSession = new DesktopSession();
-                    WebDriverWait wait = new WebDriverWait(desktopSession.Session, TimeSpan.FromSeconds(30));
-                    var firefoxVPN = wait.Until(ExpectedConditions.ElementExists(By.Name("Firefox Private Network VPN")));
+                    var firefoxVPN = Utils.WaitUntilFindElement(desktopSession.Session.FindElementByName, "Firefox Private Network VPN");
 
                     // 2. Attaching to existing firefox Window
                     string applicationSessionHandle = firefoxVPN.GetAttribute("NativeWindowHandle");
@@ -60,11 +59,6 @@ namespace FirefoxPrivateVPNUITest
         }
 
         /// <summary>
-        /// Gets session.
-        /// </summary>
-        public WindowsDriver<WindowsElement> Session { get; private set; }
-
-        /// <summary>
         /// Dispose the VPN session and close the app.
         /// </summary>
         public void Dispose()
@@ -79,13 +73,10 @@ namespace FirefoxPrivateVPNUITest
                 }
                 catch (InvalidOperationException)
                 {
-                    MainScreen mainScreen = new MainScreen(this.Session);
                     UserCommonOperation.UserSignOut(this);
                 }
 
                 this.Session.Quit();
-                var desktopSession = new DesktopSession();
-                desktopSession.CloseVPNClient();
                 this.Session = null;
             }
         }

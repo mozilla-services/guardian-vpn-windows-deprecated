@@ -4,6 +4,7 @@
 
 namespace FirefoxPrivateVPNUITest.Screens
 {
+    using System;
     using OpenQA.Selenium.Appium;
     using OpenQA.Selenium.Appium.Windows;
 
@@ -19,6 +20,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         private AppiumWebElement zipCodeInput;
         private AppiumWebElement authorizeCheckbox;
         private AppiumWebElement submit;
+        private WindowsDriver<WindowsElement> browserSession;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SubscriptionPage"/> class.
@@ -26,6 +28,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="browserSession">browser session.</param>
         public SubscriptionPage(WindowsDriver<WindowsElement> browserSession)
         {
+            this.browserSession = browserSession;
             this.fullNameInput = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Name as it appears on your card Full Name");
             this.cardNumberInput = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Credit or debit card number");
             this.expDateInput = Utils.WaitUntilFindElement(browserSession.FindElementByName, "Credit or debit card expiration date");
@@ -103,7 +106,17 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// </summary>
         public void ClickSubmitButton()
         {
-            this.submit.Click();
+            try
+            {
+                this.submit.Click();
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "An element command could not be completed because the element is not pointer- or keyboard interactable.")
+                {
+                    Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "Submit").Click();
+                }
+            }
         }
     }
 }

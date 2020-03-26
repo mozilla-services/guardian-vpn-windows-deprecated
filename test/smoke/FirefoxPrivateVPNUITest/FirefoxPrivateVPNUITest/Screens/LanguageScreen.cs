@@ -27,16 +27,16 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public LanguageScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            var languageView = vpnSession.FindElementByClassName("LanguageView");
-            this.backButton = languageView.FindElementByName("Back");
-            this.title = languageView.FindElementByName("Language");
-            var languagePane = languageView.FindElementByClassName("ScrollViewer");
-            this.defaultLanguageTitle = languagePane.FindElementByName("Default");
-            var defaultLanguagesElements = languagePane.FindElementsByName("English (United States)");
+            var languageView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "LanguageView");
+            this.backButton = Utils.WaitUntilFindElement(languageView.FindElementByName, "Back");
+            this.title = Utils.WaitUntilFindElement(languageView.FindElementByName, "Language");
+            var languagePane = Utils.WaitUntilFindElement(languageView.FindElementByClassName, "ScrollViewer");
+            this.defaultLanguageTitle = Utils.WaitUntilFindElement(languagePane.FindElementByName, "Default");
+            var defaultLanguagesElements = Utils.WaitUntilFindElements(languagePane.FindElementsByName, "English (United States)");
             this.defaultLanguageRadioButton = defaultLanguagesElements[0];
             this.defaultLanguageDetails = defaultLanguagesElements[1];
-            this.additionalLanguagesListTitle = languagePane.FindElementByName("Additional");
-            this.additionalLanguagesListView = languagePane.FindElementByAccessibilityId("SupportedLanguagesList");
+            this.additionalLanguagesListTitle = Utils.WaitUntilFindElement(languagePane.FindElementByName, "Additional");
+            this.additionalLanguagesListView = Utils.WaitUntilFindElement(languagePane.FindElementByAccessibilityId, "SupportedLanguagesList");
         }
 
         /// <summary>
@@ -106,10 +106,10 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// </summary>
         public void RandomPickAdditionalLanguage()
         {
-            var additionalLanguages = this.additionalLanguagesListView.FindElementsByClassName("ListBoxItem");
+            var additionalLanguages = Utils.WaitUntilFindElements(this.additionalLanguagesListView.FindElementsByClassName, "ListBoxItem");
             int randomIndex = Utils.RandomSelectIndex(Enumerable.Range(0, additionalLanguages.Count), (i) => true);
             var randomLanguage = additionalLanguages[randomIndex];
-            var languageSelection = randomLanguage.FindElementByClassName("RadioButton");
+            var languageSelection = Utils.WaitUntilFindElement(randomLanguage.FindElementByClassName, "RadioButton");
             languageSelection.Click();
         }
 

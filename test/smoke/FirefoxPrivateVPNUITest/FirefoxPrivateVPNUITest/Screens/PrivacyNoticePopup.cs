@@ -23,12 +23,12 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="desktopSession">VPN session.</param>
         public PrivacyNoticePopup(WindowsDriver<WindowsElement> desktopSession)
         {
-            var privacyNoticePopup = desktopSession.FindElementByName("Privacy notice");
-            var staticElements = privacyNoticePopup.FindElementsByClassName("Static");
+            var privacyNoticePopup = Utils.WaitUntilFindElement(desktopSession.FindElementByName, "Privacy notice");
+            var staticElements = Utils.WaitUntilFindElements(privacyNoticePopup.FindElementsByClassName, "Static");
             this.imageIcon = staticElements[0];
             this.privacyNoticeDetails = staticElements[1];
-            this.yesButton = privacyNoticePopup.FindElementByName("Yes");
-            this.noButton = privacyNoticePopup.FindElementByName("No");
+            this.yesButton = Utils.WaitUntilFindElement(privacyNoticePopup.FindElementByName, "Yes");
+            this.noButton = Utils.WaitUntilFindElement(privacyNoticePopup.FindElementByName, "No");
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace FirefoxPrivateVPNUITest.Screens
             }
             catch (Exception)
             {
-                this.browserSession.FindElementByName("No thanks, just take me to my product.").Click();
+                Utils.WaitUntilFindElement(this.browserSession.FindElementByName, "No thanks, just take me to my product.").Click();
             }
         }
     }

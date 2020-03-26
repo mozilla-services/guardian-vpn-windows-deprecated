@@ -29,15 +29,17 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="vpnSession">VPN session.</param>
         public MainScreen(WindowsDriver<WindowsElement> vpnSession)
         {
-            this.titleElement = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "HeroText");
-            this.subtitleElement = vpnSession.FindElementByClassName("HeroSubText");
-            var settingButtons = vpnSession.FindElementsByName("Settings");
+            var mainView = Utils.WaitUntilFindElement(vpnSession.FindElementByClassName, "MainView");
+            var mainCard = Utils.WaitUntilFindElement(mainView.FindElementByAccessibilityId, "MainCard");
+            this.titleElement = Utils.WaitUntilFindElement(mainCard.FindElementByClassName, "HeroText");
+            this.subtitleElement = Utils.WaitUntilFindElement(mainCard.FindElementByClassName, "HeroSubText");
+            var settingButtons = Utils.WaitUntilFindElements(mainCard.FindElementsByName, "Settings");
             this.vpnOffSettingButton = settingButtons[0];
             this.vpnOnSettingButton = settingButtons[1];
-            this.vpnSwitch = vpnSession.FindElementByName("Toggle");
-            this.serverListButton = vpnSession.FindElementByAccessibilityId("ConnectionNavButton");
-            this.deviceListButton = vpnSession.FindElementByName("My devices");
-            this.vpnStatus = vpnSession.FindElementByName("VPN status");
+            this.vpnSwitch = Utils.WaitUntilFindElement(mainCard.FindElementByName, "Toggle");
+            this.serverListButton = Utils.WaitUntilFindElement(mainView.FindElementByAccessibilityId, "ConnectionNavButton");
+            this.deviceListButton = Utils.WaitUntilFindElement(mainView.FindElementByName, "My devices");
+            this.vpnStatus = Utils.WaitUntilFindElement(mainCard.FindElementByName, "VPN status");
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <returns>The subtitle string.</returns>
         public string GetSubtitle()
         {
-            return this.subtitleElement.FindElementsByClassName("TextBlock")[1].Text;
+            return Utils.WaitUntilFindElements(this.subtitleElement.FindElementsByClassName, "TextBlock")[1].Text;
         }
 
         /// <summary>
@@ -106,7 +108,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <returns>OnImage Element.</returns>
         public AppiumWebElement GetOnImage()
         {
-            return this.vpnStatus.FindElementByAccessibilityId("OnImage");
+            return Utils.WaitUntilFindElement(this.vpnStatus.FindElementByAccessibilityId, "OnImage");
         }
 
         /// <summary>
@@ -115,7 +117,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <returns>OffImage Element.</returns>
         public AppiumWebElement GetOffImage()
         {
-            return this.vpnStatus.FindElementByAccessibilityId("OffImage");
+            return Utils.WaitUntilFindElement(this.vpnStatus.FindElementByAccessibilityId, "OffImage");
         }
     }
 }

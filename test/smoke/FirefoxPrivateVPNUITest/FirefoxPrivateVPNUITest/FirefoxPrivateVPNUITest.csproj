@@ -110,6 +110,7 @@
     <Compile Include="Screens\VerificationCodePage.cs" />
     <Compile Include="Screens\VerifyAccountScreen.cs" />
     <Compile Include="Screens\WindowsNotificationScreen.cs" />
+    <Compile Include="Sessions\BaseSession.cs" />
     <Compile Include="Sessions\BrowserSession.cs" />
     <Compile Include="Sessions\DesktopSession.cs" />
     <Compile Include="Sessions\FirefoxPrivateVPNSession.cs" />

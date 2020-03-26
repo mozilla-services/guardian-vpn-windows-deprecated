@@ -7,10 +7,7 @@ If ([System.IO.File]::Exists("C:\Program Files (x86)\Windows Application Driver\
     Start-Sleep -Seconds 10
 }     
 
-# warm up firefox browser
-Start-Process -FilePath "C:\Program Files\Mozilla Firefox\firefox.exe"
-Start-Sleep -Seconds 30
-Get-Process firefox | Foreach-Object { $_.CloseMainWindow() | Out-Null } | stop-process -Force
+Start-Sleep -Seconds 60
 
 $timeout = new-timespan -Minutes 10
 $sw = [diagnostics.stopwatch]::StartNew()

@@ -32,11 +32,11 @@ namespace FirefoxPrivateVPNUITest.Screens
         public ServerListScreen(WindowsDriver<WindowsElement> vpnSession)
         {
             this.vpnSession = vpnSession;
-            this.scrollDownButton = vpnSession.FindElementByAccessibilityId("PART_LineDownButton");
-            this.backButton = vpnSession.FindElementByName("Back");
-            this.title = vpnSession.FindElementByName("Connection");
-            this.serverListView = vpnSession.FindElementByAccessibilityId("CountryServerList");
-            var countryList = this.serverListView.FindElementsByClassName("ListBoxItem");
+            this.scrollDownButton = Utils.WaitUntilFindElement(vpnSession.FindElementByAccessibilityId, "PART_LineDownButton");
+            this.backButton = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "Back");
+            this.title = Utils.WaitUntilFindElement(vpnSession.FindElementByName, "Connection");
+            this.serverListView = Utils.WaitUntilFindElement(vpnSession.FindElementByAccessibilityId, "CountryServerList");
+            var countryList = Utils.WaitUntilFindElements(this.serverListView.FindElementsByClassName, "ListBoxItem");
             foreach (var country in countryList)
             {
                 if (this.selectedServerCountry != null && this.selectedServerCity != null)
@@ -47,18 +47,18 @@ namespace FirefoxPrivateVPNUITest.Screens
                 if (country.Displayed)
                 {
                     this.selectedServerCountry = country;
-                    var countryExpander = country.FindElementByClassName("Expander");
-                    var expandedState = countryExpander.FindElementByClassName("Button");
+                    var countryExpander = Utils.WaitUntilFindElement(country.FindElementByClassName, "Expander");
+                    var expandedState = Utils.WaitUntilFindElement(countryExpander.FindElementByClassName, "Button");
                     if (!expandedState.Selected)
                     {
                         expandedState.Click();
                     }
 
-                    this.selectedServerCountryCityList = countryExpander.FindElementByAccessibilityId("CityServerList");
-                    var cityList = this.selectedServerCountryCityList.FindElementsByClassName("ListBoxItem");
+                    this.selectedServerCountryCityList = Utils.WaitUntilFindElement(countryExpander.FindElementByAccessibilityId, "CityServerList");
+                    var cityList = Utils.WaitUntilFindElements(this.selectedServerCountryCityList.FindElementsByClassName, "ListBoxItem");
                     foreach (var city in cityList)
                     {
-                        var citySelection = city.FindElementByClassName("RadioButton");
+                        var citySelection = Utils.WaitUntilFindElement(city.FindElementByClassName, "RadioButton");
                         if (citySelection.Selected)
                         {
                             this.selectedServerCity = city;
@@ -110,8 +110,7 @@ namespace FirefoxPrivateVPNUITest.Screens
         /// <param name="city">The city we want to select.</param>
         public void RandomSelectDifferentCityServer(string city = null)
         {
-            ReadOnlyCollection<AppiumWebElement> cityList = null;
-            Utils.WaitUntil(ref cityList, this.selectedServerCountryCityList.FindElementsByClassName, "RadioButton", (elements) => elements.Count > 0);
+            ReadOnlyCollection<AppiumWebElement> cityList = Utils.WaitUntilFindElements(this.selectedServerCountryCityList.FindElementsByClassName, "RadioButton");
             Func<int, bool> randomPickCondition = (i) =>
             {
                 string currentCityName = cityList[i].GetAttribute("Name");
@@ -141,7 +140,7 @@ namespace FirefoxPrivateVPNUITest.Screens
 
             // Click radio button to select the server
             this.selectedServerCity = randomCity;
-            var citySelection = this.selectedServerCity.FindElementByClassName("RadioButton");
+            var citySelection = Utils.WaitUntilFindElement(this.selectedServerCity.FindElementByClassName, "RadioButton");
             citySelection.Click();
         }
     }
