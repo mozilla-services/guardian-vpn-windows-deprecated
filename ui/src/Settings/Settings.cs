@@ -23,6 +23,7 @@ namespace FirefoxPrivateNetwork
         private LanguageSettings language;
         private NetworkSettings network;
         private string filename;
+        private char multiValueSeparator = '|';
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Settings"/> class.
@@ -100,6 +101,7 @@ namespace FirefoxPrivateNetwork
             InputSettingsConfig(iniData, "Network", "EnableIPv6", Network.EnableIPv6.ToString());
             InputSettingsConfig(iniData, "Network", "IPv4Address", Network.IPv4Address);
             InputSettingsConfig(iniData, "Network", "IPv6Address", Network.IPv6Address);
+            InputSettingsConfig(iniData, "Network", "SplitTunnelApps", string.Join(char.ToString(multiValueSeparator), Network.SplitTunnelApps));
 
             return iniData.ToString();
         }
@@ -233,6 +235,11 @@ namespace FirefoxPrivateNetwork
             else
             {
                 networkSettings.IPv6Address = string.Empty;
+            }
+
+            if (ContainsSettingsConfig(data, "Network", "SplitTunnelApps"))
+            {
+                networkSettings.SplitTunnelApps = data["Network"]["SplitTunnelApps"].Split(multiValueSeparator);
             }
 
             network = networkSettings;
@@ -370,6 +377,12 @@ namespace FirefoxPrivateNetwork
             /// </summary>
             [DisplayName("IPv6Address")]
             public string IPv6Address { get; set; }
+
+            /// <summary>
+            /// Gets or sets the apps that are to be configured for split tunneling.
+            /// </summary>
+            [DisplayName("SplitTunnelApps")]
+            public string[] SplitTunnelApps { get; set; }
         }
     }
 }
