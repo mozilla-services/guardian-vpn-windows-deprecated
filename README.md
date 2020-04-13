@@ -10,6 +10,10 @@
 | `installer`   | WiX installer scripts, for setting up and creating an MSI installer | XML |
 | `test`        | Integration and end-to-end tests | Go |
 
+## Environment Preparation
+- Nuget CLI: Download Nuget.exe CLI from [nuget.org](https://dist.nuget.org/win-x86-commandline/latest/nuget.exe). [More information from Microsoft Doc](https://docs.microsoft.com/zh-tw/nuget/consume-packages/install-use-packages-nuget-cli)
+- Add MSBuild.exe to System Environment Path. For Visual Studio 2019 user, the file is placed at `C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin`
+
 ## Building
 
 - First, [build the embeddable-dll-service's tunnel.dll](tunnel/README.md).
