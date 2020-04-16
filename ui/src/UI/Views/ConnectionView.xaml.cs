@@ -46,7 +46,6 @@ namespace FirefoxPrivateNetwork.UI
 
                 // Set the selected server city and server
                 Manager.MainWindowViewModel.ServerCityListSelectedItem = selectedCity;
-                Manager.MainWindowViewModel.UpdateServerSelection();
 
                 // Switch servers if presently connected, do nothing otherwise
                 if (Manager.MainWindowViewModel.Status == Models.ConnectionState.Protected)
