@@ -30,6 +30,8 @@ namespace FirefoxPrivateNetwork.WireGuard
                 address += "," + Manager.Settings.Network.IPv6Address;
             }
 
+            Manager.MainWindowViewModel.UpdateServerSelection();
+
             ErrorHandling.DebugLogger.LogDebugMsg("Setting endpoint to", Manager.MainWindowViewModel.ServerSelected.Endpoint);
             var currentServer = FxA.Cache.FxAServerList.GetServerByIP(Manager.MainWindowViewModel.ServerSelected.Endpoint);
             configuration.SetEndpoint(currentServer.GetEndpointWithRandomPort(), currentServer.PublicKey, ProductConstants.AllowedIPs, address, currentServer.DNSServerAddress);
