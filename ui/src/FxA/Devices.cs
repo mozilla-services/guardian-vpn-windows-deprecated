@@ -76,7 +76,7 @@ namespace FirefoxPrivateNetwork.FxA
             // Execute the request`
             var response = api.SendRequest();
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            if (response != null && response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
                 Manager.Account.Config.FxALogin.User.Devices.RemoveAll(d => d.PublicKey == publicKey);
                 Manager.Account.Config.WriteFxAUserToFile(ProductConstants.FxAUserFile);
