@@ -8,7 +8,7 @@
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d" 
              VerticalContentAlignment="Top"
-             d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+             d:DesignHeight="454" d:DesignWidth="360" Width="360" MaxWidth="360">
 
     <Grid Width="Auto" Height="Auto">
         <Grid.ColumnDefinitions>
@@ -32,7 +32,7 @@
         </Grid>
 
         <!-- Scrollabe page content -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
+        <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
