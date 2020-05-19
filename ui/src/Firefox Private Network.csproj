@@ -313,6 +313,7 @@
   <ItemGroup>
     <Compile Include="ErrorHandling\UserFacingMessage.cs" />
     <Compile Include="FxA\Avatar.cs" />
+    <Compile Include="FxA\LoginSessionManager.cs" />
     <Compile Include="FxA\IpInfo.cs" />
     <Compile Include="FxA\RangeConverter.cs" />
     <Compile Include="FxA\ServerList\VPNServer.cs" />

@@ -41,8 +41,7 @@ namespace FirefoxPrivateNetwork.UI
 
         private void Signin_Click(object sender, RoutedEventArgs e)
         {
-            var fxaLoginThread = new FxA.Login();
-            fxaLoginThread.StartLogin();
+            Manager.LoginSessionManager.StartNewSession();
         }
     }
 }

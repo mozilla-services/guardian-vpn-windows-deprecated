@@ -29,6 +29,11 @@ namespace FirefoxPrivateNetwork
         public static WireGuard.Tunnel Tunnel { get; set; }
 
         /// <summary>
+        /// Gets the login session manager that can help to start/cancel a login session.
+        /// </summary>
+        public static FxA.LoginSessionManager LoginSessionManager { get; private set; } = new FxA.LoginSessionManager();
+
+        /// <summary>
         /// Gets or sets the user's FxA account.
         /// </summary>
         public static FxA.Account Account { get; set; }
