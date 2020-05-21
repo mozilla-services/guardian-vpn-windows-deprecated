@@ -3,28 +3,36 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Windows;
 
 namespace FirefoxPrivateNetwork.FxA
 {
     /// <summary>
-    /// Help to manage the lifecycle of each login session
+    /// Help to manage the lifecycle of each login session.
     /// </summary>
     public class LoginSessionManager
     {
-        private CancellationTokenSource cancelSource;
+        private Dictionary<Login, CancellationTokenSource> sessions = new Dictionary<Login, CancellationTokenSource>();
 
         /// <summary>
         /// Start a new login session.
         /// </summary>
         public void StartNewSession()
         {
-            CancelCurrentSession();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                CancelCurrentSession();
 
-            cancelSource = new CancellationTokenSource();
+                Login login = new Login(LoginResultCallback);
+                CancellationTokenSource tokenSource = new CancellationTokenSource();
 
-            Login login = new Login(LoginResultCallback);
-            login.StartLogin(cancelSource.Token);
+                sessions.Add(login, tokenSource);
+
+                if (!login.StartLogin(tokenSource.Token))
+                {
+                    CancelCurrentSession();
+                }
+            });
         }
 
         /// <summary>
@@ -32,25 +40,28 @@ namespace FirefoxPrivateNetwork.FxA
         /// </summary>
         public void CancelCurrentSession()
         {
-            // No ongoing session
-            if (cancelSource == null)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                return;
-            }
+                foreach (var session in sessions)
+                {
+                    session.Value.Cancel();
+                    session.Value.Dispose();
+                }
 
-            // Already been cancelled
-            if (cancelSource.IsCancellationRequested)
-            {
-                return;
-            }
-
-            cancelSource.Cancel();
+                sessions.Clear();
+            });
         }
 
-        private void LoginResultCallback(object sender, LoginState state)
+        private void LoginResultCallback(object sender, Login session, LoginState state)
         {
-            cancelSource.Dispose();
-            cancelSource = null;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                if (sessions.ContainsKey(session))
+                {
+                    sessions[session].Dispose();
+                    sessions.Remove(session);
+                }
+            });
         }
     }
 }

@@ -30,7 +30,7 @@ namespace FirefoxPrivateNetwork.FxA
         /// </summary>
         /// <param name="sender">Sender of the login result</param>
         /// <param name="state">The result of the login session</param>
-        public delegate void LoginResultHandler(object sender, LoginState state);
+        public delegate void LoginResultHandler(object sender, Login session, LoginState state);
 
         private event LoginResultHandler LoginResultEvent;
 
@@ -128,14 +128,15 @@ namespace FirefoxPrivateNetwork.FxA
         /// Initiate the login attempt.
         /// </summary>
         /// <param name="cancelToken">Token used to cancel the login process.</param>
-        public void StartLogin(CancellationToken cancelToken)
+        /// <returns>Whether the login process is started succefully.</returns>
+        public bool StartLogin(CancellationToken cancelToken)
         {
             try
             {
                 var loginURLs = GetLoginURLs();
                 if (loginURLs == null)
                 {
-                    return;
+                    return false;
                 }
 
                 var pollInterval = loginURLs.PollInterval % 31; // Max 30 seconds, no more
@@ -153,7 +154,10 @@ namespace FirefoxPrivateNetwork.FxA
             {
                 ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-add-device-error"), ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.UserFacingSeverity.ShowWarning, ErrorHandling.LogLevel.Error);
                 ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
+                return false;
             }
+
+            return true;
         }
 
         /// <summary>
@@ -250,7 +254,7 @@ namespace FirefoxPrivateNetwork.FxA
                 Thread.Sleep(TimeSpan.FromSeconds(5));
             }
 
-            LoginResultEvent?.Invoke(this, Manager.Account.LoginState);
+            LoginResultEvent?.Invoke(this, this, Manager.Account.LoginState);
         }
     }
 }
