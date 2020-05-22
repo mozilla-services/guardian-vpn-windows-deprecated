@@ -208,7 +208,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         private void NavigateSettings(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.NavigateToView(new SettingsView(), MainWindow.SlideDirection.Up);
+            mainWindow.NavigateToView(new SettingsView(Manager.MainWindowViewModel.ViewFrameSource), MainWindow.SlideDirection.Up);
         }
     }
 }
