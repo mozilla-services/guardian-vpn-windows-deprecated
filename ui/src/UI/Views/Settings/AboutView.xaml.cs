@@ -83,7 +83,8 @@ namespace FirefoxPrivateNetwork.UI
 
         private void ViewLog_Click(object sender, RoutedEventArgs e)
         {
-            LogWindow.ShowLog();
+            var mainWindow = Application.Current.MainWindow;
+            LogWindow.ShowLog(new Point(mainWindow.Left + mainWindow.Width, mainWindow.Top));
         }
     }
 }

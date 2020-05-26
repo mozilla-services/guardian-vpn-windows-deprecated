@@ -80,22 +80,27 @@ namespace FirefoxPrivateNetwork.UI
         /// <summary>
         /// Brings the log window to focus if already running, otherwise creates a new one.
         /// </summary>
-        public static void ShowLog()
+        public static void ShowLog(Point? position = null)
         {
-            if (globalLogWindow != null)
+            if (globalLogWindow == null)
             {
-                globalLogWindow.Show();
-                if (globalLogWindow.WindowState == WindowState.Minimized)
-                {
-                    globalLogWindow.WindowState = WindowState.Normal;
-                }
-
-                globalLogWindow.Activate();
-                return;
+                globalLogWindow = new LogWindow();
             }
 
-            globalLogWindow = new LogWindow();
-            ShowLog();
+            if (position is Point positionPoint)
+            {
+                globalLogWindow.Left = positionPoint.X;
+                globalLogWindow.Top = positionPoint.Y;
+            }
+
+            globalLogWindow.Show();
+
+            if (globalLogWindow.WindowState == WindowState.Minimized)
+            {
+                globalLogWindow.WindowState = WindowState.Normal;
+            }
+
+            globalLogWindow.Activate();
         }
 
         private static ScrollViewer FindScrollViewer(DependencyObject dependencyObject)
