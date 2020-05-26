@@ -30,7 +30,7 @@ namespace FirefoxPrivateNetwork
 
             if (ProductConstants.IsDevMode)
             {
-                UI.LogWindow.ShowLog();
+                UI.LogWindow.ShowLog(new Point(MainWindow.Left + MainWindow.Width, MainWindow.Top));
             }
         }
     }
