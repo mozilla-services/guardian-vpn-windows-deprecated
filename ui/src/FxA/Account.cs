@@ -123,15 +123,15 @@ namespace FirefoxPrivateNetwork.FxA
         {
             try
             {
-                // Disconnect the VPN tunnel
-                Manager.Tunnel.Disconnect();
-
                 // Remove the current account device
                 if (removeDevice)
                 {
                     var devices = new FxA.Devices();
                     devices.RemoveDevice(Manager.Account.Config.FxALogin.PublicKey, silent: true);
                 }
+
+                // Disconnect the VPN tunnel
+                Manager.Tunnel.Disconnect();
             }
             catch (Exception)
             {
