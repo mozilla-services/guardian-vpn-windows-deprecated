@@ -259,7 +259,7 @@ func (router *Router) V1VpnLoginVerifyTokenGet(w http.ResponseWriter, r *http.Re
 func (router *Router) BalrogVersionGet(w http.ResponseWriter, r *http.Request) {
 	var reqHost = r.Host
 	mockMSIHashValue := getHashValue()
-	stuffToSign := []byte(fmt.Sprintf(`{"version": "0.5.1.1", "url": "http://localhost:8080/downloads/vpn/FirefoxPrivateNetworkVPN.msi", "required": true, "hashFunction": "sha512", "hashValue": "%s"}`, mockMSIHashValue))
+	stuffToSign := []byte(fmt.Sprintf(`{"version": "0.5.1.1", "url": "http://localhost:8080/downloads/vpn/MozillaVPN.msi", "required": true, "hashFunction": "sha512", "hashValue": "%s"}`, mockMSIHashValue))
 	signedStuff, err := router.chain.Sign(stuffToSign)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -276,10 +276,10 @@ func (router *Router) BalrogVersionGet(w http.ResponseWriter, r *http.Request) {
 		signedStuff[3] ^= 1
 	case "0.0.0.2":
 		wrongHashValue := generateHashValue("wronghash")
-		stuffToSign = []byte(fmt.Sprintf(`{"version": "0.5.1.1", "url": "http://localhost:8080/downloads/vpn/FirefoxPrivateNetworkVPN.msi", "required": true, "hashFunction": "sha512", "hashValue": "%s"}`, wrongHashValue))
+		stuffToSign = []byte(fmt.Sprintf(`{"version": "0.5.1.1", "url": "http://localhost:8080/downloads/vpn/MozillaVPN.msi", "required": true, "hashFunction": "sha512", "hashValue": "%s"}`, wrongHashValue))
 		signedStuff, _ = router.chain.Sign(stuffToSign)
 	case "0.0.0.3":
-		stuffToSign = []byte(`{"version": "0.5.1.1", "url": "http://localhost:8080/downloads/vpn/FirefoxPrivateNetworkVPN.msi", "required": true, "hashFunction": "sha512", "hashValue": ""}`)
+		stuffToSign = []byte(`{"version": "0.5.1.1", "url": "http://localhost:8080/downloads/vpn/MozillaVPN.msi", "required": true, "hashFunction": "sha512", "hashValue": ""}`)
 		signedStuff, _ = router.chain.Sign(stuffToSign)
 	case "0.0.0.4":
 		stuffToSign = []byte(`{"version": "0.5.1.1", whatever}`)
@@ -344,11 +344,11 @@ func (router *Router) UpdateSubscriptionStatusPost(w http.ResponseWriter, r *htt
 }
 
 func (router *Router) DownloadMSI(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "../mockinstaller/x64/FirefoxPrivateNetworkMockVPN.msi")
+	http.ServeFile(w, r, "../mockinstaller/x64/MozillaMockVPN.msi")
 }
 
 func getHashValue() string {
-	f, err := os.Open("../mockinstaller/x64/FirefoxPrivateNetworkMockVPN.msi")
+	f, err := os.Open("../mockinstaller/x64/MozillaMockVPN.msi")
 	if err != nil {
 		log.Fatal(err)
 	}
