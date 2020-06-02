@@ -28,8 +28,9 @@ namespace FirefoxPrivateNetwork.FxA
         /// <summary>
         /// Handler for the result of a login session.
         /// </summary>
-        /// <param name="sender">Sender of the login result</param>
-        /// <param name="state">The result of the login session</param>
+        /// <param name="sender">Sender of the login result.</param>
+        /// <param name="session">Login object that is associated with the login result.</param>
+        /// <param name="state">The result of the login session.</param>
         public delegate void LoginResultHandler(object sender, Login session, LoginState state);
 
         private event LoginResultHandler LoginResultEvent;

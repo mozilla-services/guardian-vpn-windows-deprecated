@@ -91,7 +91,7 @@ namespace FirefoxPrivateNetwork.FxA
                 // Empty status response
                 if (response.StatusCode == 0 || response.Content == null)
                 {
-                    ErrorHandling.DebugLogger.LogDebugMsg("res=" + request.Resource + 
+                    ErrorHandling.DebugLogger.LogDebugMsg("res=" + request.Resource +
                         ", status=" + response.ResponseStatus + ", msg=" + response.ErrorMessage);
                     return null;
                 }
