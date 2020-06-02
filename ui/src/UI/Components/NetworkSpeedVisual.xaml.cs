@@ -346,7 +346,7 @@ namespace FirefoxPrivateNetwork.UI.Components
             {
                 return stringList.Split(',').Select(num => double.Parse(num)).ToList();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return new List<double>();
             }

@@ -80,6 +80,7 @@ namespace FirefoxPrivateNetwork.UI
         /// <summary>
         /// Brings the log window to focus if already running, otherwise creates a new one.
         /// </summary>
+        /// <param name="position">The top-left position of the log window.</param>
         public static void ShowLog(Point? position = null)
         {
             if (globalLogWindow == null)
@@ -208,7 +209,7 @@ namespace FirefoxPrivateNetwork.UI
                 filterRegexChanged = true;
                 filterRegex = regex;
             }
-            catch (Exception _)
+            catch (Exception)
             {
             }
         }
