@@ -11,11 +11,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Firefox Private Network VPN")]
+[assembly: AssemblyTitle("Mozilla VPN")]
 [assembly: AssemblyDescription("A fast, secure and easy to use VPN (Virtual Private Network)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mozilla")]
-[assembly: AssemblyProduct("Firefox Private Network")]
+[assembly: AssemblyProduct("Mozilla VPN")]
 [assembly: AssemblyCopyright("©2019 Mozilla")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
