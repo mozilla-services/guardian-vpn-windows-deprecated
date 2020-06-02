@@ -40,7 +40,7 @@ MSBuild /t:Rebuild /p:Configuration=Debug_QA /p:Platform="x64"
 
 #### Install the MSI
 ```
-msiexec /log install.log /qn /i installer\x64\FirefoxPrivateNetworkVPN.msi
+msiexec /log install.log /qn /i installer\x64\MozillaVPN.msi
 ```
 
 #### Initial Check
@@ -63,7 +63,7 @@ nunit3-console.exe /result:.\test\result\unittests\result.xml FirefoxPrivateNetw
 
 #### Run App In Debug_QA mode
 ```
-Start-Process -FilePath ".\ui\src\bin\x64\Debug_QA\FirefoxPrivateNetworkVPN.exe"
+Start-Process -FilePath ".\ui\src\bin\x64\Debug_QA\MozillaVPN.exe"
 ```
 
 #### Run Integration Tests
@@ -82,14 +82,14 @@ go test github.com/mozilla-services/guardian-vpn-windows/test/integrations -v | 
 #### Deploy
 - Save the MSI file into `test/result`
 ```
-Copy-Item ".\installer\x64\FirefoxPrivateNetworkVPN.msi" -Destination ".\test\result"
+Copy-Item ".\installer\x64\MozillaVPN.msi" -Destination ".\test\result"
 ```
 
 #### Upload MSI to S3 (Only for the every-12-hours workflow)
 - Upload VPN client MSI to S3 bucket
 ```
 $ProgressPreference = "SilentlyContinue"
-Write-S3Object -BucketName $env:S3_BUCKET -File test/result/FirefoxPrivateNetworkVPN.msi -Key msi/$env:CIRCLE_BUILD_NUM/FirefoxPrivateNetworkVPN.msi
+Write-S3Object -BucketName $env:S3_BUCKET -File test/result/MozillaVPN.msi -Key msi/$env:CIRCLE_BUILD_NUM/MozillaVPN.msi
 ```
 
 #### Launch EC2 with Windows 10 (Only for the every-12-hours workflow)
