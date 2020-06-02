@@ -25,7 +25,7 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Notification area/system tray tool tip.
         /// </summary>
-        public const string DefaultSystemTrayTitle = "Mozilla VPN";
+        public const string DefaultSystemTrayTitle = ProductName;
 
         /// <summary>
         /// Tray windows class name used when constructing the TrayWindowMessageHandler. Must be unique.
@@ -40,27 +40,27 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Name of the broker service.
         /// </summary>
-        public const string BrokerServiceName = "MozillaVPNBroker";
+        public const string BrokerServiceName = InternalAppName + "Broker";
 
         /// <summary>
         /// Tunnel service unique name. Must be prefixed with "WireGuard$".
         /// </summary>
-        public const string TunnelServiceInternalName = "WireGuardTunnel$MozillaVPN";
+        public const string TunnelServiceInternalName = "WireGuardTunnel$" + InternalAppName;
 
         /// <summary>
         /// Tunnel service display name.
         /// </summary>
-        public const string TunnelServiceName = "Mozilla VPN";
+        public const string TunnelServiceName = ProductName;
 
         /// <summary>
         /// Tunnel service description.
         /// </summary>
-        public const string TunnelServiceDescription = "Manages the Mozilla VPN tunnel connection";
+        public const string TunnelServiceDescription = "Manages the " + ProductName + " tunnel connection";
 
         /// <summary>
         /// Tunnel service pipe name. Must be unique and prefixed with "ProtectedPrefix\Administrators\WireGuard\".
         /// </summary>
-        public const string TunnelPipeName = "ProtectedPrefix\\Administrators\\WireGuard\\MozillaVPN";
+        public const string TunnelPipeName = "ProtectedPrefix\\Administrators\\WireGuard\\" + InternalAppName;
 
         /// <summary>
         /// Default filename suggestion when saving a log file dump.
@@ -91,7 +91,7 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// VPN WG configuration file path.
         /// </summary>
-        public static readonly string FirefoxPrivateNetworkConfFile = Path.Combine(UserAppDataFolder, "MozillaVPN.conf");
+        public static readonly string FirefoxPrivateNetworkConfFile = Path.Combine(UserAppDataFolder, InternalAppName + ".conf");
 
         /// <summary>
         /// Log file location.
