@@ -66,7 +66,7 @@ namespace FirefoxPrivateVPNUITest
             Assert.AreEqual("My devices", deviceScreen.GetTitle());
             Regex rgx = new Regex(@"^[1-5] of 5$");
             Assert.IsTrue(rgx.IsMatch(deviceScreen.GetDeviceSummary()));
-            rgx = new Regex(@"^Devices with Firefox Private Network installed using your account. Connect up to [0-9] devices.$");
+            rgx = new Regex(@"^Devices with Mozilla VPN installed using your account. Connect up to [0-9] devices.$");
             Assert.IsTrue(rgx.IsMatch(deviceScreen.GetDevicePanelTitle()));
             Assert.IsTrue(deviceScreen.GetCurrentDeviceName().Contains(Environment.MachineName));
             Assert.AreEqual("Current device", deviceScreen.GetCurrentDeviceStatus());

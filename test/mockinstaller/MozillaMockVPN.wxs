@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 	<Product
 		Id="*"
-		Name="Firefox Private Network Mock VPN Installer"
+		Name="Mozilla Mock VPN Installer"
 		Language="1033"
 		Version="0.1.0.0"
 		Manufacturer="Mozilla Corporation"
@@ -11,7 +11,7 @@
 			InstallerVersion="400"
 			Compressed="yes"
 			InstallScope="perMachine"
-			Description="Firefox Private Network Mock VPN"
+			Description="Mozilla Mock VPN"
 			ReadOnly="yes"	
 		/>
 
@@ -27,19 +27,19 @@
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFiles64Folder">
 				<Directory Id="MozillaFolder" Name="Mozilla">
-					<Directory Id="FirefoxPrivateNetworkMockVPNFolder" Name="Firefox Private Network Mock VPN" />
+					<Directory Id="MozillaMockVPNFolder" Name="Mozilla Mock VPN" />
 				</Directory>
 			</Directory>
 		</Directory>
 
-		<ComponentGroup Id="FirefoxPrivateNetworkMockVPNComponents">
-			<Component Directory="FirefoxPrivateNetworkMockVPNFolder" Id="FirefoxPrivateNetworkVPNMockFile" Guid="dd597a2c-b8af-439d-97ec-fd1bc527d709">
+		<ComponentGroup Id="MozillaMockVPNComponents">
+			<Component Directory="MozillaMockVPNFolder" Id="MozillaVPNMockFile" Guid="dd597a2c-b8af-439d-97ec-fd1bc527d709">
 				<File Source="mockdata/MockInstallFile.txt" />
 			</Component>
 		</ComponentGroup>
 
-		<Feature Id="FirefoxPrivateNetworkMockVPNFeature" Title="Firefox Private Network Mock VPN" Level="1">
-			<ComponentGroupRef Id="FirefoxPrivateNetworkMockVPNComponents" />
+		<Feature Id="MozillaMockVPNFeature" Title="Mozilla Mock VPN" Level="1">
+			<ComponentGroupRef Id="MozillaMockVPNComponents" />
 		</Feature>
 	</Product>
 </Wix>
