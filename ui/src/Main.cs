@@ -14,7 +14,7 @@ using FirefoxPrivateNetwork.WireGuard;
 namespace FirefoxPrivateNetwork
 {
     /// <summary>
-    /// Entry point of the FirefoxPrivateNetwork application.
+    /// Entry point of the Mozilla VPN application.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1649:FileNameMustMatchTypeName", Justification = "Default C# behavior.")]
     internal class Entry : System.Windows.Application
