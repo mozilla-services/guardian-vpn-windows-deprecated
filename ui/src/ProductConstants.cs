@@ -20,12 +20,12 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Main product name.
         /// </summary>
-        public const string ProductName = "Firefox Private Network VPN";
+        public const string ProductName = "Mozilla VPN";
 
         /// <summary>
         /// Notification area/system tray tool tip.
         /// </summary>
-        public const string DefaultSystemTrayTitle = "Firefox Private Network VPN";
+        public const string DefaultSystemTrayTitle = "Mozilla VPN";
 
         /// <summary>
         /// Tray windows class name used when constructing the TrayWindowMessageHandler. Must be unique.
@@ -35,32 +35,32 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Tunnel service internal application name.
         /// </summary>
-        public const string InternalAppName = "FirefoxPrivateNetworkVPN";
+        public const string InternalAppName = "MozillaVPN";
 
         /// <summary>
         /// Name of the broker service.
         /// </summary>
-        public const string BrokerServiceName = "FirefoxPrivateNetworkVPNBroker";
+        public const string BrokerServiceName = "MozillaVPNBroker";
 
         /// <summary>
         /// Tunnel service unique name. Must be prefixed with "WireGuard$".
         /// </summary>
-        public const string TunnelServiceInternalName = "WireGuardTunnel$FirefoxPrivateNetworkVPN";
+        public const string TunnelServiceInternalName = "WireGuardTunnel$MozillaVPN";
 
         /// <summary>
         /// Tunnel service display name.
         /// </summary>
-        public const string TunnelServiceName = "Firefox Private Network VPN";
+        public const string TunnelServiceName = "Mozilla VPN";
 
         /// <summary>
         /// Tunnel service description.
         /// </summary>
-        public const string TunnelServiceDescription = "Manages the Firefox Private Network VPN tunnel connection";
+        public const string TunnelServiceDescription = "Manages the Mozilla VPN tunnel connection";
 
         /// <summary>
         /// Tunnel service pipe name. Must be unique and prefixed with "ProtectedPrefix\Administrators\WireGuard\".
         /// </summary>
-        public const string TunnelPipeName = "ProtectedPrefix\\Administrators\\WireGuard\\FirefoxPrivateNetworkVPN";
+        public const string TunnelPipeName = "ProtectedPrefix\\Administrators\\WireGuard\\MozillaVPN";
 
         /// <summary>
         /// Default filename suggestion when saving a log file dump.
@@ -86,12 +86,12 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// User's app data folder where the configuration files are stored.
         /// </summary>
-        public static readonly string UserAppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mozilla", "FirefoxPrivateNetworkVPN");
+        public static readonly string UserAppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mozilla", "MozillaVPN");
 
         /// <summary>
         /// VPN WG configuration file path.
         /// </summary>
-        public static readonly string FirefoxPrivateNetworkConfFile = Path.Combine(UserAppDataFolder, "FirefoxPrivateNetworkVPN.conf");
+        public static readonly string FirefoxPrivateNetworkConfFile = Path.Combine(UserAppDataFolder, "MozillaVPN.conf");
 
         /// <summary>
         /// Log file location.
