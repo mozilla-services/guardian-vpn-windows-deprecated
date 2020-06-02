@@ -332,7 +332,7 @@ namespace FirefoxPrivateNetwork.WCF
         /// <returns>WCF process check response.</returns>
         private ProcessCheckResponse CheckFirefoxPrivateNetworkProcess()
         {
-            string processName = "FirefoxPrivateNetwork";
+            string processName = "MozillaVPN";
             bool uiExist = false;
             bool brokerExist = false;
             bool tunnelExist = false;
@@ -345,19 +345,19 @@ namespace FirefoxPrivateNetwork.WCF
                     commands.AppendLine(commandLine);
                     if (!uiExist)
                     {
-                        Regex rgx = new Regex(@"^.*FirefoxPrivateNetworkVPN\.exe""$");
+                        Regex rgx = new Regex(@"^.*MozillaVPN\.exe""$");
                         uiExist = rgx.IsMatch(commandLine);
                     }
 
                     if (!brokerExist)
                     {
-                        Regex rgx = new Regex(@"^.*FirefoxPrivateNetworkVPN\.exe""\ broker.*$");
+                        Regex rgx = new Regex(@"^.*MozillaVPN\.exe""\ broker.*$");
                         brokerExist = rgx.IsMatch(commandLine);
                     }
 
                     if (!tunnelExist)
                     {
-                        Regex rgx = new Regex(@"^.*FirefoxPrivateNetworkVPN\.exe""\ tunnel.*$");
+                        Regex rgx = new Regex(@"^.*MozillaVPN\.exe""\ tunnel.*$");
                         tunnelExist = rgx.IsMatch(commandLine);
                     }
                 }
