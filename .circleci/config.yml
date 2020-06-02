@@ -14,29 +14,29 @@ jobs:
           name: Build Tunnel
           command: |
             .\tunnel\build.cmd
-      - run: 
+      - run:
           name: Build Logger
           command: |
             cd test/logger
             nuget install packages.config -OutputDirectory packages
             C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe -target:library SALogger.cs -reference:.\packages\Microsoft.Build.Utilities.Core.16.3.0\lib\net472\Microsoft.Build.Utilities.Core.dll,.\packages\Microsoft.Build.Framework.16.3.0\lib\net472\Microsoft.Build.Framework.dll,.\packages\Microsoft.PowerShell.5.ReferenceAssemblies.1.1.0\lib\net4\System.Management.Automation.dll
-      - run: 
+      - run:
           name: Build Application
           command: |
             New-Item -ItemType directory -Path test\result
             cd ui
-            nuget restore -SolutionDirectory ./ 
+            nuget restore -SolutionDirectory ./
             MSBuild -t:Rebuild -p:Configuration=Release -p:Platform="x64" -logger:"..\test\logger\SALogger.dll;..\test\result\Output.log"
             MSBuild -t:Rebuild -p:Configuration=Release -p:Platform="x86"
             MSBuild -t:Rebuild -p:Configuration=Debug_QA -p:Platform="x64"
-      - run: 
+      - run:
           name: Build MSI
           command: |
-            .\installer\build.cmd  
+            .\installer\build.cmd
       - run:
           name: Install MSI
           command: |
-            Start-Process msiexec.exe -Wait -ArgumentList '/log install.log /qn /i installer\x64\FirefoxPrivateNetworkVPN.msi'
+            Start-Process msiexec.exe -Wait -ArgumentList '/log install.log /qn /i installer\x64\MozillaVPN.msi'
             Get-Content install.log
       - run:
           name: Initial Check
@@ -52,10 +52,10 @@ jobs:
           name: Run Application On Debug_QA mode
           command: |
             netsh http add urlacl url=http://+:8000/ user=Everyone
-            Get-Process FirefoxPrivateNetworkVPN -ErrorAction SilentlyContinue | Stop-Process -Force
-            Start-Process -FilePath ".\ui\src\bin\x64\Debug_QA\FirefoxPrivateNetworkVPN.exe"
-            Start-Service -Name "FirefoxPrivateNetworkVPNBroker"
-      - run: 
+            Get-Process MozillaVPN -ErrorAction SilentlyContinue | Stop-Process -Force
+            Start-Process -FilePath ".\ui\src\bin\x64\Debug_QA\MozillaVPN.exe"
+            Start-Service -Name "MozillaVPNBroker"
+      - run:
           name: Run Integration Tests
           command: |
             .\test\mockinstaller\build.cmd
@@ -84,23 +84,23 @@ jobs:
               xunit-viewer --results=report-utf8.xml --output=report.html;
             }
             # save application log
-            If ([System.IO.File]::Exists("C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin")) {
+            If ([System.IO.File]::Exists("C:\Users\circleci\AppData\Local\Mozilla\MozillaVPN\log.bin")) {
               cd C:\Users\circleci\project\test\ringloggerParser
               MSBuild -t:Rebuild -p:Configuration=Release
-              .\bin\Release\RingloggerParser.exe C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin C:\Users\circleci\project\test\result\log.txt
+              .\bin\Release\RingloggerParser.exe C:\Users\circleci\AppData\Local\Mozilla\MozillaVPN\log.bin C:\Users\circleci\project\test\result\log.txt
             }
           when: always
       - run:
           name: Deploy
           command: |
-            Copy-Item ".\installer\x64\FirefoxPrivateNetworkVPN.msi" -Destination ".\test\result"
+            Copy-Item ".\installer\x64\MozillaVPN.msi" -Destination ".\test\result"
           when: on_success
       - store_test_results:
           path: test/result
       - store_artifacts:
           path: test/result
       - run:
-          name: Add Comment 
+          name: Add Comment
           command: |
             # add comments to PR if there are any warnings or errors on committed files
             If ($env:CIRCLE_PULL_REQUEST -And [System.IO.File]::Exists("C:\Users\circleci\project\test\result\Output.log")) {
@@ -121,7 +121,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project/test
-      - run: 
+      - run:
           name: Install AWSTool
           command: |
             Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
@@ -130,12 +130,12 @@ jobs:
           name: Upload To S3
           command: |
             $ProgressPreference = "SilentlyContinue"
-            Write-S3Object -BucketName $env:S3_BUCKET -File test/result/FirefoxPrivateNetworkVPN.msi -Key msi/$env:CIRCLE_BUILD_NUM/FirefoxPrivateNetworkVPN.msi
-      - run: 
+            Write-S3Object -BucketName $env:S3_BUCKET -File test/result/MozillaVPN.msi -Key msi/$env:CIRCLE_BUILD_NUM/MozillaVPN.msi
+      - run:
           name: Launch EC2 Win10
           command: |
             ./test/smoke/aws/create_ec2.ps1
-      - run: 
+      - run:
           name: Wait for Smoke Test result
           command: |
             New-Item -Path ./test/result/ -Name "smoketest" -ItemType "directory"
@@ -152,8 +152,8 @@ jobs:
                 }
                 Else {
                   Write-Host "The smoke test result is not available!"
-                } 
-              } 
+                }
+              }
               Else {
                 Write-Host "The bucket $env:S3_BUCKET does not exist."
                 Exit 1
