@@ -60,7 +60,7 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Tunnel service pipe name. Must be unique and prefixed with "ProtectedPrefix\Administrators\WireGuard\".
         /// </summary>
-        public const string TunnelPipeName = "ProtectedPrefix\\Administrators\\WireGuard\\" + InternalAppName;
+        public const string TunnelPipeName = "ProtectedPrefix\\Administrators\\WireGuard\\FirefoxPrivateNetworkVPN";
 
         /// <summary>
         /// Default filename suggestion when saving a log file dump.
@@ -86,12 +86,12 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// User's app data folder where the configuration files are stored.
         /// </summary>
-        public static readonly string UserAppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mozilla", "MozillaVPN");
+        public static readonly string UserAppDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Mozilla", "FirefoxPrivateNetworkVPN");
 
         /// <summary>
         /// VPN WG configuration file path.
         /// </summary>
-        public static readonly string FirefoxPrivateNetworkConfFile = Path.Combine(UserAppDataFolder, InternalAppName + ".conf");
+        public static readonly string FirefoxPrivateNetworkConfFile = Path.Combine(UserAppDataFolder, "FirefoxPrivateNetworkVPN.conf");
 
         /// <summary>
         /// Log file location.

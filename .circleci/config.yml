@@ -84,7 +84,7 @@ jobs:
               xunit-viewer --results=report-utf8.xml --output=report.html;
             }
             # save application log
-            If ([System.IO.File]::Exists("C:\Users\circleci\AppData\Local\Mozilla\MozillaVPN\log.bin")) {
+            If ([System.IO.File]::Exists("C:\Users\circleci\AppData\Local\Mozilla\FirefoxPrivateNetworkVPN\log.bin")) {
               cd C:\Users\circleci\project\test\ringloggerParser
               MSBuild -t:Rebuild -p:Configuration=Release
               .\bin\Release\RingloggerParser.exe C:\Users\circleci\AppData\Local\Mozilla\MozillaVPN\log.bin C:\Users\circleci\project\test\result\log.txt
