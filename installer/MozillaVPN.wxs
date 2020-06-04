@@ -33,6 +33,12 @@
 			Description="Mozilla VPN"
 			ReadOnly="yes" />
 
+		<Upgrade Id="$(var.UpgradeCode)">
+			<UpgradeVersion OnlyDetect='no' Property='PREVIOUSFOUND'
+				Minimum='0.0.0.0' IncludeMinimum='yes'
+				Maximum='1.0.0.0' IncludeMaximum='no' />
+		</Upgrade>
+
 		<MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
 		<Icon Id="MozillaVPNMainIcon" SourceFile="../ui/assets/MainIcon.ico" />
@@ -70,7 +76,7 @@
 			Components
 		-->
 		<ComponentGroup Id="MozillaVPNComponents">
-			<Component Directory="MozillaVPNFolder" Id="MozillaVPNExecutable" Guid="dab6f29e-c825-4ee8-8815-417761fc6447">
+			<Component Directory="MozillaVPNFolder" Id="MozillaVPNExecutable" Guid="EF353A73-A10B-4A2D-87AC-4389BBD9313B">
 				<File Id="MozillaVPNExecutable" Source="../ui/bin/$(var.Platform)/Release/MozillaVPN.exe" KeyPath="yes">
 					<Shortcut Id="MozillaVPNShortcut" Directory="ProgramMenuFolder" Name="Mozilla VPN" Description="A fast, secure and easy to use VPN (Virtual Private Network)" WorkingDirectory="MozillaVPNFolder" Advertise="yes" />
 				</File>
