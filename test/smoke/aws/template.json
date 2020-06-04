@@ -216,8 +216,8 @@
                   "Ref": "StageUrl"
                 },
                 "\" \n",
-                "If(!(Test-Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\MozillaVPN)) { New-Item -ItemType directory -Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\FirefoxPrivateNetworkVPN } \n",
-                "Set-Content -Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\MozillaVPN\\settings.conf -Value $env:Settings \n",
+                "If(!(Test-Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\FirefoxPrivateNetworkVPN)) { New-Item -ItemType directory -Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\FirefoxPrivateNetworkVPN } \n",
+                "Set-Content -Path C:\\Users\\Administrator\\AppData\\Local\\Mozilla\\FirefoxPrivateNetworkVPN\\settings.conf -Value $env:Settings \n",
                 "Write-Host 'Complete.' \n", 
 
                 "Write-Host 'Build Smoke Test App' \n",
