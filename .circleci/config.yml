@@ -195,16 +195,16 @@ workflows:
   workflow:
     jobs:
       - build
-  smoke-test:
-    triggers:
-      - schedule:
-          cron: "0 0,12 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - build
-      - smoke-test:
-          requires:
-            - build
+ # smoke-test:
+ #   triggers:
+ #     - schedule:
+ #         cron: "0 0,12 * * *"
+ #         filters:
+ #           branches:
+ #             only:
+ #               - master
+ #   jobs:
+ #     - build
+ #     - smoke-test:
+ #         requires:
+ #           - build
