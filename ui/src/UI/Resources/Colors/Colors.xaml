@@ -15,7 +15,7 @@
     <SolidColorBrush x:Key="Green/Green 60" Color="#2AC3A2"/>
     <SolidColorBrush x:Key="Green/Green 50" Color="#3FE1B0"/>
     <SolidColorBrush x:Key="Green/Green 40" Color="#54FFBD"/>
-    <SolidColorBrush x:Key="Red/Red 70" Color="#FF283A"/>
+    <SolidColorBrush x:Key="Red/Red 70" Color="#C50042"/>
     <SolidColorBrush x:Key="Red/Red 60" Color="#FF3B4C"/>
     <SolidColorBrush x:Key="Red/Red 50" Color="#FF4F5E"/>
     <SolidColorBrush x:Key="Red/Red 40" Color="#FF6A75"/>

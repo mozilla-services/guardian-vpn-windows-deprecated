@@ -9,7 +9,7 @@
              xmlns:svgc="http://sharpvectors.codeplex.com/svgc/"
              mc:Ignorable="d" 
              VerticalContentAlignment="Top"
-             d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+             d:DesignHeight="454" d:DesignWidth="360" Width="360" MaxWidth="360">
     <UserControl.Resources>
         <cef:RangeConverter x:Key="rangeConv"></cef:RangeConverter>
     </UserControl.Resources>

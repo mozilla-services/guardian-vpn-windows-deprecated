@@ -133,49 +133,66 @@ namespace FirefoxPrivateNetwork.UI.Components
 
             SpeedVisual.DrawCurves();
 
-            DataUsage.Visibility = Visibility.Visible;
-
             if (animated)
             {
                 Storyboard flipAnimation = Resources["FlipToDataUsageStoryboard"] as Storyboard;
 
-                flipAnimation.Completed += (sender, e) =>
-                {
-                    VpnConnection.Visibility = Visibility.Collapsed;
-                };
+                AddTimelineCompleteHandler(flipAnimation, () => UpdateCardVisibility());
 
+                DataUsage.Visibility = Visibility.Visible;
                 flipAnimation.Begin();
             }
             else
             {
-                VpnConnection.Visibility = Visibility.Collapsed;
+                UpdateCardVisibility();
             }
         }
 
         private void FlipToVpnConnection(bool animated)
         {
-            VpnConnection.Visibility = Visibility.Visible;
+            HasDataUsageSideUp = false;
+            OnPropertyChanged("HasDataUsageSideUp");
+            HasVpnConnectionSideUp = true;
+            OnPropertyChanged("HasVpnConnectionSideUp");
 
             if (animated)
             {
                 Storyboard flipAnimation = Resources["FlipToVpnConnectionStoryboard"] as Storyboard;
 
-                flipAnimation.Completed += (sender, e) =>
-                {
-                    DataUsage.Visibility = Visibility.Collapsed;
-                };
+                AddTimelineCompleteHandler(flipAnimation, () => UpdateCardVisibility());
 
+                VpnConnection.Visibility = Visibility.Visible;
                 flipAnimation.Begin();
             }
             else
             {
+                UpdateCardVisibility();
+            }
+        }
+
+        private void UpdateCardVisibility()
+        {
+            if (HasDataUsageSideUp)
+            {
+                VpnConnection.Visibility = Visibility.Collapsed;
+                DataUsage.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                VpnConnection.Visibility = Visibility.Visible;
                 DataUsage.Visibility = Visibility.Collapsed;
             }
+        }
 
-            HasDataUsageSideUp = false;
-            OnPropertyChanged("HasDataUsageSideUp");
-            HasVpnConnectionSideUp = true;
-            OnPropertyChanged("HasVpnConnectionSideUp");
+        private void AddTimelineCompleteHandler(Timeline timeline, Action action)
+        {
+            EventHandler completeHandler = null;
+            completeHandler = (sender, e) =>
+            {
+                timeline.Completed -= completeHandler;
+                action();
+            };
+            timeline.Completed += completeHandler;
         }
 
         private void InitializeToggle()
@@ -191,7 +208,7 @@ namespace FirefoxPrivateNetwork.UI.Components
         private void NavigateSettings(object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.NavigateToView(new SettingsView(), MainWindow.SlideDirection.Up);
+            mainWindow.NavigateToView(new SettingsView(Manager.MainWindowViewModel.ViewFrameSource), MainWindow.SlideDirection.Up);
         }
     }
 }

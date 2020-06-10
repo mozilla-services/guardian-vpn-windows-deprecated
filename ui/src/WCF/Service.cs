@@ -9,6 +9,7 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using FirefoxPrivateNetwork.JSONStructures;
 using FirefoxPrivateNetwork.Models;
@@ -129,7 +130,7 @@ namespace FirefoxPrivateNetwork.WCF
                 var loginInstance = new FxA.Login();
                 var pollInterval = req.PollInterval % 31; // Max 30 seconds, no more
                 Manager.Account.LoginState = FxA.LoginState.LoggingIn;
-                loginInstance.StartQueryLoginThread(req.VerificationUrl, req.PollInterval, req.ExpiresOn);
+                loginInstance.StartQueryLoginThread(req.VerificationUrl, req.PollInterval, req.ExpiresOn, CancellationToken.None);
                 return new Response(200, "Success");
             }
             catch (Exception ex)

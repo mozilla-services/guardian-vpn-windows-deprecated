@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:FirefoxPrivateNetwork.UI"
              mc:Ignorable="d" 
              VerticalContentAlignment="Top"
-             d:DesignHeight="454" d:DesignWidth="360" Height="454" Width="360" MaxHeight="454" MaxWidth="360">
+             d:DesignHeight="454" d:DesignWidth="360" Width="360" MaxWidth="360">
 
     <UserControl.Resources>
         <local:EqualityConverter x:Key="EqualityConverter"/>

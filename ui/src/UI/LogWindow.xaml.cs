@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,9 @@ namespace FirefoxPrivateNetwork.UI
         private static LogWindow globalLogWindow;
         private readonly Thread logDumpThread;
 
+        private Regex filterRegex;
+        private bool filterRegexChanged = false;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LogWindow"/> class.
         /// </summary>
@@ -35,13 +39,16 @@ namespace FirefoxPrivateNetwork.UI
                 while (Thread.CurrentThread.IsAlive)
                 {
                     var lines = ErrorHandling.ErrorHandler.Ringlogger.FollowFromCursor(ref cursor);
-                    if (lines.Count > 0)
+                    Dispatcher.Invoke(new Action(() =>
                     {
-                        Dispatcher.Invoke(new Action(() =>
+                        if (lines.Count > 0)
                         {
                             foreach (var line in lines)
                             {
-                                logView.Items.Add(line);
+                                if (filterRegex == null || filterRegex.Match(line.Message) != Match.Empty)
+                                {
+                                    logView.Items.Add(line);
+                                }
                             }
 
                             while (logView.Items.Count > 8192)
@@ -54,8 +61,15 @@ namespace FirefoxPrivateNetwork.UI
                             {
                                 scrollViewer.ScrollToBottom();
                             }
-                        }));
-                    }
+                        }
+
+                        if (filterRegexChanged)
+                        {
+                            cursor = WireGuard.Ringlogger.CursorAll;
+                            logView.Items.Clear();
+                            filterRegexChanged = false;
+                        }
+                    }));
 
                     Thread.Sleep(300);
                 }
@@ -66,22 +80,27 @@ namespace FirefoxPrivateNetwork.UI
         /// <summary>
         /// Brings the log window to focus if already running, otherwise creates a new one.
         /// </summary>
-        public static void ShowLog()
+        public static void ShowLog(Point? position = null)
         {
-            if (globalLogWindow != null)
+            if (globalLogWindow == null)
             {
-                globalLogWindow.Show();
-                if (globalLogWindow.WindowState == WindowState.Minimized)
-                {
-                    globalLogWindow.WindowState = WindowState.Normal;
-                }
-
-                globalLogWindow.Activate();
-                return;
+                globalLogWindow = new LogWindow();
             }
 
-            globalLogWindow = new LogWindow();
-            ShowLog();
+            if (position is Point positionPoint)
+            {
+                globalLogWindow.Left = positionPoint.X;
+                globalLogWindow.Top = positionPoint.Y;
+            }
+
+            globalLogWindow.Show();
+
+            if (globalLogWindow.WindowState == WindowState.Minimized)
+            {
+                globalLogWindow.WindowState = WindowState.Normal;
+            }
+
+            globalLogWindow.Activate();
         }
 
         private static ScrollViewer FindScrollViewer(DependencyObject dependencyObject)
@@ -177,6 +196,21 @@ namespace FirefoxPrivateNetwork.UI
 
             gridView.Columns[0].Width = width * timestampColumn;
             gridView.Columns[1].Width = width * logTextColumn;
+        }
+
+        private void FilterTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var pattern = filterText.Text;
+            try
+            {
+                var regex = new Regex(pattern);
+
+                filterRegexChanged = true;
+                filterRegex = regex;
+            }
+            catch (Exception _)
+            {
+            }
         }
     }
 }

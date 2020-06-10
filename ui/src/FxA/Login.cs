@@ -17,6 +17,24 @@ namespace FirefoxPrivateNetwork.FxA
     public class Login
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="Login"/> class.
+        /// </summary>
+        /// <param name="handler">Handler for the login result event.</param>
+        public Login(LoginResultHandler handler = null)
+        {
+            LoginResultEvent = handler;
+        }
+
+        /// <summary>
+        /// Handler for the result of a login session.
+        /// </summary>
+        /// <param name="sender">Sender of the login result</param>
+        /// <param name="state">The result of the login session</param>
+        public delegate void LoginResultHandler(object sender, Login session, LoginState state);
+
+        private event LoginResultHandler LoginResultEvent;
+
+        /// <summary>
         /// Gets the unique login urls for the user's signin attempt.
         /// </summary>
         /// <returns>A <see cref="JSONStructures.FxALoginURLs"/> object.</returns>
@@ -109,19 +127,21 @@ namespace FirefoxPrivateNetwork.FxA
         /// <summary>
         /// Initiate the login attempt.
         /// </summary>
-        public void StartLogin()
+        /// <param name="cancelToken">Token used to cancel the login process.</param>
+        /// <returns>Whether the login process is started succefully.</returns>
+        public bool StartLogin(CancellationToken cancelToken)
         {
             try
             {
                 var loginURLs = GetLoginURLs();
                 if (loginURLs == null)
                 {
-                    return;
+                    return false;
                 }
 
                 var pollInterval = loginURLs.PollInterval % 31; // Max 30 seconds, no more
                 Manager.Account.LoginState = FxA.LoginState.LoggingIn;
-                StartQueryLoginThread(loginURLs.VerificationUrl, loginURLs.PollInterval, loginURLs.ExpiresOn);
+                StartQueryLoginThread(loginURLs.VerificationUrl, loginURLs.PollInterval, loginURLs.ExpiresOn, cancelToken);
 
                 // Launch a browser
                 OpenBrowser(loginURLs.LoginUrl);
@@ -134,7 +154,10 @@ namespace FirefoxPrivateNetwork.FxA
             {
                 ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-add-device-error"), ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.UserFacingSeverity.ShowWarning, ErrorHandling.LogLevel.Error);
                 ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
+                return false;
             }
+
+            return true;
         }
 
         /// <summary>
@@ -143,9 +166,10 @@ namespace FirefoxPrivateNetwork.FxA
         /// <param name="queryUri">Login verification URL.</param>
         /// <param name="timeoutSeconds">Timeout (secs) between verification query attempts.</param>
         /// <param name="expiresAt">Expiration date of the verification URL.</param>
-        public void StartQueryLoginThread(string queryUri, int timeoutSeconds, DateTime expiresAt)
+        /// <param name="cancelToken">Token used to cancel the login thread.</param>
+        public void StartQueryLoginThread(string queryUri, int timeoutSeconds, DateTime expiresAt, CancellationToken cancelToken)
         {
-            var loginThread = new Thread(() => QueryLoginThread(queryUri, timeoutSeconds, expiresAt))
+            var loginThread = new Thread(() => QueryLoginThread(queryUri, timeoutSeconds, expiresAt, cancelToken))
             {
                 IsBackground = true,
             };
@@ -158,13 +182,19 @@ namespace FirefoxPrivateNetwork.FxA
         /// <param name="queryUri">Login verification URL.</param>
         /// <param name="timeoutSeconds">Timeout (secs) between verification query attempts.</param>
         /// <param name="expiresAt">Expiration date of the verification URL.</param>
-        private void QueryLoginThread(string queryUri, int timeoutSeconds, DateTime expiresAt)
+        /// <param name="cancelToken">Token used to cancel the login thread.</param>
+        private void QueryLoginThread(string queryUri, int timeoutSeconds, DateTime expiresAt, CancellationToken cancelToken)
         {
             while (Manager.Account.LoginState == FxA.LoginState.LoggingIn && DateTime.Compare(DateTime.UtcNow, expiresAt) < 0)
             {
                 try
                 {
                     var queryRawData = QueryRawLoginState(queryUri);
+
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
 
                     if (queryRawData == null)
                     {
@@ -223,6 +253,8 @@ namespace FirefoxPrivateNetwork.FxA
 
                 Thread.Sleep(TimeSpan.FromSeconds(5));
             }
+
+            LoginResultEvent?.Invoke(this, this, Manager.Account.LoginState);
         }
     }
 }

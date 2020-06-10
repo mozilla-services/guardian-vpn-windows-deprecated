@@ -13,8 +13,6 @@ namespace FirefoxPrivateNetwork.UI
     /// </summary>
     public partial class VerifyAccountView : UserControl
     {
-        private string loginURL;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="VerifyAccountView"/> class.
         /// </summary>
@@ -23,7 +21,6 @@ namespace FirefoxPrivateNetwork.UI
         {
             DataContext = Manager.MainWindowViewModel;
             InitializeComponent();
-            this.loginURL = loginURL;
         }
 
         private void Subscribe_Click(object sender, RoutedEventArgs e)
@@ -33,7 +30,7 @@ namespace FirefoxPrivateNetwork.UI
 
         private void TryAgain_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(loginURL);
+            Manager.LoginSessionManager.StartNewSession();
         }
     }
 }

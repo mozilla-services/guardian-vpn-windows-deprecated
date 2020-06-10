@@ -27,6 +27,11 @@ namespace FirefoxPrivateNetwork
                 var mainWindow = new UI.MainWindow();
                 mainWindow.Show();
             }
+
+            if (ProductConstants.IsDevMode)
+            {
+                UI.LogWindow.ShowLog(new Point(MainWindow.Left + MainWindow.Width, MainWindow.Top));
+            }
         }
     }
 }

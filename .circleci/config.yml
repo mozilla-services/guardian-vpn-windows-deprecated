@@ -12,7 +12,7 @@ jobs:
       - checkout
       - run:
           name: Build Tunnel
-          command: |               
+          command: |
             .\tunnel\build.cmd
       - run: 
           name: Build Logger
@@ -182,6 +182,7 @@ jobs:
       - store_artifacts:
           path: test/result
 workflows:
+  version: 2
   nightly:
     triggers:
       - schedule:
@@ -195,17 +196,3 @@ workflows:
   workflow:
     jobs:
       - build
-  smoke-test:
-    triggers:
-      - schedule:
-          cron: "0 0,12 * * *"
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - build
-      - smoke-test:
-          requires:
-            - build
-
