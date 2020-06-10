@@ -222,7 +222,7 @@ namespace FirefoxPrivateVPNUITest
 
             // About screen
             AboutScreen aboutScreen = new AboutScreen(this.vpnClient.Session);
-            Assert.AreEqual("Mozilla VPN", aboutScreen.GetFPNTitle());
+            Assert.AreEqual("Firefox Private Network", aboutScreen.GetFPNTitle());
             Assert.AreEqual("A fast, secure and easy to use VPN \r\n(Virtual Private Network).", aboutScreen.GetFPNSubtitle());
             Assert.AreEqual("Release version", aboutScreen.GetReleaseTitle());
             Console.WriteLine($"Version: {aboutScreen.GetReleaseVersion()}");

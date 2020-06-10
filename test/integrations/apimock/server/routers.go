@@ -136,7 +136,7 @@ func NewRouter() (*mux.Router, error) {
 		{
 			"DownloadMSI",
 			GET,
-			"/downloads/vpn/MozillaVPN.msi",
+			"/downloads/vpn/FirefoxPrivateNetworkVPN.msi",
 			r.DownloadMSI,
 		},
 	}

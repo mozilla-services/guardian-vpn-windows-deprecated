@@ -23,7 +23,7 @@ func Install(t *testing.T) {
 
 	// try to install the app
 	t.Log("Install - Start to install")
-	cmd := exec.Command("msiexec", "/log", "install.log", "/qn", "/i", os.Getenv("PRJ_DIR")+"\\installer\\x64\\MozillaVPN.msi")
+	cmd := exec.Command("msiexec", "/log", "install.log", "/qn", "/i", os.Getenv("PRJ_DIR")+"\\installer\\x64\\FirefoxPrivateNetworkVPN.msi")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()

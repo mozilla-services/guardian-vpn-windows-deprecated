@@ -19,7 +19,7 @@ using FirefoxPrivateNetwork.Windows;
 namespace FirefoxPrivateNetwork.WireGuard
 {
     /// <summary>
-    /// Class <c>Broker</c> models the intermediary third-party that manages transactions between the MozillaVPN
+    /// Class <c>Broker</c> models the intermediary third-party that manages transactions between the FirefoxPrivateNetwork
     /// VPN client and the WireGuard tunnel.
     /// </summary>
     internal class Broker
@@ -120,7 +120,7 @@ namespace FirefoxPrivateNetwork.WireGuard
         }
 
         /// <summary>
-        /// Child process thread which will be executed upon calling the MozillaVPN.exe with the "broker" switch.
+        /// Child process thread which will be executed upon calling the FirefoxPrivateNetwork.exe with the "broker" switch.
         /// </summary>
         private static void ChildProcess()
         {

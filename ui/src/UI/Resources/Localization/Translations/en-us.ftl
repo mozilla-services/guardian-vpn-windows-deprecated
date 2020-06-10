@@ -1,5 +1,5 @@
 ## Application
-application-name = Mozilla VPN
+application-name = Firefox Private Network
 application-description = 
    A fast, secure and easy to use VPN 
    (Virtual Private Network).

@@ -45,7 +45,7 @@ namespace FirefoxPrivateVPNUITest
             vpnClient.Session.SwitchTo();
             QuickAccessScreen quickAccessScreen = new QuickAccessScreen(vpnClient.Session);
             Assert.AreEqual("Quick access", quickAccessScreen.GetTitle());
-            Assert.AreEqual("You can quickly access Mozilla VPN from your taskbar tray", quickAccessScreen.GetSubTitle());
+            Assert.AreEqual("You can quickly access Firefox Private Network from your taskbar tray", quickAccessScreen.GetSubTitle());
             Assert.AreEqual("Located next to the clock at the bottom right of your screen", quickAccessScreen.GetDescription());
             quickAccessScreen.ClickContinueButton();
         }

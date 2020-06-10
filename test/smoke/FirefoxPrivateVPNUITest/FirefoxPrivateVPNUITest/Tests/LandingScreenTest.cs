@@ -41,7 +41,7 @@ namespace FirefoxPrivateVPNUITest
         {
             this.vpnClient.Session.SwitchTo();
             LandingScreen landingScreen = new LandingScreen(this.vpnClient.Session);
-            Assert.AreEqual("Mozilla VPN", landingScreen.GetTitle());
+            Assert.AreEqual("Firefox Private Network", landingScreen.GetTitle());
             Assert.AreEqual("A fast, secure and easy to use VPN \r\n(Virtual Private Network).", landingScreen.GetSubTitle());
             Assert.AreEqual("Get started", landingScreen.GetStartedButtonText());
             Assert.AreEqual("Learn more", landingScreen.GetLearnMoreHyperlinkText());
