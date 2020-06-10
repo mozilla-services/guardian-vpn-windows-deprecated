@@ -182,6 +182,7 @@ jobs:
       - store_artifacts:
           path: test/result
 workflows:
+  version: 2
   nightly:
     triggers:
       - schedule:
