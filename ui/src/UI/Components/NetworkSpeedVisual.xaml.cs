@@ -342,14 +342,8 @@ namespace FirefoxPrivateNetwork.UI.Components
                 return GetInitialSpeedList();
             }
 
-            try
-            {
-                return stringList.Split(',').Select(num => double.Parse(num)).ToList();
-            }
-            catch (Exception)
-            {
-                return new List<double>();
-            }
+            List<double> newList = stringList.Split(',').Select(num => double.Parse(num)).ToList();
+            return newList;
         }
 
         /// <summary>

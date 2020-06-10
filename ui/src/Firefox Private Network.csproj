@@ -8,7 +8,7 @@
     <ProjectGuid>{C8C653DB-8CDA-446B-A903-BAAFBB3C26B3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>FirefoxPrivateNetwork</RootNamespace>
-    <AssemblyName>MozillaVPN</AssemblyName>
+    <AssemblyName>FirefoxPrivateNetworkVPN</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -136,7 +136,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>
     </NoWarn>
-    <DocumentationFile>..\bin\x64\Debug\MozillaVPN.xml</DocumentationFile>
+    <DocumentationFile>..\bin\x64\Debug\FirefoxPrivateNetworkVPN.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>..\bin\x64\Release\</OutputPath>
@@ -147,7 +147,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>..\bin\x64\Release\MozillaVPN.xml</DocumentationFile>
+    <DocumentationFile>..\bin\x64\Release\FirefoxPrivateNetworkVPN.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release x86|x64'">
     <OutputPath>..\bin\x64\Release x86\</OutputPath>
@@ -208,7 +208,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>bin\x64\Debug_QA\MozillaVPN.xml</DocumentationFile>
+    <DocumentationFile>bin\x64\Debug_QA\FirefoxPrivateNetworkVPN.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
@@ -1098,7 +1098,7 @@
     <Content Include="Resources\Graphics\icon_70x70.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="MozillaVPN.visualelementsmanifest.xml">
+    <Content Include="FirefoxPrivateNetworkVPN.visualelementsmanifest.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="UI\Resources\Animations\Ripple\ripple.png" />

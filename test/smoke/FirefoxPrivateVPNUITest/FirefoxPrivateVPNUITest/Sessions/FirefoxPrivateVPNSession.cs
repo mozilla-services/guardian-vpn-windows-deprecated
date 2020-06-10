@@ -18,7 +18,7 @@ namespace FirefoxPrivateVPNUITest
     public class FirefoxPrivateVPNSession : BaseSession
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
-        private const string FirefoxPrivateVPNAppId = @"C:\Program Files\Mozilla\Mozilla VPN\MozillaVPN.exe";
+        private const string FirefoxPrivateVPNAppId = @"C:\Program Files\Mozilla\Firefox Private Network VPN\FirefoxPrivateNetworkVPN.exe";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FirefoxPrivateVPNSession"/> class.
@@ -41,7 +41,7 @@ namespace FirefoxPrivateVPNUITest
                 {
                     // 1. Creating a Desktop session
                     var desktopSession = new DesktopSession();
-                    var firefoxVPN = Utils.WaitUntilFindElement(desktopSession.Session.FindElementByName, "Mozilla VPN");
+                    var firefoxVPN = Utils.WaitUntilFindElement(desktopSession.Session.FindElementByName, "Firefox Private Network VPN");
 
                     // 2. Attaching to existing firefox Window
                     string applicationSessionHandle = firefoxVPN.GetAttribute("NativeWindowHandle");

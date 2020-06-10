@@ -20,12 +20,12 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Main product name.
         /// </summary>
-        public const string ProductName = "Mozilla VPN";
+        public const string ProductName = "Firefox Private Network VPN";
 
         /// <summary>
         /// Notification area/system tray tool tip.
         /// </summary>
-        public const string DefaultSystemTrayTitle = ProductName;
+        public const string DefaultSystemTrayTitle = "Firefox Private Network VPN";
 
         /// <summary>
         /// Tray windows class name used when constructing the TrayWindowMessageHandler. Must be unique.
@@ -35,27 +35,27 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Tunnel service internal application name.
         /// </summary>
-        public const string InternalAppName = "MozillaVPN";
+        public const string InternalAppName = "FirefoxPrivateNetworkVPN";
 
         /// <summary>
         /// Name of the broker service.
         /// </summary>
-        public const string BrokerServiceName = InternalAppName + "Broker";
+        public const string BrokerServiceName = "FirefoxPrivateNetworkVPNBroker";
 
         /// <summary>
         /// Tunnel service unique name. Must be prefixed with "WireGuard$".
         /// </summary>
-        public const string TunnelServiceInternalName = "WireGuardTunnel$" + InternalAppName;
+        public const string TunnelServiceInternalName = "WireGuardTunnel$FirefoxPrivateNetworkVPN";
 
         /// <summary>
         /// Tunnel service display name.
         /// </summary>
-        public const string TunnelServiceName = ProductName;
+        public const string TunnelServiceName = "Firefox Private Network VPN";
 
         /// <summary>
         /// Tunnel service description.
         /// </summary>
-        public const string TunnelServiceDescription = "Manages the " + ProductName + " tunnel connection";
+        public const string TunnelServiceDescription = "Manages the Firefox Private Network VPN tunnel connection";
 
         /// <summary>
         /// Tunnel service pipe name. Must be unique and prefixed with "ProtectedPrefix\Administrators\WireGuard\".

@@ -22,7 +22,7 @@ func Uninstall(t *testing.T) {
 
 	// try to uninstall the app
 	t.Log("Uninstall - Start to uninstall")
-	cmd := exec.Command("msiexec", "/log", "uninstall.log", "/qn", "/x", os.Getenv("PRJ_DIR")+"\\installer\\x64\\MozillaVPN.msi")
+	cmd := exec.Command("msiexec", "/log", "uninstall.log", "/qn", "/x", os.Getenv("PRJ_DIR")+"\\installer\\x64\\FirefoxPrivateNetworkVPN.msi")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()

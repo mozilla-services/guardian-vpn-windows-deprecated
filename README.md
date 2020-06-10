@@ -1,4 +1,4 @@
-# Mozilla VPN for Windows
+# Firefox Private Network VPN for Windows
 [![CircleCI](https://circleci.com/gh/mozilla-services/guardian-vpn-windows.svg?style=svg&circle-token=d0d916754d2f18a3ec876dcdf2c79f6b45b334e0)](https://circleci.com/gh/mozilla-services/guardian-vpn-windows)
 
 ## Structure
@@ -30,7 +30,7 @@ C:\guardian-vpn\ui> MSBuild.exe /t:Rebuild /p:Configuration=Release /p:Platform=
 C:\guardian-vpn\ui> MSBuild.exe /t:Rebuild /p:Configuration=Release /p:Platform="x64"
 C:\guardian-vpn\ui> cd ..
 C:\guardian-vpn> installer\build.cmd
-C:\guardian-vpn> msiexec /i installer\x64\MozillaVPN.msi
+C:\guardian-vpn> msiexec /i installer\x64\FirefoxPrivateNetworkVPN.msi
 ```
 ## Testing
 

@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Mozilla VPN" 
+        Title="Firefox Private Network VPN" 
         Height="491" Width="375" MinHeight="491" MinWidth="375"
         Background="{StaticResource 'Grey/Grey 5'}"
         Closed="Window_Closed" Closing="Window_Closing" Initialized="Window_Initialized" SizeChanged="Window_SizeChanged">

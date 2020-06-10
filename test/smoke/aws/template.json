@@ -205,8 +205,8 @@
                 "cd C:\\Users\\Administrator \n",
                 "Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force \n",
                 "Install-Module -Name AWS.Tools.S3,AWS.Tools.EC2 -Scope AllUsers -Force \n",
-                "Read-S3Object -BucketName $env:S3_BUCKET -Key msi/$env:BUILD_NUMBER/MozillaVPN.msi -File MozillaVPN.msi \n",
-                "Start-Process msiexec.exe -Wait -ArgumentList '/I MozillaVPN.msi /quiet' -Verb RunAs \n",  
+                "Read-S3Object -BucketName $env:S3_BUCKET -Key msi/$env:BUILD_NUMBER/FirefoxPrivateNetworkVPN.msi -File FirefoxPrivateNetworkVPN.msi \n",
+                "Start-Process msiexec.exe -Wait -ArgumentList '/I FirefoxPrivateNetworkVPN.msi /quiet' -Verb RunAs \n",  
                 "Write-Host 'Complete.' \n",      
 
                 "Write-Host 'Update Config file' \n",

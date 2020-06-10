@@ -11,7 +11,7 @@ import (
 )
 
 func checkApplicationInstalled() (bool, error) {
-	applicationName := "Mozilla VPN"
+	applicationName := "Firefox Private Network VPN"
 	k, err := registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall`, registry.QUERY_VALUE|registry.ENUMERATE_SUB_KEYS)
 	if err != nil {
 		log.Fatal(err)
@@ -49,6 +49,6 @@ func checkTunnelDllExist() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	_, err = os.Stat(path + "\\Mozilla\\Mozilla VPN\\tunnel.dll")
+	_, err = os.Stat(path + "\\Mozilla\\Firefox Private Network VPN\\tunnel.dll")
 	return !os.IsNotExist(err), nil
 }
