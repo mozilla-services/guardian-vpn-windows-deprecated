@@ -204,7 +204,7 @@ namespace FirefoxPrivateNetwork
 #if DEBUG_QA
         public static string BaseUrl = "http://127.0.0.1:8080";
 #else
-        public static string BaseUrl { get; set; } = "https://fpn.firefox.com";
+        public static string BaseUrl { get; set; } = "https://vpn.mozilla.org";
 #endif
 
         /// <summary>
