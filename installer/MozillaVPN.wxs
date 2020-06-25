@@ -44,7 +44,7 @@
 		<Icon Id="MozillaVPNMainIcon" SourceFile="../ui/assets/MainIcon.ico" />
 
 		<Property Id="ARPPRODUCTICON" Value="MozillaVPNMainIcon" />
-		<Property Id="ARPURLINFOABOUT" Value="https://fpn.firefox.com/vpn/" />
+		<Property Id="ARPURLINFOABOUT" Value="https://vpn.mozilla.org" />
 		<Property Id="ARPNOMODIFY" Value="yes" />
 		<Property Id="DISABLEADVTSHORTCUTS" Value="yes" />
 		<Property Id="DISABLEROLLBACK" Value="yes" />
@@ -97,12 +97,12 @@
 					ErrorControl="normal"
 					Vital="yes" />
 
-				<util:ServiceConfig 
-					ServiceName="MozillaVPNBroker" 
-					FirstFailureActionType="restart" 
-					SecondFailureActionType="restart" 
-					ThirdFailureActionType="none" 
-					ResetPeriodInDays="1" 
+				<util:ServiceConfig
+					ServiceName="MozillaVPNBroker"
+					FirstFailureActionType="restart"
+					SecondFailureActionType="restart"
+					ThirdFailureActionType="none"
+					ResetPeriodInDays="1"
 					RestartServiceDelayInSeconds="5" />
 
 				<ServiceControl Id="StartService" Start="install" Stop="both" Remove="both" Name="MozillaVPNBroker" Wait="yes" />
