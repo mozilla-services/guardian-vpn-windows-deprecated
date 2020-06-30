@@ -1,4 +1,4 @@
-# Firefox Private Network VPN UI
+# Mozilla VPN UI
 
 The main application housing the UI, the elevated service manager and the WireGuard tunnel interface.
 

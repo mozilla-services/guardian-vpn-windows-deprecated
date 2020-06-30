@@ -11,11 +11,11 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Firefox Private Network VPN")]
+[assembly: AssemblyTitle("Mozilla VPN")]
 [assembly: AssemblyDescription("A fast, secure and easy to use VPN (Virtual Private Network)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mozilla")]
-[assembly: AssemblyProduct("Firefox Private Network")]
+[assembly: AssemblyProduct("Mozilla VPN")]
 [assembly: AssemblyCopyright("©2019 Mozilla")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -55,8 +55,8 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.19.1.1")]
-[assembly: AssemblyFileVersion("0.19.1.1")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: Guid("b58922b9-3dd6-49a9-8c78-955f657dd0dd")]
 [assembly: NeutralResourcesLanguage("en-US")]
 

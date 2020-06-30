@@ -61,7 +61,7 @@ namespace FirefoxPrivateNetwork.UI
                 Title = "Export debug package",
             };
 
-            if (MessageBox.Show("Thank you for debugging the Firefox Private Network VPN client!\n\nThis utility will export a ZIP file to a directory of your choosing." +
+            if (MessageBox.Show("Thank you for debugging the Mozilla VPN client!\n\nThis utility will export a ZIP file to a directory of your choosing." +
                 " This file will contain the following:\n\n- A list of your running processes\n- A list of your devices and device drivers\n" +
                 "- Information about your network interfaces\n- Your computer hardware information\n\n" +
                 "Along with the VPN tunnel log, the currently available list of VPN servers will also be included.\n" +

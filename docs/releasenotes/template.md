@@ -1,6 +1,6 @@
 # v<version number> Release Notes
 
-### Firefox Private Network VPN for Windows
+### Mozilla VPN for Windows
 
 #### <release date>
 

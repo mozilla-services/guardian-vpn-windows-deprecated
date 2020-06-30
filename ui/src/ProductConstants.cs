@@ -20,12 +20,12 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Main product name.
         /// </summary>
-        public const string ProductName = "Firefox Private Network VPN";
+        public const string ProductName = "Mozilla VPN";
 
         /// <summary>
         /// Notification area/system tray tool tip.
         /// </summary>
-        public const string DefaultSystemTrayTitle = "Firefox Private Network VPN";
+        public const string DefaultSystemTrayTitle = ProductName;
 
         /// <summary>
         /// Tray windows class name used when constructing the TrayWindowMessageHandler. Must be unique.
@@ -35,27 +35,27 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Tunnel service internal application name.
         /// </summary>
-        public const string InternalAppName = "FirefoxPrivateNetworkVPN";
+        public const string InternalAppName = "MozillaVPN";
 
         /// <summary>
         /// Name of the broker service.
         /// </summary>
-        public const string BrokerServiceName = "FirefoxPrivateNetworkVPNBroker";
+        public const string BrokerServiceName = InternalAppName + "Broker";
 
         /// <summary>
         /// Tunnel service unique name. Must be prefixed with "WireGuard$".
         /// </summary>
-        public const string TunnelServiceInternalName = "WireGuardTunnel$FirefoxPrivateNetworkVPN";
+        public const string TunnelServiceInternalName = "WireGuardTunnel$" + InternalAppName;
 
         /// <summary>
         /// Tunnel service display name.
         /// </summary>
-        public const string TunnelServiceName = "Firefox Private Network VPN";
+        public const string TunnelServiceName = ProductName;
 
         /// <summary>
         /// Tunnel service description.
         /// </summary>
-        public const string TunnelServiceDescription = "Manages the Firefox Private Network VPN tunnel connection";
+        public const string TunnelServiceDescription = "Manages the " + ProductName + " tunnel connection";
 
         /// <summary>
         /// Tunnel service pipe name. Must be unique and prefixed with "ProtectedPrefix\Administrators\WireGuard\".
@@ -204,7 +204,7 @@ namespace FirefoxPrivateNetwork
 #if DEBUG_QA
         public static string BaseUrl = "http://127.0.0.1:8080";
 #else
-        public static string BaseUrl { get; set; } = "https://fpn.firefox.com";
+        public static string BaseUrl { get; set; } = "https://vpn.mozilla.org";
 #endif
 
         /// <summary>

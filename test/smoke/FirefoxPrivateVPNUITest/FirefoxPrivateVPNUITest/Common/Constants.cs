@@ -26,7 +26,7 @@ namespace FirefoxPrivateVPNUITest
         /// <summary>
         /// Privacy Notice.
         /// </summary>
-        public static readonly string PrivacyNotice = @"Thank you for debugging the Firefox Private Network VPN client!
+        public static readonly string PrivacyNotice = @"Thank you for debugging the Mozilla VPN client!
     
 This utility will export a ZIP file to a directory of your choosing. This file will contain the following:
     
