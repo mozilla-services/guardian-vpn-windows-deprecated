@@ -12,7 +12,7 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Mozilla VPN")]
-[assembly: AssemblyDescription("A fast, secure and easy to use VPN (Virtual Private Network)")]
+[assembly: AssemblyDescription("A fast, secure and easy to use VPN. Built by the makers of Firefox.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Mozilla")]
 [assembly: AssemblyProduct("Mozilla VPN")]
