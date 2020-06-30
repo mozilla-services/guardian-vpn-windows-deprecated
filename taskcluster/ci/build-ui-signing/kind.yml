@@ -24,6 +24,6 @@ job-template:
         upstream-artifacts:
             - taskId: {task-reference: "<build-ui>"}
               taskType: build
-              paths: ["project/mpd001/ui/FirefoxPrivateNetworkVPN.zip"]
+              paths: ["project/mpd001/ui/MozillaVPN.zip"]
               formats: [autograph_authenticode_ev]
 

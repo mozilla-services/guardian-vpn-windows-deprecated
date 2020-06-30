@@ -24,6 +24,6 @@ job-template:
         upstream-artifacts:
             - taskId: {task-reference: "<msi>"}
               taskType: build
-              paths: ["project/mpd001/installer/FirefoxPrivateNetworkVPN.msi"]
+              paths: ["project/mpd001/installer/MozillaVPN.msi"]
               formats: [autograph_authenticode_ev]
-              authenticode_comment: "Firefox Private Network VPN"
+              authenticode_comment: "Mozilla VPN"

@@ -24,8 +24,8 @@ job-template:
         artifacts:
             - type: file
               # build\src\ui\bin\x64\Release
-              path: "build/src/ui/bin/FirefoxPrivateNetworkVPN.zip"
-              name: project/mpd001/ui/FirefoxPrivateNetworkVPN.zip
+              path: "build/src/ui/bin/MozillaVPN.zip"
+              name: project/mpd001/ui/MozillaVPN.zip
     fetches:
         build-signing:
             - artifact: tunnel/x86/tunnel.dll

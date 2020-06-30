@@ -24,13 +24,13 @@ job-template:
         chain-of-trust: true
         artifacts:
             - type: file
-              path: "build/src/installer/x64/FirefoxPrivateNetworkVPN.msi"
-              name: project/mpd001/installer/FirefoxPrivateNetworkVPN.msi
+              path: "build/src/installer/x64/MozillaVPN.msi"
+              name: project/mpd001/installer/MozillaVPN.msi
         env:
             MOZ_TC_AUTOMATION: '1'
     fetches:
         build-ui-signing:
-            - artifact: ui/FirefoxPrivateNetworkVPN.zip
+            - artifact: ui/MozillaVPN.zip
               dest: ../build/src/ui/bin/
               extract: true
         wix:
