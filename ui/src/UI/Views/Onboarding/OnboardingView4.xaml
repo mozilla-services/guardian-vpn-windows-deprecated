@@ -60,7 +60,7 @@
 
             <!-- Onboarding logo -->
             <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="0">
-                <Image Source="{svgc:SvgImage Source={StaticResource 'illu-power'}}" Margin="0,16,0,0" Width="80" Height="80" />
+                <Image Source="{svgc:SvgImage Source={StaticResource 'illu-lock'}}" Margin="0,16,0,0" Width="80" Height="80" />
             </Grid>
 
             <!-- Onboarding title and content -->
