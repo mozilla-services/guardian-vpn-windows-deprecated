@@ -165,14 +165,14 @@ update-update-failed = Update fehler
 update-update-started = Update starten
 
 ## New User Experience
-nux-title-1 = Kein Aktivitätsprotokoll vorhanden
-nux-content-1 = Wir sind Mozilla. Wir speichern deine Aktivitäten nie.
-nux-title-2 = Verschlüsselung auf Geräteebene
-nux-content-2 = Niemand wird Ihren Standort oder Ihre Aktivität sehen, auch nicht in unsicheren Wi-Fi-Netzwerken.
-nux-title-3 = Server in 39 Ländern
-nux-content-3 =  Schützen Sie Ihren Zugang zum Internet, indem Sie sich gegen Datenkraken wehren.
-nux-title-4 = Bis zu 5 Geräte verbinden
-nux-content-4 = Streaming, Downloads und Spiele. Wir werden die Bandbreite nicht beschränken.
+nux-title-1 = Verschlüsselung auf Geräteebene
+nux-content-1 = Niemand wird Ihren Standort oder Ihre Aktivität sehen, auch nicht in unsicheren Wi-Fi-Netzwerken.
+nux-title-2 = Server in 39 Ländern
+nux-content-2 =  Schützen Sie Ihren Zugang zum Internet, indem Sie sich gegen Datenkraken wehren.
+nux-title-3 = Bis zu 5 Geräte verbinden
+nux-content-3 = Streaming, Downloads und Spiele. Wir werden die Bandbreite nicht beschränken.
+nux-title-4 = Kein Aktivitätsprotokoll vorhanden
+nux-content-4 = Wir sind Mozilla. Wir speichern deine Aktivitäten nie.
 nux-title-5 = Schnellzugriff
 nux-content-5-1 = Du kannst auf {application-name} schnell von der Taskleiste zugreifen
 nux-content-5-2 = Neben der Uhr unten rechts auf Ihrem Bildschirm.
