@@ -1,8 +1,6 @@
 ## Application
 application-name = Mozilla VPN
-application-description = 
-   A fast, secure and easy to use VPN 
-   (Virtual Private Network).
+application-description = A fast, secure and easy to use VPN. Built by the makers of Firefox.
 
 ## Navigation
 navigation-close = Close
@@ -17,12 +15,12 @@ navigation-open-log = Open View log link
 navigation-open-data-usage = Open data usage
 
 ## Pages
-connection-page-title = Connection
+connection-page-title = Select location
 devices-page-title = My devices
 devices-page-subtitle = {$numUserDevices} of {$numMaxDevices}
 settings-page-title = Settings
 get-help-page-title = Get help
-about-page-title = About
+about-page-title = About us
 feedback-page-title = Give feedback
 language-page-title = Language
 notifications-page-title = Notifications
@@ -54,11 +52,11 @@ data-usage-idle = Idle
 
 hero-subtext-unstable = Unstable
 hero-subtext-no-signal = No signal
-hero-subtext-turn-on = Turn it on to protect your entire device
-hero-subtext-secure-protected = Secure and protected
+hero-subtext-turn-on = Turn on to protect your privacy
+hero-subtext-secure-protected = Secure and private
 hero-subtext-check-connection = Check connection
-hero-subtext-protected-shortly = You will be protected shortly
-hero-subtext-disconnected-shortly = You will be disconnected shortly
+hero-subtext-protected-shortly = Masking connection and location
+hero-subtext-disconnected-shortly = Unmasking connection and location
 hero-subtext-server-switch = From {$currentServer} to {$switchServer}
 hero-subtext-server-switch-from = From
 hero-subtext-server-switch-to = to
@@ -165,14 +163,14 @@ update-update-started = Update started
 update-update-failed-georestricted = Updates are only available for users located in the US
 
 ## New User Experience
-nux-title-1 = No activity logs
-nux-content-1 = We're Mozilla. We don't log your activity and we're always on your side.
-nux-title-2 = Device level encryption
-nux-content-2 = No one will see your location or activity, even on unsecure Wi-Fi networks.
-nux-title-3 = Servers in 39 countries
-nux-content-3 = Stand up to tech bullies and protect your access to the web.
-nux-title-4 = Connect up to 5 devices
-nux-content-4 = Stream, download and game. We won't restrict your bandwidth.
+nux-title-1 = Device-level encryption
+nux-content-1 = Encrypt your traffic so that it can't be read by your ISP or eavesdroppers.
+nux-title-2 = Servers in 30+ countries
+nux-content-2 = Pick a server in any country you want and hide your location to throw off trackers.
+nux-title-3 = No bandwidth restrictions
+nux-content-3 = Stream, download, and game without limits, monthly caps or ISP throttling.
+nux-title-4 = No online activity logs
+nux-content-4 = We are committed to not monitoring or logging your browsing or network history.
 nux-title-5 = Quick access
 nux-content-5-1 = You can quickly access {application-name} from your taskbar tray
 nux-content-5-2 = Located next to the clock at the bottom right of your screen
