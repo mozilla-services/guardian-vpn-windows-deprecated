@@ -24,6 +24,13 @@ namespace FirefoxPrivateNetwork.UI
             this.parentView = parentView;
             InitializeComponent();
             DataContext = Manager.MainWindowViewModel;
+
+            if (parentView is LandingView)
+            {
+                // Since contact feature require user to have account first, we hide this item
+                // if the user enter this page from the login screen.
+                contactItem.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private void NavigateBack(object sender, RoutedEventArgs e)
