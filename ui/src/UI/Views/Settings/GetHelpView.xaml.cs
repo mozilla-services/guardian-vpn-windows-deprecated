@@ -41,5 +41,33 @@ namespace FirefoxPrivateNetwork.UI
         {
             Process.Start(ProductConstants.ContactUrl);
         }
+
+        private void Debug_Click(object sender, RoutedEventArgs e)
+        {
+            var saveDialog = new System.Windows.Forms.SaveFileDialog
+            {
+                Filter = "ZIP Archive|*.zip",
+                Title = "Export debug package",
+            };
+
+            if (MessageBox.Show("Thank you for debugging the Mozilla VPN client!\n\nThis utility will export a ZIP file to a directory of your choosing." +
+                " This file will contain the following:\n\n- A list of your running processes\n- A list of your devices and device drivers\n" +
+                "- Information about your network interfaces\n- Your computer hardware information\n\n" +
+                "Along with the VPN tunnel log, the currently available list of VPN servers will also be included.\n" +
+                "Your Firefox account information and any of your VPN credentials will not be exported.\n\n" +
+                "Do you wish to proceed?",
+                "Privacy notice",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+                ) == MessageBoxResult.Yes)
+            {
+                saveDialog.ShowDialog();
+
+                if (saveDialog.FileName != string.Empty)
+                {
+                    ErrorHandling.DebugDump.CreateDump(saveDialog.FileName);
+                }
+            }
+        }
     }
 }
