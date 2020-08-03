@@ -14,7 +14,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="48" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="48" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -32,7 +32,7 @@
         </Grid>
 
         <!-- Contact us link -->
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="0">
+        <Grid x:Name="contactItem" Height="48" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1" Grid.Column="0">
             <DockPanel VerticalAlignment="Center" Margin="16,0,16,0">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
                     <TextBlock Style="{StaticResource 'Header 20'}" Foreground="{StaticResource 'Grey/Grey 50'}" Text="{Binding Path=[contact-url-title]}" />
