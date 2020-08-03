@@ -22,9 +22,14 @@ namespace FirefoxPrivateNetwork
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            if (!Manager.MainWindowViewModel.RanOnStartup)
+            var mainWindow = new UI.MainWindow();
+            if (Manager.MainWindowViewModel.RanOnStartup)
             {
-                var mainWindow = new UI.MainWindow();
+                mainWindow.WindowState = WindowState.Minimized;
+                WireGuard.Connector.Connect();
+            }
+            else
+            {
                 mainWindow.Show();
             }
 
