@@ -50,6 +50,36 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
+            <Button 
+                Content="Button"
+                Cursor="Hand"
+                Width="Auto"
+                Height="Auto"
+                Margin="0,16,16,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Click="GetHelp_Click">
+                <Button.Template>
+                    <ControlTemplate>
+                        <TextBlock 
+                            x:Name="buttonText"
+                            Style="{StaticResource 'Body 10'}"
+                            Foreground="{StaticResource 'Blue/Blue 50'}"
+                            Text="{Binding Path=[get-help-page-title]}"
+                            VerticalAlignment="Center" />
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="TextBlock.Foreground" TargetName="buttonText" Value="{StaticResource 'Blue/Blue 60'}" />
+                            </Trigger>
+                            <Trigger Property="Button.IsPressed" Value="true">
+                                <Setter Property="TextBlock.Foreground" TargetName="buttonText" Value="{StaticResource 'Blue/Blue 70'}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
             <!-- Application logo -->
             <Grid HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="0" Grid.Column="0">
                 <Image Source="{svgc:SvgImage Source={StaticResource 'illu-logo'}}" Margin="0,72,0,0" Width="80" Height="80" />
