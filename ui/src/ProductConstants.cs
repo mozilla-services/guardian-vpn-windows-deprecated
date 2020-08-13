@@ -315,17 +315,11 @@ namespace FirefoxPrivateNetwork
             // FxA API link
             FxAUrl = string.Concat(BaseUrl, "/api/v1");
 
-            // Login link
-            FxALoginUrl = string.Concat(FxAUrl, "/vpn/login");
-
             // Feedback form link
             FeedbackFormUrl = string.Concat(BaseUrl, "/r/vpn/client/feedback", FxAUtmTags);
 
             // Subscription Link
             SubscriptionUrl = string.Concat(BaseUrl, "/vpn", FxAUtmTags);
-
-            // Download Link
-            DownloadUrl = string.Concat(BaseUrl, "/vpn/download", FxAUtmTags);
 
             // FxA account management URL
             FxAAccountManagementUrl = string.Concat(BaseUrl, "/r/vpn/account", FxAUtmTags);
