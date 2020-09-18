@@ -74,8 +74,9 @@ namespace FirefoxPrivateNetwork.ViewModels
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
+        /// <param name="code">Optional verification code.</param>
         /// </summary>
-        public MainWindowViewModel()
+        public MainWindowViewModel(string code = "")
         {
             // Initialize connectionStatus in the view model
             connectionStatus = new Models.ConnectionStatus
@@ -102,6 +103,10 @@ namespace FirefoxPrivateNetwork.ViewModels
             if (Manager.Account.LoginState == FxA.LoginState.LoggedIn && currentDevice != null)
             {
                 InitialViewFrameSourceType = typeof(UI.MainView);
+            }
+            else if (code != string.Empty)
+            {
+                InitialViewFrameSourceType = typeof(UI.OnboardingView5);
             }
             else
             {
