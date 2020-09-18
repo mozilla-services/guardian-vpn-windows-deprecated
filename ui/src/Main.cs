@@ -3,6 +3,8 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
@@ -17,13 +19,8 @@ namespace FirefoxPrivateNetwork
     /// Entry point of the Mozilla VPN application.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1649:FileNameMustMatchTypeName", Justification = "Default C# behavior.")]
-    internal class Entry : System.Windows.Application
+    internal class Entry : Application
     {
-        /// <summary>
-        /// Global value that is used to indicate if there is already an instance of the application running.
-        /// </summary>
-        private static readonly Mutex RunOnceMutex = new Mutex(false, string.Concat(@"Local\", ProductConstants.GUID));
-
         /// <summary>
         /// Main entry point of the application.
         /// </summary>
@@ -32,7 +29,9 @@ namespace FirefoxPrivateNetwork
         {
             bool ranOnStartup = false;
 
-            if (args.Count() == 1)
+            List<Process> processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).ToList();
+
+            if (args.Count() == 1 && !args[0].Contains("mozilla-vpn:"))
             {
                 // Run the broker child process, skip the UI
                 if (args.First().ToLower() == "broker")
@@ -59,16 +58,17 @@ namespace FirefoxPrivateNetwork
             }
 
             // Prevent multiple instances of the application
-            if (!RunOnceMutex.WaitOne(TimeSpan.Zero, true))
+            if (processes.Count > 1)
             {
-                // Already running, attempt to send a "show" command to the already running process before exiting
-                var runningWindow = User32.FindWindow(ProductConstants.TrayWindowClassName, string.Empty);
-                if (runningWindow != IntPtr.Zero)
-                {
-                    User32.SendMessage(runningWindow, User32.WmShow, IntPtr.Zero, string.Empty);
-                }
+                processes.Sort((x, y) => DateTime.Compare(y.StartTime, x.StartTime));
 
-                Environment.Exit(1);
+                if (processes.Count > 2)
+                {
+                    for (int i = 1; i <= processes.Count - 2; i++)
+                    {
+                        processes[i].Kill();
+                    }
+                }
             }
 
             // We dont need `If Debug_QA` here, because we already had an attribute `[Conditional("DEBUG_QA")]` for this function
@@ -81,7 +81,17 @@ namespace FirefoxPrivateNetwork
                 app.InitializeComponent();
 
                 // Initialize interfaces
-                Manager.Initialize();
+                // Run this if the app is opened via the custom URL protocol with a code
+                if (args.Count() == 1 && args[0].Contains("mozilla-vpn:"))
+                {
+                    // Get the code string that's returned from the server to be used in the verification request
+                    Manager.Initialize(args.First());
+                    VerifyUser(args.First());
+                }
+                else
+                {
+                    Manager.Initialize();
+                }
 
                 // Has the app just been launched at Windows startup?
                 Manager.MainWindowViewModel.RanOnStartup = ranOnStartup;
@@ -129,6 +139,33 @@ namespace FirefoxPrivateNetwork
             {
                 var error = Tunnel.TunnelService(configFilePath);
                 Environment.Exit(0);
+            }
+            catch (Exception e)
+            {
+                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
+                Environment.Exit(1);
+            }
+        }
+
+        /// <summary>
+        /// Starts the WireGuard tunnel service.
+        /// </summary>
+        /// <param name="args">
+        /// Argument 0: "tunnel" keyword
+        /// Argument 1: Path to the configuration file.
+        /// </param>
+        private static void VerifyUser(string args)
+        {
+            try
+            {
+                string code = args.Substring(args.IndexOf("code=") + 5);
+
+                if (code != null && code.Length >= 44)
+                {
+                    FxA.Login verifyUser = new FxA.Login();
+
+                    verifyUser.VerifyUserLogin(code);
+                }
             }
             catch (Exception e)
             {

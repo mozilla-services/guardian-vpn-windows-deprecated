@@ -313,10 +313,10 @@ namespace FirefoxPrivateNetwork
             }
 
             // FxA API link
-            FxAUrl = string.Concat(BaseUrl, "/api/v1");
+            FxAUrl = string.Concat(BaseUrl, "/api/v2");
 
             // Login link
-            FxALoginUrl = string.Concat(FxAUrl, "/vpn/login");
+            FxALoginUrl = string.Concat(FxAUrl, "/vpn/login/windows");
 
             // Feedback form link
             FeedbackFormUrl = string.Concat(BaseUrl, "/r/vpn/client/feedback", FxAUtmTags);
