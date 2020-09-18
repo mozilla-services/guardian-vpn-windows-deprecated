@@ -82,7 +82,7 @@
                 <!-- Launch VPN on startup setting -->
                 <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="0">
                     <StackPanel Margin="0,0,0,8">
-                        <CheckBox Margin="18" Content="{Binding Path=[settings-auto-launch]}" Click="RunOnStartup_Click">
+                        <CheckBox Margin="18" Content="{Binding Path=[settings-auto-launch]}" Click="RunOnStartup_Click" Visibility="Hidden">
                             <CheckBox.Style>
                                 <Style BasedOn="{StaticResource Checkbox}" TargetType="{x:Type CheckBox}">
                                     <Setter Property="IsChecked" Value="False" />

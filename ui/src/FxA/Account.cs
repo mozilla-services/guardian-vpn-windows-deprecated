@@ -51,6 +51,11 @@ namespace FirefoxPrivateNetwork.FxA
         }
 
         /// <summary>
+        /// Gets or sets the API version for making non-PKCE auth requests and handling responses.
+        /// </summary>
+        public static string OriginalApiVersion { get; set; } = "/api/v1";
+
+        /// <summary>
         /// Gets or sets the config structure associated with this account.
         /// </summary>
         public Config Config { get; set; } = new Config();
@@ -73,7 +78,7 @@ namespace FirefoxPrivateNetwork.FxA
         public bool ProcessLogin(string fxaJson)
         {
             // Initialize a new login session configuration
-            Manager.Account.Config = new FxA.Config(fxaJson);
+            Manager.Account.Config = new Config(fxaJson);
 
             // Sets a value that a user has just logged in
             Manager.MainWindowViewModel.NewUserSignIn = true;
@@ -87,14 +92,14 @@ namespace FirefoxPrivateNetwork.FxA
             Manager.Account.Config.WriteFxAUserToFile(ProductConstants.FxAUserFile);
 
             // Set the account login state to logged in
-            Manager.Account.LoginState = FxA.LoginState.LoggedIn;
+            Manager.Account.LoginState = LoginState.LoggedIn;
 
             // Initialize cache for avatar image
             Manager.Account.Avatar.InitializeCache(avatarUrl: Config.FxALogin.User.Avatar);
 
             // Added a new account device through the FxA API, using the newly generated keypair
-            var devices = new FxA.Devices();
-            var deviceName = string.Format("{0} ({1} {2})", System.Environment.MachineName, System.Environment.OSVersion.Platform, System.Environment.OSVersion.Version);
+            var devices = new Devices();
+            var deviceName = string.Format("{0} ({1} {2})", Environment.MachineName, Environment.OSVersion.Platform, Environment.OSVersion.Version);
             var deviceAddResponse = devices.AddDevice(deviceName, keys.Public);
 
             // Upon successful addition of a new device, save the device interface to the WireGuard configuration file and IP addresses to settings file
@@ -159,7 +164,7 @@ namespace FirefoxPrivateNetwork.FxA
         /// <returns>FxA user JSON object.</returns>
         public JSONStructures.User GetAccountDetails()
         {
-            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/account", RestSharp.Method.GET);
+            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, $"{ProductConstants.BaseUrl}{OriginalApiVersion}/vpn/account", RestSharp.Method.GET);
 
             // Execute the request
             var response = api.SendRequest();

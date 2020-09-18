@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -22,7 +23,7 @@ namespace FirefoxPrivateNetwork.FxA
         /// <returns>Returns the user's device if successful, otherwise null.</returns>
         public JSONStructures.Device AddDevice(string deviceName, string publicKey)
         {
-            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/device", RestSharp.Method.POST);
+            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, $"{ProductConstants.BaseUrl}{Account.OriginalApiVersion}/vpn/device", RestSharp.Method.POST);
             api.AddPostBody(new Dictionary<string, string> { { "name", deviceName }, { "pubkey", publicKey } });
 
             // Execute the request
@@ -71,7 +72,7 @@ namespace FirefoxPrivateNetwork.FxA
 
             // Url encoding the device public key
             var sanitizedDevicePublicKey = System.Web.HttpUtility.UrlEncode(publicKey);
-            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/device/" + sanitizedDevicePublicKey, RestSharp.Method.DELETE);
+            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, $"{ProductConstants.BaseUrl}{Account.OriginalApiVersion}/vpn/device/" + sanitizedDevicePublicKey, RestSharp.Method.DELETE);
 
             // Execute the request`
             var response = api.SendRequest();
