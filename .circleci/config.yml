@@ -55,12 +55,12 @@ jobs:
             Get-Process MozillaVPN -ErrorAction SilentlyContinue | Stop-Process -Force
             Start-Process -FilePath ".\ui\src\bin\x64\Debug_QA\MozillaVPN.exe"
             Start-Service -Name "MozillaVPNBroker"
-      - run:
-          name: Run Integration Tests
-          command: |
-            .\test\mockinstaller\build.cmd
-            cd test
-            go test github.com/mozilla-services/guardian-vpn-windows/test/integrations -v | tee test.out
+#      - run:
+#          name: Run Integration Tests
+#          command: |
+#            .\test\mockinstaller\build.cmd
+#            cd test
+#            go test github.com/mozilla-services/guardian-vpn-windows/test/integrations -v | tee test.out
       - run:
           name: Generate Tests Report
           command: |
