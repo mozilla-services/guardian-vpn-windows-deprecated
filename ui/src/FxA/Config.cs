@@ -7,6 +7,7 @@ using System.IO;
 using IniParser;
 using IniParser.Model;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 namespace FirefoxPrivateNetwork.FxA
 {
@@ -76,8 +77,8 @@ namespace FirefoxPrivateNetwork.FxA
 
             try
             {
-                var user = JsonConvert.DeserializeObject<JSONStructures.User>(File.ReadAllText(fxaUserFile));
-                FxALogin.User = user;
+                string content = File.ReadAllText(fxaUserFile);
+                FxALogin.User = DeserializeUserFileContent(content);
             }
             catch (Exception e)
             {
@@ -86,6 +87,23 @@ namespace FirefoxPrivateNetwork.FxA
             }
 
             return true;
+        }
+
+        private JSONStructures.User DeserializeUserFileContent(string content)
+        {
+            string decryptResult = Decrypt(content);
+
+            JSONStructures.User user;
+            if (decryptResult == null)
+            {
+                user = JsonConvert.DeserializeObject<JSONStructures.User>(content);
+            }
+            else
+            {
+                user = JsonConvert.DeserializeObject<JSONStructures.User>(decryptResult);
+            }
+
+            return user;
         }
 
         /// <summary>
@@ -118,7 +136,16 @@ namespace FirefoxPrivateNetwork.FxA
         {
             System.IO.FileInfo file = new System.IO.FileInfo(filename);
             Directory.CreateDirectory(file.Directory.FullName);
-            File.WriteAllText(filename, JsonConvert.SerializeObject(FxALogin.User));
+            string content = JsonConvert.SerializeObject(FxALogin.User);
+            string encrypted = Encrypt(content);
+            if (encrypted == null)
+            {
+                File.WriteAllText(filename, content);
+            }
+            else
+            {
+                File.WriteAllText(filename, encrypted);
+            }
         }
 
         /// <summary>
@@ -142,6 +169,50 @@ namespace FirefoxPrivateNetwork.FxA
             }
 
             return true;
+        }
+
+        private string Encrypt(string plainText)
+        {
+            try
+             {
+                byte[] plainBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+                byte[] encryptedByte = ProtectedData.Protect(plainBytes, null, DataProtectionScope.CurrentUser);
+                return Convert.ToBase64String(encryptedByte);
+            }
+            catch (FormatException e)
+            {
+                return null;
+            }
+            catch (CryptographicException e)
+            {
+                return null;
+            }
+            catch (NotSupportedException e)
+            {
+                return null;
+            }
+        }
+
+        private string Decrypt(string encrypted)
+        {
+            try
+            {
+                byte[] encryptedByte = Convert.FromBase64String(encrypted);
+                byte[] decryptedByte = ProtectedData.Unprotect(encryptedByte, null, DataProtectionScope.CurrentUser);
+                return System.Text.Encoding.UTF8.GetString(decryptedByte);
+            }
+            catch (FormatException e)
+            {
+                return null;
+            }
+            catch (CryptographicException e)
+            {
+                return null;
+            }
+            catch (NotSupportedException e)
+            {
+                return null;
+            }
         }
     }
 }
