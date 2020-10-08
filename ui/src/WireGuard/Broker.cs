@@ -126,9 +126,12 @@ namespace FirefoxPrivateNetwork.WireGuard
         {
             // Configure pipe security for the broker pipe
             PipeSecurity ps = new PipeSecurity();
-            SecurityIdentifier sid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-            NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
-            ps.AddAccessRule(new PipeAccessRule(account, PipeAccessRights.ReadWrite, AccessControlType.Allow));
+            SecurityIdentifier worldSid = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            ps.AddAccessRule(new PipeAccessRule(worldSid, PipeAccessRights.ReadWrite, AccessControlType.Allow));
+
+            SecurityIdentifier networkSid = new SecurityIdentifier(WellKnownSidType.NetworkSid, null);
+            ps.AddAccessRule(new PipeAccessRule(networkSid, PipeAccessRights.ReadWrite, AccessControlType.Deny));
+
             ps.AddAccessRule(new PipeAccessRule(WindowsIdentity.GetCurrent().Owner, PipeAccessRights.FullControl, AccessControlType.Allow));
 
             // Main child process loop - start the listener thread and listen for commands
