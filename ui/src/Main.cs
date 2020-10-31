@@ -3,6 +3,8 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Threading;
@@ -17,7 +19,7 @@ namespace FirefoxPrivateNetwork
     /// Entry point of the Mozilla VPN application.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1649:FileNameMustMatchTypeName", Justification = "Default C# behavior.")]
-    internal class Entry : System.Windows.Application
+    internal class Entry : Application
     {
         /// <summary>
         /// Global value that is used to indicate if there is already an instance of the application running.
@@ -32,7 +34,9 @@ namespace FirefoxPrivateNetwork
         {
             bool ranOnStartup = false;
 
-            if (args.Count() == 1)
+            List<Process> processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).ToList();
+
+            if (args.Count() == 1 && !args[0].Contains("mozilla-vpn:"))
             {
                 // Run the broker child process, skip the UI
                 if (args.First().ToLower() == "broker")
@@ -63,6 +67,7 @@ namespace FirefoxPrivateNetwork
             {
                 // Already running, attempt to send a "show" command to the already running process before exiting
                 var runningWindow = User32.FindWindow(ProductConstants.TrayWindowClassName, string.Empty);
+
                 if (runningWindow != IntPtr.Zero)
                 {
                     User32.SendMessage(runningWindow, User32.WmShow, IntPtr.Zero, string.Empty);
@@ -80,7 +85,6 @@ namespace FirefoxPrivateNetwork
                 var app = new App();
                 app.InitializeComponent();
 
-                // Initialize interfaces
                 Manager.Initialize();
 
                 // Has the app just been launched at Windows startup?

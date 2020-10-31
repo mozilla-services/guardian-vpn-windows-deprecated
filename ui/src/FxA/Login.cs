@@ -3,11 +3,22 @@
 // </copyright>
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Security.Permissions;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Web;
 using System.Windows;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using RestSharp.Extensions;
 
 namespace FirefoxPrivateNetwork.FxA
 {
@@ -36,120 +47,97 @@ namespace FirefoxPrivateNetwork.FxA
         private event LoginResultHandler LoginResultEvent;
 
         /// <summary>
-        /// Gets the unique login urls for the user's signin attempt.
+        /// Gets or sets the API version for making PKCE auth requests and handling responses.
         /// </summary>
-        /// <returns>A <see cref="JSONStructures.FxALoginURLs"/> object.</returns>
-        public JSONStructures.FxALoginURLs GetLoginURLs()
-        {
-            var api = new ApiRequest(string.Empty, "/vpn/login", RestSharp.Method.POST);
-            JSONStructures.FxALoginURLs loginURLs;
-
-            // Execute the request
-            var response = api.SendRequest();
-
-            if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-login-url-retrieval-error"), ErrorHandling.UserFacingErrorType.None, ErrorHandling.LogLevel.Error);
-                return null;
-            }
-
-            try
-            {
-                loginURLs = JsonConvert.DeserializeObject<JSONStructures.FxALoginURLs>(response.Content);
-                return loginURLs;
-            }
-            catch (Exception e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-            }
-
-            return null;
-        }
+        public static string ApiVersion { get; set; } = "/api/v2";
 
         /// <summary>
-        /// Queries the verification URL to check if the user has logged in.
+        /// ref http://stackoverflow.com/a/3978040.
         /// </summary>
-        /// <param name="tokenURL">Login verification URL.</param>
-        /// <returns>Returns the response content if successful, otherwise returns null.</returns>
-        public string QueryRawLoginState(string tokenURL)
+        /// <returns>Random open port number.</returns>
+        public static int GetRandomUnusedPort()
         {
-            var api = new ApiRequest(string.Empty, tokenURL, RestSharp.Method.GET);
+            var listener = new TcpListener(IPAddress.Loopback, 0);
 
-            // Execute the request
-            var response = api.SendRequest();
+            listener.Start();
 
-            if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                ErrorHandling.ErrorHandler.Handle("User has not logged in yet", ErrorHandling.LogLevel.Debug);
-                return null;
-            }
+            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
 
-            return response.Content;
-        }
+            listener.Stop();
 
-        /// <summary>
-        /// Deserializes the FxA login response from JSON.
-        /// </summary>
-        /// <param name="jsonContents">FxA login response.</param>
-        /// <returns>A <see cref="JSONStructures.FxALogin"/> object.</returns>
-        public JSONStructures.FxALogin ParseLoginState(string jsonContents)
-        {
-            try
-            {
-                var loginData = JsonConvert.DeserializeObject<JSONStructures.FxALogin>(jsonContents);
-                return loginData;
-            }
-            catch (Exception e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-            }
-
-            return null;
+            return port;
         }
 
         /// <summary>
         /// Navigates to URL in the user's default browser.
         /// </summary>
-        /// <param name="uri">URL to navigate to.</param>
-        public void OpenBrowser(string uri)
+        public async void OpenBrowser()
         {
-            // Validate URL first
-            if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri parsedUri))
-            {
-                return;
-            }
+            // Generate code_verifier
+            string codeVerifier = GetUniqueToken(44);
 
-            if (parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps)
+            // Get a random, unused port number to use in the PKCE request
+            int portNumber = GetRandomUnusedPort();
+
+            // Generate the code_challenge by getting the SHA256 hash and encoding it to send in a request
+            // Switched the code_challenge_method to plain since there were intermittent issues with the SHA256 method returning the user data each time.
+            string codeChallenge = codeVerifier;
+
+            // The codeChallenge is there to handle the PKCE request to the server
+            string loginURL = $"{ProductConstants.BaseUrl}{ApiVersion}/vpn/login/windows?code_challenge={codeChallenge}&code_challenge_method=plain&port={portNumber}";
+
+            // Creates a redirect URI using an available port on the loopback address.
+            string redirectURI = string.Format("http://{0}:{1}/", IPAddress.Loopback, portNumber);
+
+            // Open browser with the URL
+            Process.Start(loginURL);
+
+            // Creates an HttpListener to listen for requests on that redirect URI.
+            HttpListener http = new HttpListener();
+
+            // Make sure HTTP listener is listening to the localhost:{portNumber} URI
+            http.Prefixes.Add(redirectURI);
+            http.Start();
+
+            // Waits for the OAuth authorization response.
+            var context = await http.GetContextAsync();
+
+            // Sends an HTTP response to the browser.
+            var response = context.Response;
+
+            string responseString = string.Format("<html><head><meta http-equiv='refresh' content='10;url=https://www.mozilla.org/'></head><body>Please return to the app.</body></html>");
+
+            byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+
+            response.ContentLength64 = buffer.Length;
+
+            Stream responseOutput = response.OutputStream;
+
+            Task responseTask = responseOutput.WriteAsync(buffer, 0, buffer.Length).ContinueWith((task) =>
             {
-                Process.Start(uri);
-            }
+                responseOutput.Close();
+                http.Stop();
+            });
+
+            // extracts the code
+            string code = context.Request.QueryString.Get("code");
+
+            // Starts the code exchange at the Token Endpoint.
+            VerifyUserLogin(codeVerifier, code);
         }
 
         /// <summary>
         /// Initiate the login attempt.
         /// </summary>
-        /// <param name="cancelToken">Token used to cancel the login process.</param>
         /// <returns>Whether the login process is started succefully.</returns>
-        public bool StartLogin(CancellationToken cancelToken)
+        public bool StartLogin()
         {
             try
             {
-                var loginURLs = GetLoginURLs();
-                if (loginURLs == null)
-                {
-                    return false;
-                }
-
-                var pollInterval = loginURLs.PollInterval % 31; // Max 30 seconds, no more
-                Manager.Account.LoginState = FxA.LoginState.LoggingIn;
-                StartQueryLoginThread(loginURLs.VerificationUrl, loginURLs.PollInterval, loginURLs.ExpiresOn, cancelToken);
+                Manager.Account.LoginState = LoginState.LoggingIn;
 
                 // Launch a browser
-                OpenBrowser(loginURLs.LoginUrl);
-
-                // Navigate to verification page
-                UI.MainWindow mainWindow = (UI.MainWindow)Application.Current.MainWindow;
-                mainWindow.NavigateToView(new FirefoxPrivateNetwork.UI.VerifyAccountView(loginURLs.LoginUrl), UI.MainWindow.SlideDirection.Left);
+                OpenBrowser();
             }
             catch (Exception e)
             {
@@ -162,100 +150,99 @@ namespace FirefoxPrivateNetwork.FxA
         }
 
         /// <summary>
-        /// Intiates the login verification thread.
+        /// Gets verification code from mozilla-vpn:// redirect after the user logs in through the browser.
         /// </summary>
-        /// <param name="queryUri">Login verification URL.</param>
-        /// <param name="timeoutSeconds">Timeout (secs) between verification query attempts.</param>
-        /// <param name="expiresAt">Expiration date of the verification URL.</param>
-        /// <param name="cancelToken">Token used to cancel the login thread.</param>
-        public void StartQueryLoginThread(string queryUri, int timeoutSeconds, DateTime expiresAt, CancellationToken cancelToken)
+        /// <param name="codeVerifier">The code sent in the PKCE auth request.</param>
+        /// <param name="code">Verification code from the localhost redirect after logging in.</param>
+        public void VerifyUserLogin(string codeVerifier, string code)
         {
-            var loginThread = new Thread(() => QueryLoginThread(queryUri, timeoutSeconds, expiresAt, cancelToken))
+            // Make the POST request to the verify endpoint
+            ApiRequest api = new ApiRequest(string.Empty, $"{ProductConstants.BaseUrl}{ApiVersion}/vpn/login/verify", RestSharp.Method.POST);
+
+            // Create a new dictionary to hold the code and code_verifier.
+            Dictionary<string, string> postBody = new Dictionary<string, string>();
+            postBody.Add("code", code);
+            postBody.Add("code_verifier", codeVerifier);
+            api.AddPostBody(postBody);
+
+            // Execute the request
+            var response = api.SendRequest();
+
+            if (response == null || response.StatusCode != HttpStatusCode.OK)
             {
-                IsBackground = true,
-            };
-            loginThread.Start();
+                ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-login-url-retrieval-error"), ErrorHandling.UserFacingErrorType.None, ErrorHandling.LogLevel.Error);
+                return;
+            }
+
+            // Check login credentials, add the session info to the settings, and add a new device
+            Manager.Account.ProcessLogin(response.Content);
+
+            var owner = Application.Current.MainWindow;
+            ((UI.MainWindow)owner).NavigateToView(new UI.OnboardingView5(), UI.MainWindow.SlideDirection.Left);
         }
 
         /// <summary>
-        /// Polls a verification URL periodically to confirm if the user has logged in.
+        /// Generates a Base64 encoded string based on a SHA256 hash with the string it's given.
         /// </summary>
-        /// <param name="queryUri">Login verification URL.</param>
-        /// <param name="timeoutSeconds">Timeout (secs) between verification query attempts.</param>
-        /// <param name="expiresAt">Expiration date of the verification URL.</param>
-        /// <param name="cancelToken">Token used to cancel the login thread.</param>
-        private void QueryLoginThread(string queryUri, int timeoutSeconds, DateTime expiresAt, CancellationToken cancelToken)
+        /// <param name="text">The text that needs to be converted to a SHA256 hash.</param>
+        /// <returns>A Base64 encoded SHA256 hash.</returns>
+        private static string GetHashSha256(string text)
         {
-            while (Manager.Account.LoginState == FxA.LoginState.LoggingIn && DateTime.Compare(DateTime.UtcNow, expiresAt) < 0)
+            SHA256Managed hashTool = new SHA256Managed();
+
+            byte[] phraseAsByte = Encoding.UTF8.GetBytes(string.Concat(text));
+            byte[] encryptedBytes = hashTool.ComputeHash(phraseAsByte);
+
+            hashTool.Clear();
+
+            string value = Convert.ToBase64String(encryptedBytes);
+
+            return value;
+        }
+
+        /// <summary>
+        /// Generates a random cryptographic string to use in a PKCE auth request and response.
+        /// </summary>
+        /// <param name="length">The number of characters that should be in the string.</param>
+        /// <param name="chars">The acceptable characters that can be in the string.</param>
+        /// <returns>A cryptographic string.</returns>
+        private static string GetUniqueToken(int length, string chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-_")
+        {
+            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
             {
-                try
+                byte[] data = new byte[length];
+
+                // If chars.Length isn't a power of 2 then there is a bias if we simply use the modulus operator. The first characters of chars will be more probable than the last ones.
+                // buffer used if we encounter an unusable random byte. We will regenerate it in this buffer.
+                byte[] buffer = null;
+
+                // Maximum random number that can be used without introducing a bias
+                int maxRandom = byte.MaxValue - ((byte.MaxValue + 1) % chars.Length);
+
+                crypto.GetBytes(data);
+
+                char[] result = new char[length];
+
+                for (int i = 0; i < length; i++)
                 {
-                    var queryRawData = QueryRawLoginState(queryUri);
+                    byte value = data[i];
 
-                    if (cancelToken.IsCancellationRequested)
+                    while (value > maxRandom)
                     {
-                        break;
-                    }
-
-                    if (queryRawData == null)
-                    {
-                        Thread.Sleep(TimeSpan.FromSeconds(timeoutSeconds));
-                        continue;
-                    }
-
-                    var queryData = ParseLoginState(queryRawData);
-
-                    if (queryData.User == null || queryData.User.Subscriptions == null || queryData.User.Subscriptions.Vpn == null)
-                    {
-                        Manager.Account.LoginState = LoginState.LoggedOut;
-                        break;
-                    }
-
-                    if (!queryData.User.Subscriptions.Vpn.Active)
-                    {
-                        Manager.Account.LoginState = LoginState.LoggedOut;
-                        break;
-                    }
-
-                    var processLoginResult = Manager.Account.ProcessLogin(queryRawData);
-                    Manager.Account.LoginState = LoginState.LoggedIn;
-                    Manager.StartUIUpdaters();
-
-                    var maxDevicesReached = !processLoginResult && Manager.Account.Config.FxALogin.User.Devices.Count() >= Manager.Account.Config.FxALogin.User.MaxDevices;
-
-                    Cache.FxAServerList.RetrieveRemoteServerList();
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        var owner = Application.Current.MainWindow;
-                        if (owner != null)
+                        if (buffer == null)
                         {
-                            if (!Manager.MustUpdate)
-                            {
-                                if (maxDevicesReached)
-                                {
-                                    ((UI.MainWindow)owner).NavigateToView(new UI.DevicesView(deviceLimitReached: true, fxaJson: queryRawData), UI.MainWindow.SlideDirection.Left);
-                                }
-                                else
-                                {
-                                    ((UI.MainWindow)owner).NavigateToView(new UI.OnboardingView5(), UI.MainWindow.SlideDirection.Left);
-                                }
-                            }
-
-                            ((UI.MainWindow)owner).Show();
-                            ((UI.MainWindow)owner).WindowState = WindowState.Normal;
-                            ((UI.MainWindow)owner).Activate();
+                            buffer = new byte[1];
                         }
-                    });
-                }
-                catch (Exception e)
-                {
-                    ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Debug);
+
+                        crypto.GetBytes(buffer);
+                        value = buffer[0];
+                    }
+
+                    result[i] = chars[value % chars.Length];
                 }
 
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                return new string(result);
             }
-
-            LoginResultEvent?.Invoke(this, this, Manager.Account.LoginState);
         }
     }
 }
