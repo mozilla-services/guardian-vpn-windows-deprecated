@@ -111,7 +111,8 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Initialize all elements of the Manager class.
         /// </summary>
-        public static void Initialize()
+        /// <param name="code">Optional verification code.</param>
+        public static void Initialize(string code = "")
         {
             InitializeSettings();
             InitializeTranslationService();
@@ -119,7 +120,7 @@ namespace FirefoxPrivateNetwork
             InitializeServerListCache();
             InitializeTunnel();
             InitializeAccount();
-            InitializeViewModels();
+            InitializeViewModels(code);
             InitializeWlanWatcher();
             InitializeCaptivePortalDetector();
             InitializeIpInfo();
@@ -167,9 +168,10 @@ namespace FirefoxPrivateNetwork
         /// <summary>
         /// Initialize the main window view model.
         /// </summary>
-        public static void InitializeViewModels()
+        /// <param name="code">Optional verification code.</param>
+        public static void InitializeViewModels(string code = "")
         {
-            MainWindowViewModel = new ViewModels.MainWindowViewModel();
+            MainWindowViewModel = new ViewModels.MainWindowViewModel(code);
         }
 
         /// <summary>
@@ -233,6 +235,8 @@ namespace FirefoxPrivateNetwork
             ConnectionStatusUpdater.StopThread();
             ServerListUpdater.StopThread();
             AccountInfoUpdater.StopTask();
+            VersionUpdater.StopTask();
+            ToastManager.StopThread();
         }
 
         /// <summary>

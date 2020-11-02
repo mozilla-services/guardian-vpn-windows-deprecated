@@ -51,6 +51,11 @@ namespace FirefoxPrivateNetwork.FxA
         }
 
         /// <summary>
+        /// Gets or sets the API version for making non-PKCE auth requests and handling responses.
+        /// </summary>
+        public static string OriginalApiVersion { get; set; } = "/api/v1";
+
+        /// <summary>
         /// Gets or sets the config structure associated with this account.
         /// </summary>
         public Config Config { get; set; } = new Config();
