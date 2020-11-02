@@ -164,7 +164,7 @@ namespace FirefoxPrivateNetwork.FxA
         /// <returns>FxA user JSON object.</returns>
         public JSONStructures.User GetAccountDetails()
         {
-            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/account", RestSharp.Method.GET);
+            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, $"{ProductConstants.BaseUrl}{OriginalApiVersion}/vpn/account", RestSharp.Method.GET);
 
             // Execute the request
             var response = api.SendRequest();
