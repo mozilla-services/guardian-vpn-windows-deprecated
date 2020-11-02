@@ -32,7 +32,7 @@ namespace FirefoxPrivateNetwork.FxA
 
                 sessions.Add(login, tokenSource);
 
-                if (!login.StartLogin(tokenSource.Token))
+                if (!login.StartLogin())
                 {
                     CancelCurrentSession();
                 }

@@ -87,13 +87,13 @@ namespace FirefoxPrivateNetwork.FxA
             Manager.Account.Config.WriteFxAUserToFile(ProductConstants.FxAUserFile);
 
             // Set the account login state to logged in
-            Manager.Account.LoginState = FxA.LoginState.LoggedIn;
+            Manager.Account.LoginState = LoginState.LoggedIn;
 
             // Initialize cache for avatar image
             Manager.Account.Avatar.InitializeCache(avatarUrl: Config.FxALogin.User.Avatar);
 
             // Added a new account device through the FxA API, using the newly generated keypair
-            var devices = new FxA.Devices();
+            var devices = new Devices();
             var deviceName = string.Format("{0} ({1} {2})", System.Environment.MachineName, System.Environment.OSVersion.Platform, System.Environment.OSVersion.Version);
             var deviceAddResponse = devices.AddDevice(deviceName, keys.Public);
 
