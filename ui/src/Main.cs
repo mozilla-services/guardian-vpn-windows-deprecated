@@ -36,7 +36,7 @@ namespace FirefoxPrivateNetwork
 
             List<Process> processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).ToList();
 
-            if (args.Count() == 1 && !args[0].Contains("mozilla-vpn:"))
+            if (args.Count() == 1)
             {
                 // Run the broker child process, skip the UI
                 if (args.First().ToLower() == "broker")

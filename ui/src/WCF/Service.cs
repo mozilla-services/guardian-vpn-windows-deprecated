@@ -130,7 +130,7 @@ namespace FirefoxPrivateNetwork.WCF
                 var loginInstance = new FxA.Login();
                 var pollInterval = req.PollInterval % 31; // Max 30 seconds, no more
                 Manager.Account.LoginState = FxA.LoginState.LoggingIn;
-                loginInstance.StartQueryLoginThread(req.VerificationUrl, req.PollInterval, req.ExpiresOn, CancellationToken.None);
+                // loginInstance.StartQueryLoginThread(req.VerificationUrl, req.PollInterval, req.ExpiresOn, CancellationToken.None);
                 return new Response(200, "Success");
             }
             catch (Exception ex)

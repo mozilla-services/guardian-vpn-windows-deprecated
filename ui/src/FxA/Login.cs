@@ -16,7 +16,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RestSharp.Extensions;
 
@@ -175,10 +174,38 @@ namespace FirefoxPrivateNetwork.FxA
             }
 
             // Check login credentials, add the session info to the settings, and add a new device
-            Manager.Account.ProcessLogin(response.Content);
+            bool processLoginResult = Manager.Account.ProcessLogin(response.Content);
+            Manager.Account.LoginState = LoginState.LoggedIn;
+            Manager.StartUIUpdaters();
 
-            var owner = Application.Current.MainWindow;
-            ((UI.MainWindow)owner).NavigateToView(new UI.OnboardingView5(), UI.MainWindow.SlideDirection.Left);
+            var maxDevicesReached = !processLoginResult && Manager.Account.Config.FxALogin.User.Devices.Count() >= Manager.Account.Config.FxALogin.User.MaxDevices;
+
+            Cache.FxAServerList.RetrieveRemoteServerList();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var owner = Application.Current.MainWindow;
+                if (owner != null)
+                {
+                    if (!Manager.MustUpdate)
+                    {
+                        if (maxDevicesReached)
+                        {
+                            ((UI.MainWindow)owner).NavigateToView(new UI.DevicesView(deviceLimitReached: true, fxaJson: response.Content), UI.MainWindow.SlideDirection.Left);
+                        }
+                        else
+                        {
+                            ((UI.MainWindow)owner).NavigateToView(new UI.OnboardingView5(), UI.MainWindow.SlideDirection.Left);
+                        }
+                    }
+
+                    ((UI.MainWindow)owner).Show();
+                    ((UI.MainWindow)owner).WindowState = WindowState.Normal;
+                    ((UI.MainWindow)owner).Activate();
+                }
+            });
+
+            LoginResultEvent?.Invoke(this, this, Manager.Account.LoginState);
         }
 
         /// <summary>
