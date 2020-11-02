@@ -22,6 +22,11 @@ namespace FirefoxPrivateNetwork
     internal class Entry : Application
     {
         /// <summary>
+        /// Global value that is used to indicate if there is already an instance of the application running.
+        /// </summary>
+        private static readonly Mutex RunOnceMutex = new Mutex(false, string.Concat(@"Local\", ProductConstants.GUID));
+
+        /// <summary>
         /// Main entry point of the application.
         /// </summary>
         /// <param name="args">System provided command line parameters.</param>
@@ -31,7 +36,7 @@ namespace FirefoxPrivateNetwork
 
             List<Process> processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).ToList();
 
-            if (args.Count() == 1 && !args[0].Contains("mozilla-vpn:"))
+            if (args.Count() == 1)
             {
                 // Run the broker child process, skip the UI
                 if (args.First().ToLower() == "broker")
@@ -58,17 +63,17 @@ namespace FirefoxPrivateNetwork
             }
 
             // Prevent multiple instances of the application
-            if (processes.Count > 1)
+            if (!RunOnceMutex.WaitOne(TimeSpan.Zero, true))
             {
-                processes.Sort((x, y) => DateTime.Compare(y.StartTime, x.StartTime));
+                // Already running, attempt to send a "show" command to the already running process before exiting
+                var runningWindow = User32.FindWindow(ProductConstants.TrayWindowClassName, string.Empty);
 
-                if (processes.Count > 2)
+                if (runningWindow != IntPtr.Zero)
                 {
-                    for (int i = 1; i <= processes.Count - 2; i++)
-                    {
-                        processes[i].Kill();
-                    }
+                    User32.SendMessage(runningWindow, User32.WmShow, IntPtr.Zero, string.Empty);
                 }
+
+                Environment.Exit(1);
             }
 
             // We dont need `If Debug_QA` here, because we already had an attribute `[Conditional("DEBUG_QA")]` for this function
@@ -80,18 +85,7 @@ namespace FirefoxPrivateNetwork
                 var app = new App();
                 app.InitializeComponent();
 
-                // Initialize interfaces
-                // Run this if the app is opened via the custom URL protocol with a code
-                if (args.Count() == 1 && args[0].Contains("mozilla-vpn:"))
-                {
-                    // Get the code string that's returned from the server to be used in the verification request
-                    Manager.Initialize(args.First());
-                    VerifyUser(args.First());
-                }
-                else
-                {
-                    Manager.Initialize();
-                }
+                Manager.Initialize();
 
                 // Has the app just been launched at Windows startup?
                 Manager.MainWindowViewModel.RanOnStartup = ranOnStartup;
@@ -139,33 +133,6 @@ namespace FirefoxPrivateNetwork
             {
                 var error = Tunnel.TunnelService(configFilePath);
                 Environment.Exit(0);
-            }
-            catch (Exception e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-                Environment.Exit(1);
-            }
-        }
-
-        /// <summary>
-        /// Starts the WireGuard tunnel service.
-        /// </summary>
-        /// <param name="args">
-        /// Argument 0: "tunnel" keyword
-        /// Argument 1: Path to the configuration file.
-        /// </param>
-        private static void VerifyUser(string args)
-        {
-            try
-            {
-                string code = args.Substring(args.IndexOf("code=") + 5);
-
-                if (code != null && code.Length >= 44)
-                {
-                    FxA.Login verifyUser = new FxA.Login();
-
-                    verifyUser.VerifyUserLogin(code);
-                }
             }
             catch (Exception e)
             {

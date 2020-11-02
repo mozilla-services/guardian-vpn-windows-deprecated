@@ -119,6 +119,27 @@ namespace FirefoxPrivateNetwork.WCF
         }
 
         /// <summary>
+        /// Initiate login.
+        /// </summary>
+        /// <param name="req">LoginRequest WCF command object.</param>
+        /// <returns>WCF response.</returns>
+        public Response Login(LoginRequest req)
+        {
+            try
+            {
+                var loginInstance = new FxA.Login();
+                var pollInterval = req.PollInterval % 31; // Max 30 seconds, no more
+                Manager.Account.LoginState = FxA.LoginState.LoggingIn;
+                // loginInstance.StartQueryLoginThread(req.VerificationUrl, req.PollInterval, req.ExpiresOn, CancellationToken.None);
+                return new Response(200, "Success");
+            }
+            catch (Exception ex)
+            {
+                return new Response(500, ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Initiate logout.
         /// </summary>
         /// <returns>WCF response.</returns>
