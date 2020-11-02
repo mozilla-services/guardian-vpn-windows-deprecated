@@ -173,7 +173,7 @@ namespace FirefoxPrivateNetwork.FxA
         /// <returns>Success status of the remote server list retrieval.</returns>
         public bool RetrieveRemoteServerList()
         {
-            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, "/vpn/servers", Method.GET);
+            var api = new ApiRequest(Manager.Account.Config.FxALogin.Token, $"{ProductConstants.BaseUrl}{Account.OriginalApiVersion}/vpn/servers", Method.GET);
             var response = api.SendRequest();
             if (response == null)
             {
