@@ -7,13 +7,15 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using RestSharp.Extensions;
 
@@ -24,9 +26,6 @@ namespace FirefoxPrivateNetwork.FxA
     /// </summary>
     public class Login
     {
-        private static string codeVerifierPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-        private static string codeVerifierFile = "moz_gen_cvf.txt";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Login"/> class.
         /// </summary>
@@ -52,55 +51,78 @@ namespace FirefoxPrivateNetwork.FxA
         public static string ApiVersion { get; set; } = "/api/v2";
 
         /// <summary>
-        /// Gets the unique login urls for the user's signin attempt.
+        /// ref http://stackoverflow.com/a/3978040.
         /// </summary>
-        /// <returns>A <see cref="JSONStructures.FxALoginURLs"/> object.</returns>
-        public JSONStructures.FxALoginURLs GetLoginURL()
+        /// <returns>Random open port number.</returns>
+        public static int GetRandomUnusedPort()
         {
-            // Generate code_verifier
-            string codeVerifier = GetUniqueToken(44);
+            var listener = new TcpListener(IPAddress.Loopback, 0);
 
-            // Save the code_verifier for use in the verify request
-            File.WriteAllText(Path.Combine(codeVerifierPath, codeVerifierFile), codeVerifier);
+            listener.Start();
 
-            // Generate the code_challenge by getting the SHA256 hash and encoding it to send in a request
-            // Switched the code_challenge_method to plain since there were intermittent issues with the SHA256 method returning the user data each time.
-            string codeChallenge = codeVerifier;
+            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
 
-            // Make new instance of object that hold the URLs needed for a user to login
-            JSONStructures.FxALoginURLs loginURLs = new JSONStructures.FxALoginURLs();
+            listener.Stop();
 
-            try
-            {
-                // The codeChallenge is there to handle the PKCE request to the server
-                loginURLs.LoginUrl = $"{ProductConstants.BaseUrl}{ApiVersion}/vpn/login/windows?code_challenge={codeChallenge}&code_challenge_method=plain";
-
-                return loginURLs;
-            }
-            catch (Exception e)
-            {
-                ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
-            }
-
-            return null;
+            return port;
         }
 
         /// <summary>
         /// Navigates to URL in the user's default browser.
         /// </summary>
-        /// <param name="uri">URL to navigate to.</param>
-        public void OpenBrowser(string uri)
+        public async void OpenBrowser()
         {
-            // Validate URL first
-            if (!Uri.TryCreate(uri, UriKind.Absolute, out Uri parsedUri))
-            {
-                return;
-            }
+            // Generate code_verifier
+            string codeVerifier = GetUniqueToken(44);
 
-            if (parsedUri.Scheme == Uri.UriSchemeHttp || parsedUri.Scheme == Uri.UriSchemeHttps)
+            // Get a random, unused port number to use in the PKCE request
+            int portNumber = GetRandomUnusedPort();
+
+            // Generate the code_challenge by getting the SHA256 hash and encoding it to send in a request
+            // Switched the code_challenge_method to plain since there were intermittent issues with the SHA256 method returning the user data each time.
+            string codeChallenge = codeVerifier;
+
+            // The codeChallenge is there to handle the PKCE request to the server
+            string loginURL = $"{ProductConstants.BaseUrl}{ApiVersion}/vpn/login/windows?code_challenge={codeChallenge}&code_challenge_method=plain&port={portNumber}";
+
+            // Creates a redirect URI using an available port on the loopback address.
+            string redirectURI = string.Format("http://{0}:{1}/", IPAddress.Loopback, portNumber);
+
+            // Open browser with the URL
+            Process.Start(loginURL);
+
+            // Creates an HttpListener to listen for requests on that redirect URI.
+            HttpListener http = new HttpListener();
+
+            // Make sure HTTP listener is listening to the localhost:{portNumber} URI
+            http.Prefixes.Add(redirectURI);
+            http.Start();
+
+            // Waits for the OAuth authorization response.
+            var context = await http.GetContextAsync();
+
+            // Sends an HTTP response to the browser.
+            var response = context.Response;
+
+            string responseString = string.Format("<html><head><meta http-equiv='refresh' content='10;url=https://www.mozilla.org/'></head><body>Please return to the app.</body></html>");
+
+            byte[] buffer = Encoding.UTF8.GetBytes(responseString);
+
+            response.ContentLength64 = buffer.Length;
+
+            Stream responseOutput = response.OutputStream;
+
+            Task responseTask = responseOutput.WriteAsync(buffer, 0, buffer.Length).ContinueWith((task) =>
             {
-                Process.Start(uri);
-            }
+                responseOutput.Close();
+                http.Stop();
+            });
+
+            // extracts the code
+            string code = context.Request.QueryString.Get("code");
+
+            // Starts the code exchange at the Token Endpoint.
+            VerifyUserLogin(codeVerifier, code);
         }
 
         /// <summary>
@@ -111,30 +133,10 @@ namespace FirefoxPrivateNetwork.FxA
         {
             try
             {
-                // Get the login and verify URLs
-                JSONStructures.FxALoginURLs loginURL = GetLoginURL();
-
-                if (loginURL == null)
-                {
-                    return false;
-                }
-
-                // Create the GET request for PKCE auth
-                ApiRequest api = new ApiRequest(string.Empty, loginURL.LoginUrl, RestSharp.Method.GET);
-
-                // Execute the request
-                var response = api.SendRequest();
-
-                if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-login-url-retrieval-error"), ErrorHandling.UserFacingErrorType.None, ErrorHandling.LogLevel.Error);
-                    return false;
-                }
-
                 Manager.Account.LoginState = LoginState.LoggingIn;
 
                 // Launch a browser
-                OpenBrowser(loginURL.LoginUrl);
+                OpenBrowser();
             }
             catch (Exception e)
             {
@@ -149,32 +151,61 @@ namespace FirefoxPrivateNetwork.FxA
         /// <summary>
         /// Gets verification code from mozilla-vpn:// redirect after the user logs in through the browser.
         /// </summary>
-        /// <param name="code">Verification code from the custom URL protocol redirect after logging in.</param>
-        public void VerifyUserLogin(string code)
+        /// <param name="codeVerifier">The code sent in the PKCE auth request.</param>
+        /// <param name="code">Verification code from the localhost redirect after logging in.</param>
+        public void VerifyUserLogin(string codeVerifier, string code)
         {
             // Make the POST request to the verify endpoint
             ApiRequest api = new ApiRequest(string.Empty, $"{ProductConstants.BaseUrl}{ApiVersion}/vpn/login/verify", RestSharp.Method.POST);
 
-            // Get code_verifier that was generated in the login request
-            string code_verifier = File.ReadAllText(Path.Combine(codeVerifierPath, codeVerifierFile));
-
             // Create a new dictionary to hold the code and code_verifier.
             Dictionary<string, string> postBody = new Dictionary<string, string>();
             postBody.Add("code", code);
-            postBody.Add("code_verifier", code_verifier);
+            postBody.Add("code_verifier", codeVerifier);
             api.AddPostBody(postBody);
 
             // Execute the request
             var response = api.SendRequest();
 
-            if (response == null || response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response == null || response.StatusCode != HttpStatusCode.OK)
             {
                 ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-login-url-retrieval-error"), ErrorHandling.UserFacingErrorType.None, ErrorHandling.LogLevel.Error);
                 return;
             }
 
             // Check login credentials, add the session info to the settings, and add a new device
-            Manager.Account.ProcessLogin(response.Content);
+            bool processLoginResult = Manager.Account.ProcessLogin(response.Content);
+            Manager.Account.LoginState = LoginState.LoggedIn;
+            Manager.StartUIUpdaters();
+
+            var maxDevicesReached = !processLoginResult && Manager.Account.Config.FxALogin.User.Devices.Count() >= Manager.Account.Config.FxALogin.User.MaxDevices;
+
+            Cache.FxAServerList.RetrieveRemoteServerList();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var owner = Application.Current.MainWindow;
+                if (owner != null)
+                {
+                    if (!Manager.MustUpdate)
+                    {
+                        if (maxDevicesReached)
+                        {
+                            ((UI.MainWindow)owner).NavigateToView(new UI.DevicesView(deviceLimitReached: true, fxaJson: response.Content), UI.MainWindow.SlideDirection.Left);
+                        }
+                        else
+                        {
+                            ((UI.MainWindow)owner).NavigateToView(new UI.OnboardingView5(), UI.MainWindow.SlideDirection.Left);
+                        }
+                    }
+
+                    ((UI.MainWindow)owner).Show();
+                    ((UI.MainWindow)owner).WindowState = WindowState.Normal;
+                    ((UI.MainWindow)owner).Activate();
+                }
+            });
+
+            LoginResultEvent?.Invoke(this, this, Manager.Account.LoginState);
         }
 
         /// <summary>
