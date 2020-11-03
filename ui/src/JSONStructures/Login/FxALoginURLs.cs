@@ -23,5 +23,17 @@ namespace FirefoxPrivateNetwork.JSONStructures
         /// </summary>
         [JsonProperty("verification_url")]
         public string VerificationUrl { get; set; }
+
+        /// <summary>
+        /// Gets or sets the expiration date/time for the URLs.
+        /// </summary>
+        [JsonProperty("expires_on")]
+        public DateTime ExpiresOn { get; set; }
+
+        /// <summary>
+        /// Gets or sets the recommended poll interval for the verification URL.
+        /// </summary>
+        [JsonProperty("poll_interval")]
+        public int PollInterval { get; set; }
     }
 }
