@@ -128,7 +128,7 @@ devices-page-description = Devices with {application-name} installed using your 
 devices-limit-reached-title = Remove a device
 devices-limit-reached-content = You've reached your limit. To install the VPN on this device, you'll need to remove one.
 devices-remove-popup-title = Remove device?
-devices-remove-popup-content = Please confirm you would like to remove {$deviceName}. You will need to open the VPN client on the removed device to clear your network settings and access the internet again.
+devices-remove-popup-content = Please confirm you would like to remove {$deviceName}.
 devices-remove = Remove device
 
 ## Popup

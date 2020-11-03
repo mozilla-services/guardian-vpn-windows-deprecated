@@ -42,6 +42,15 @@ namespace FirefoxPrivateNetwork.WCF
         Response Disconnect();
 
         /// <summary>
+        /// Login stub.
+        /// </summary>
+        /// <param name="req">Login request object.</param>
+        /// <returns>WCF response.</returns>
+        [OperationContract]
+        [WebInvoke(Method = "POST", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+        Response Login(LoginRequest req);
+
+        /// <summary>
         /// Logout stub.
         /// </summary>
         /// <returns>WCF response.</returns>
