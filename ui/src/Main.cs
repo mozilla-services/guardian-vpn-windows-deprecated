@@ -22,84 +22,18 @@ namespace FirefoxPrivateNetwork
     internal class Entry : Application
     {
         /// <summary>
-        /// Global value that is used to indicate if there is already an instance of the application running.
-        /// </summary>
-        private static readonly Mutex RunOnceMutex = new Mutex(false, string.Concat(@"Local\", ProductConstants.GUID));
-
-        /// <summary>
         /// Main entry point of the application.
         /// </summary>
         /// <param name="args">System provided command line parameters.</param>
         public static void Main(string[] args)
         {
-            bool ranOnStartup = false;
+            // Run the broker child process, skip the UI
+            RunBroker();
 
-            List<Process> processes = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName).ToList();
+            // Run the tunnel service, skip the UI
+            RunTunnelService();
 
-            if (args.Count() == 1)
-            {
-                // Run the broker child process, skip the UI
-                if (args.First().ToLower() == "broker")
-                {
-                    RunBroker();
-                    return;
-                }
-
-                // Run the UI minimized
-                if (args.First().ToLower() == "-s")
-                {
-                    ranOnStartup = true;
-                }
-            }
-
-            if (args.Count() == 2)
-            {
-                // Run the tunnel service, skip the UI
-                if (args.First().ToLower() == "tunnel")
-                {
-                    RunTunnelService(args);
-                    return;
-                }
-            }
-
-            // Prevent multiple instances of the application
-            if (!RunOnceMutex.WaitOne(TimeSpan.Zero, true))
-            {
-                // Already running, attempt to send a "show" command to the already running process before exiting
-                var runningWindow = User32.FindWindow(ProductConstants.TrayWindowClassName, string.Empty);
-
-                if (runningWindow != IntPtr.Zero)
-                {
-                    User32.SendMessage(runningWindow, User32.WmShow, IntPtr.Zero, string.Empty);
-                }
-
-                Environment.Exit(1);
-            }
-
-            // We dont need `If Debug_QA` here, because we already had an attribute `[Conditional("DEBUG_QA")]` for this function
-            Tester.OpenConnection();
-
-            var staThread = new Thread(() =>
-            {
-                // Main Application
-                var app = new App();
-                app.InitializeComponent();
-
-                Manager.Initialize();
-
-                // Has the app just been launched at Windows startup?
-                Manager.MainWindowViewModel.RanOnStartup = ranOnStartup;
-
-                // Run the application
-                app.Run();
-            })
-            {
-                Name = "UI Thread",
-            };
-
-            staThread.SetApartmentState(ApartmentState.STA);
-            staThread.Start();
-            staThread.Join();
+            return;
         }
 
         /// <summary>
@@ -125,9 +59,9 @@ namespace FirefoxPrivateNetwork
         /// Argument 0: "tunnel" keyword
         /// Argument 1: Path to the configuration file.
         /// </param>
-        private static void RunTunnelService(string[] args)
+        private static void RunTunnelService()
         {
-            var configFilePath = args[1];
+            var configFilePath = ProductConstants.FirefoxPrivateNetworkConfFile;
 
             try
             {

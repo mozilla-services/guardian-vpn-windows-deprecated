@@ -136,14 +136,6 @@ namespace FirefoxPrivateNetwork.WireGuard
             }
             catch (Exception e)
             {
-                if (pipe is NamedPipeClientStream && (e is InvalidOperationException || e is IOException))
-                {
-                    if (promptRestartBrokerServiceOnFail)
-                    {
-                        Broker.PromptRestartBrokerService();
-                    }
-                }
-
                 ErrorHandling.ErrorHandler.Handle(e, ErrorHandling.LogLevel.Error);
                 return false;
             }
