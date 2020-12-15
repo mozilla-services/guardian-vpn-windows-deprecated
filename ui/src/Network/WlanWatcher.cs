@@ -118,15 +118,6 @@ namespace FirefoxPrivateNetwork.Network
                             accessPoint.LastNotified = DateTime.UtcNow;
                             accessPoints[bSsid] = accessPoint;
                         }
-
-                        if (showNotification)
-                        {
-                            Manager.TrayIcon.ShowNotification(
-                                Manager.TranslationService.GetString("windows-notification-unsecure-network-title"),
-                                Manager.TranslationService.GetString("windows-notification-unsecure-network-content", UI.Resources.Localization.TranslationService.Args("wifiName", connectionData.WlanAssociationAttributes.Dot11Ssid.ToString())),
-                                NotificationArea.ToastIconType.Disconnected
-                            );
-                        }
                     }
 
                     if (queryData != IntPtr.Zero)

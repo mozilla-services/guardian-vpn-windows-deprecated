@@ -81,7 +81,6 @@ namespace FirefoxPrivateNetwork.FxA
                 Manager.Account.Config.FxALogin.User.Devices.RemoveAll(d => d.PublicKey == publicKey);
                 Manager.Account.Config.WriteFxAUserToFile(ProductConstants.FxAUserFile);
 
-                Manager.AccountInfoUpdater.RefreshDeviceList();
                 ErrorHandling.ErrorHandler.Handle(new ErrorHandling.UserFacingMessage("toast-remove-device-success"), silent ? ErrorHandling.UserFacingErrorType.None : ErrorHandling.UserFacingErrorType.Toast, ErrorHandling.UserFacingSeverity.ShowNotice, ErrorHandling.LogLevel.Info);
 
                 return true;

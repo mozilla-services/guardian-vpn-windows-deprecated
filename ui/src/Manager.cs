@@ -44,36 +44,6 @@ namespace FirefoxPrivateNetwork
         public static ViewModels.MainWindowViewModel MainWindowViewModel { get; set; }
 
         /// <summary>
-        /// Gets or sets the connection status updater.
-        /// </summary>
-        public static UIUpdaters.ConnectionStatusUpdater ConnectionStatusUpdater { get; set; }
-
-        /// <summary>
-        /// Gets or sets the server list updater.
-        /// </summary>
-        public static UIUpdaters.ServerListUpdater ServerListUpdater { get; set; }
-
-        /// <summary>
-        /// Gets or sets the FxA account info updater.
-        /// </summary>
-        public static UIUpdaters.AccountInfoUpdater AccountInfoUpdater { get; set; }
-
-        /// <summary>
-        /// Gets or sets the IP info updater.
-        /// </summary>
-        public static UIUpdaters.IpInfoUpdater IPInfoUpdater { get; set; }
-
-        /// <summary>
-        /// Gets or sets the application version updater.
-        /// </summary>
-        public static UIUpdaters.VersionUpdater VersionUpdater { get; set; }
-
-        /// <summary>
-        /// Gets or sets the in-app toast manager.
-        /// </summary>
-        public static UIUpdaters.ToastManager ToastManager { get; set; }
-
-        /// <summary>
         /// Gets or sets the wireless local area network watcher.
         /// </summary>
         public static Network.WlanWatcher WlanWatcher { get; set; }
@@ -99,11 +69,6 @@ namespace FirefoxPrivateNetwork
         public static NotificationArea.TrayMessageWindow TrayMessageWindow { get; set; }
 
         /// <summary>
-        /// Gets or sets the application translation service for localization.
-        /// </summary>
-        public static UI.Resources.Localization.TranslationService TranslationService { get; set; }
-
-        /// <summary>
         /// Gets or sets the application settings.
         /// </summary>
         public static Settings Settings { get; set; }
@@ -114,7 +79,6 @@ namespace FirefoxPrivateNetwork
         public static void Initialize()
         {
             InitializeSettings();
-            InitializeTranslationService();
             InitializeTray();
             InitializeServerListCache();
             InitializeTunnel();
@@ -122,8 +86,6 @@ namespace FirefoxPrivateNetwork
             InitializeViewModels();
             InitializeWlanWatcher();
             InitializeCaptivePortalDetector();
-            InitializeIpInfo();
-            InitializeUIUpdaters();
         }
 
         /// <summary>
@@ -189,66 +151,11 @@ namespace FirefoxPrivateNetwork
         }
 
         /// <summary>
-        /// Initializes the IP information.
-        /// </summary>
-        public static void InitializeIpInfo()
-        {
-            IPInfoUpdater = new UIUpdaters.IpInfoUpdater();
-        }
-
-        /// <summary>
-        /// Initialize the UI updaters.
-        /// </summary>
-        public static void InitializeUIUpdaters()
-        {
-            ConnectionStatusUpdater = new UIUpdaters.ConnectionStatusUpdater(MainWindowViewModel);
-            ServerListUpdater = new UIUpdaters.ServerListUpdater();
-            AccountInfoUpdater = new UIUpdaters.AccountInfoUpdater(MainWindowViewModel);
-            IPInfoUpdater = new UIUpdaters.IpInfoUpdater();
-            VersionUpdater = new UIUpdaters.VersionUpdater();
-            ToastManager = new UIUpdaters.ToastManager();
-            PingManager = new Network.Pinger();
-
-            StartUIUpdaters();
-        }
-
-        /// <summary>
-        /// Starts the UI updater threads/tasks.
-        /// </summary>
-        public static void StartUIUpdaters()
-        {
-            ConnectionStatusUpdater.StartThread();
-            ServerListUpdater.StartThread();
-            AccountInfoUpdater.StartTask();
-            VersionUpdater.StartTask();
-            ToastManager.StartThread();
-            PingManager.StartThread();
-        }
-
-        /// <summary>
-        /// Terminates UI updater threads/tasks on FxA account logout.
-        /// </summary>
-        public static void TerminateUIUpdaters()
-        {
-            ConnectionStatusUpdater.StopThread();
-            ServerListUpdater.StopThread();
-            AccountInfoUpdater.StopTask();
-        }
-
-        /// <summary>
         /// Initializes the user's FxA account.
         /// </summary>
         public static void InitializeAccount()
         {
             Account = new FxA.Account();
-        }
-
-        /// <summary>
-        /// Initializes the application translation service.
-        /// </summary>
-        public static void InitializeTranslationService()
-        {
-            TranslationService = new UI.Resources.Localization.TranslationService();
         }
 
         /// <summary>

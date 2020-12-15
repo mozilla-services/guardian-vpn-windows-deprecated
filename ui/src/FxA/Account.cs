@@ -149,7 +149,6 @@ namespace FirefoxPrivateNetwork.FxA
 
                 // Set logged out state and terminate UI Updater threads
                 LoginState = LoginState.LoggedOut;
-                Manager.TerminateUIUpdaters();
             }
         }
 

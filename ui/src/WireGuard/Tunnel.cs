@@ -141,9 +141,6 @@ namespace FirefoxPrivateNetwork.WireGuard
                     {
                         throw new Exception("Set request UAPI error " + errno);
                     }
-
-                    // Update IP info.
-                    Manager.IPInfoUpdater.ForceUpdate();
                 }
             }
             catch (Exception e)
@@ -189,29 +186,8 @@ namespace FirefoxPrivateNetwork.WireGuard
             // Do tunnel service checks
             if (Service.IsTunnelServiceRunning())
             {
-                // Service is now running, clear transitioning states and query statistics
-                if (IsConnecting)
-                {
-                    // Update IP info.
-                    Manager.IPInfoUpdater.ForceUpdate();
-                }
-
-                ClearConnectionTransitionState();
-
-                // Sends the connection statistics request to the broker
-                if (!QueryConnectionStatisticsFromBroker())
-                {
-                    Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.TrySetResult(true);
-
-                    var newConnectionStatus = new Models.ConnectionStatus() { Status = Models.ConnectionState.Protected, ConnectionStability = Models.ConnectionStability.NoSignal };
-                    Manager.ConnectionStatusUpdater.UpdateConnectionStatus(newConnectionStatus);
-                }
-
                 return;
             }
-
-            // Service is not running, mark the request connection status task to be complete
-            Manager.ConnectionStatusUpdater.RequestConnectionStatusTcs.SetResult(true);
 
             if (!Service.IsTunnelServiceRunning() && IsDisconnecting)
             {
@@ -222,25 +198,16 @@ namespace FirefoxPrivateNetwork.WireGuard
             // Broker process is running, but the tunnel service is not running
             if (IsConnecting == false)
             {
-                // We are not in a connecting state, meaning if the tunnel service is down, the user is unprotected
-                Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Unprotected });
                 return;
             }
             else if (IsConnecting == true)
             {
-                // We are currently only connecting
-                Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Connecting });
                 return;
             }
             else if (IsDisconnecting == true)
             {
-                // We are currently only disconnecting
-                Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Disconnecting });
                 return;
             }
-
-            // No previous checks apply, the user is unprotected
-            Manager.ConnectionStatusUpdater.UpdateConnectionStatus(new Models.ConnectionStatus() { Status = Models.ConnectionState.Unprotected });
         }
 
         /// <summary>

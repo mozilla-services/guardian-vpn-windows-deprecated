@@ -101,15 +101,9 @@ namespace FirefoxPrivateNetwork.NotificationArea
                     return IntPtr.Zero;
 
                 case Windows.User32.WmShow:
-                    Tray.ShowMainWindow();
                     return IntPtr.Zero;
 
                 case Windows.User32.WmTrayMouseMessage:
-                    if (Manager.TrayIcon != null)
-                    {
-                        Manager.TrayIcon.HandleMessage(lParam.ToInt64());
-                    }
-
                     return IntPtr.Zero;
                 default:
                     return User32.DefWindowProcW(hWnd, msg, wParam, lParam);

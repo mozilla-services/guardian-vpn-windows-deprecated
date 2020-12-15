@@ -128,7 +128,6 @@ namespace FirefoxPrivateNetwork.ErrorHandling
         public static void Handle(UserFacingMessage msg, UserFacingErrorType errorType)
         {
             WriteToLog(msg.Text, LogLevel.Debug);
-            HandleUserFacingMessage(msg, errorType);
         }
 
         /// <summary>
@@ -167,7 +166,6 @@ namespace FirefoxPrivateNetwork.ErrorHandling
         public static void Handle(UserFacingMessage msg, UserFacingErrorType errorType, LogLevel logLevel)
         {
             WriteToLog(msg.Text, logLevel);
-            HandleUserFacingMessage(msg, errorType);
         }
 
         /// <summary>
@@ -180,7 +178,6 @@ namespace FirefoxPrivateNetwork.ErrorHandling
         public static void Handle(UserFacingMessage msg, UserFacingErrorType errorType, UserFacingSeverity severity, LogLevel logLevel)
         {
             WriteToLog(msg.Text, logLevel);
-            HandleUserFacingMessage(msg, errorType, severity);
         }
 
         /// <summary>
@@ -193,35 +190,6 @@ namespace FirefoxPrivateNetwork.ErrorHandling
             if (logLevel >= ProductConstants.LogLevel)
             {
                 Ringlogger.Write(msg);
-            }
-        }
-
-        /// <summary>
-        /// Handle a user facing message by potentially writing to the log and/or displaying it to the user.
-        /// </summary>
-        /// <param name="msg">User facing message to potentially display and/or log.</param>
-        /// <param name="errorType">User facing error type.</param>
-        /// <param name="severity">Type of severity presented to the user when displaying a message.</param>
-        private static void HandleUserFacingMessage(UserFacingMessage msg, UserFacingErrorType errorType, UserFacingSeverity severity = UserFacingSeverity.ShowError)
-        {
-            switch (errorType)
-            {
-                case UserFacingErrorType.ModalMessage:
-                    HandleUserFacingModalMessage(msg, severity);
-                    break;
-
-                case UserFacingErrorType.WindowsToast:
-                    HandleUserFacingWindowsToastMessage(msg, severity);
-                    break;
-
-                case UserFacingErrorType.Toast:
-                    HandleUserFacingToastMessage(msg, severity);
-                    break;
-
-                case UserFacingErrorType.None:
-                default:
-
-                    break;
             }
         }
 
@@ -244,71 +212,6 @@ namespace FirefoxPrivateNetwork.ErrorHandling
 
                 case UserFacingSeverity.ShowWarning:
                     MessageBox.Show(msg.Text, ProductConstants.ProductName, MessageBoxButton.OK, MessageBoxImage.Warning);
-                    break;
-
-                case UserFacingSeverity.Hide:
-                default:
-
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Show a windows toast message on the desktop (balloon on Windows 7).
-        /// </summary>
-        /// <param name="msg">User facing message to display.</param>
-        /// <param name="severity">Type of severity presented to the user when displaying a message.</param>
-        private static void HandleUserFacingWindowsToastMessage(UserFacingMessage msg, UserFacingSeverity severity)
-        {
-            switch (severity)
-            {
-                case UserFacingSeverity.ShowError:
-                    Manager.TrayIcon.ShowNotification(Manager.TranslationService.GetString("windows-notification-error-title"), msg.Text, NotificationArea.ToastIconType.Disconnected);
-                    break;
-
-                case UserFacingSeverity.ShowNotice:
-                    Manager.TrayIcon.ShowNotification(Manager.TranslationService.GetString("windows-notification-notice-title"), msg.Text, NotificationArea.ToastIconType.Disconnected);
-                    break;
-
-                case UserFacingSeverity.ShowWarning:
-                    Manager.TrayIcon.ShowNotification(Manager.TranslationService.GetString("windows-notification-warning-title"), msg.Text, NotificationArea.ToastIconType.Disconnected);
-                    break;
-
-                case UserFacingSeverity.Hide:
-                default:
-
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Show a toast message inside the app.
-        /// </summary>
-        /// <param name="msg">User facing message to display.</param>
-        /// <param name="severity">Type of severity presented to the user when displaying a message.</param>
-        private static void HandleUserFacingToastMessage(UserFacingMessage msg, UserFacingSeverity severity)
-        {
-            switch (severity)
-            {
-                case UserFacingSeverity.ShowError:
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Manager.ToastManager.Show(new UI.Components.Toast.Toast(UI.Components.Toast.Style.Error, msg, duration: TimeSpan.FromSeconds(5), priority: UI.Components.Toast.Priority.Important));
-                    });
-                    break;
-
-                case UserFacingSeverity.ShowNotice:
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Manager.ToastManager.Show(new UI.Components.Toast.Toast(UI.Components.Toast.Style.Info, msg, duration: TimeSpan.FromSeconds(5), priority: UI.Components.Toast.Priority.Low));
-                    });
-                    break;
-
-                case UserFacingSeverity.ShowWarning:
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Manager.ToastManager.Show(new UI.Components.Toast.Toast(UI.Components.Toast.Style.Error, msg, duration: TimeSpan.FromSeconds(5), priority: UI.Components.Toast.Priority.Normal));
-                    });
                     break;
 
                 case UserFacingSeverity.Hide:

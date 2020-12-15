@@ -42,7 +42,6 @@ namespace FirefoxPrivateNetwork.WireGuard
                 Manager.MainWindowViewModel.IsServerSwitching = true;
                 Manager.MainWindowViewModel.SwitchingServerFrom = previousServerCity;
                 Manager.MainWindowViewModel.SwitchingServerTo = switchServerCity;
-                Manager.ConnectionStatusUpdater.StartConnectionTransitionStopwatch();
 
                 new Thread(() =>
                 {

@@ -99,14 +99,6 @@ namespace FirefoxPrivateNetwork.Network
                 if (value)
                 {
                     CaptivePortalLoggedIn = false;
-
-                    // Send a windows notification if captive portal is detected.
-                    Manager.TrayIcon.ShowNotification(
-                        Manager.TranslationService.GetString("windows-notification-captive-portal-blocked-title"),
-                        Manager.TranslationService.GetString("windows-notification-captive-portal-blocked-content"),
-                        NotificationArea.ToastIconType.Disconnected,
-                        clickEvent: ToastClickEvent.Disconnect
-                    );
                 }
             }
         }
@@ -207,17 +199,6 @@ namespace FirefoxPrivateNetwork.Network
                     {
                         // Task delay for the post captive portal login grace period
                         monitorInternetConnectivityTokenSource.Token.WaitHandle.WaitOne(postLoginNotificationGracePeriod);
-
-                        // If the vpn is still turned off, send notification prompting the user to turn it on
-                        if (Manager.MainWindowViewModel.Status == Models.ConnectionState.Unprotected)
-                        {
-                            Manager.TrayIcon.ShowNotification(
-                                Manager.TranslationService.GetString("windows-notification-captive-portal-detected-title"),
-                                Manager.TranslationService.GetString("windows-notification-captive-portal-detected-content", UI.Resources.Localization.TranslationService.Args("wifiName", connectedNetworks.First().Name)),
-                                NotificationArea.ToastIconType.Disconnected,
-                                clickEvent: ToastClickEvent.Connect
-                            );
-                        }
 
                         CaptivePortalLoggedIn = true;
                         MonitoringInternetConnection = false;

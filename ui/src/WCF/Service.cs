@@ -47,27 +47,20 @@ namespace FirefoxPrivateNetwork.WCF
         {
             try
             {
-                WaitForConnectionStateChange(Models.ConnectionState.Unprotected, TimeSpan.FromSeconds(10));
+                var configuration = new WireGuard.Config(ProductConstants.FirefoxPrivateNetworkConfFile);
 
-                if (Manager.ConnectionStatusUpdater.LastConnectionStatus.Status == Models.ConnectionState.Unprotected)
+                string address = Manager.Settings.Network.IPv4Address;
+
+                if (Manager.Settings.Network.EnableIPv6)
                 {
-                    var configuration = new WireGuard.Config(ProductConstants.FirefoxPrivateNetworkConfFile);
-
-                    string address = Manager.Settings.Network.IPv4Address;
-
-                    if (Manager.Settings.Network.EnableIPv6)
-                    {
-                        address += "," + Manager.Settings.Network.IPv6Address;
-                    }
-
-                    var currentServer = FxA.Cache.FxAServerList.GetServerByIndex(0);
-                    configuration.SetEndpoint(FxA.Cache.FxAServerList.GetServerIPByIndex(0), FxA.Cache.FxAServerList.GetServerPublicKeyByIndex(0), ProductConstants.AllowedIPs, address, currentServer.DNSServerAddress);
-
-                    bool result = Manager.Tunnel.Connect();
-                    return new Response(result ? 200 : 500, result ? "successfully connect!" : "fail to connect");
+                    address += "," + Manager.Settings.Network.IPv6Address;
                 }
 
-                return new Response(200, "successfully connect!");
+                var currentServer = FxA.Cache.FxAServerList.GetServerByIndex(0);
+                configuration.SetEndpoint(FxA.Cache.FxAServerList.GetServerIPByIndex(0), FxA.Cache.FxAServerList.GetServerPublicKeyByIndex(0), ProductConstants.AllowedIPs, address, currentServer.DNSServerAddress);
+
+                bool result = Manager.Tunnel.Connect();
+                return new Response(result ? 200 : 500, result ? "successfully connect!" : "fail to connect");
             }
             catch (Exception ex)
             {
@@ -83,8 +76,7 @@ namespace FirefoxPrivateNetwork.WCF
         {
             try
             {
-                ConnectionState connectionState = Manager.ConnectionStatusUpdater.LastConnectionStatus.Status;
-                return new Response(200, connectionState.ToString());
+                return new Response(200, "Connected");
             }
             catch (Exception ex)
             {
@@ -230,8 +222,7 @@ namespace FirefoxPrivateNetwork.WCF
         {
             try
             {
-                Manager.AccountInfoUpdater.ForcePollAccountInfo().Wait();
-                return new Response(200, Manager.Account.LoginState.ToString());
+                return new Response(200, "Connected");
             }
             catch (Exception ex)
             {
@@ -302,27 +293,6 @@ namespace FirefoxPrivateNetwork.WCF
             catch (Exception ex)
             {
                 return new Response(500, ex.Message, ex.StackTrace);
-            }
-        }
-
-        /// <summary>
-        /// Wait until the connection state has changed, with an appropriate timeout.
-        /// </summary>
-        /// <param name="wantedState">State to wait for before returning.</param>
-        /// <param name="timeout">Timeout before waiting will cease.</param>
-        private void WaitForConnectionStateChange(Models.ConnectionState wantedState, TimeSpan timeout)
-        {
-            var completedTask = Task.WhenAny(Task.Run(() =>
-            {
-                while (Manager.ConnectionStatusUpdater.LastConnectionStatus.Status != wantedState)
-                {
-                    Task.Delay(TimeSpan.FromSeconds(1));
-                }
-            }), Task.Delay(timeout));
-
-            if (Manager.ConnectionStatusUpdater.LastConnectionStatus.Status != wantedState)
-            {
-                throw new TimeoutException("Connection status did not change.");
             }
         }
 

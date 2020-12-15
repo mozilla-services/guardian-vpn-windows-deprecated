@@ -53,9 +53,6 @@ namespace FirefoxPrivateNetwork.ViewModels
         private int userNumDevices;
         private int maxNumDevices;
 
-        // Version Update Properties
-        private UI.Components.Toast.Toast updateToast;
-
         // Subscription Status Properties
         private string subscriptionStatus;
 
@@ -96,16 +93,6 @@ namespace FirefoxPrivateNetwork.ViewModels
             {
                 currentDevice = Manager.Account.Config.FxALogin.User.Devices.Find(d => d.PublicKey == Manager.Account.Config.FxALogin.PublicKey);
                 UserNumDevices = Manager.Account.Config.FxALogin.User.Devices.Count();
-            }
-
-            // Determine initial page to display in the ViewFrame
-            if (Manager.Account.LoginState == FxA.LoginState.LoggedIn && currentDevice != null)
-            {
-                InitialViewFrameSourceType = typeof(UI.MainView);
-            }
-            else
-            {
-                InitialViewFrameSourceType = typeof(UI.LandingView);
             }
         }
 
@@ -154,7 +141,6 @@ namespace FirefoxPrivateNetwork.ViewModels
                         }
                         else
                         {
-                            Manager.ConnectionStatusUpdater.StartConnectionTransitionStopwatch();
                             tunnelStatus = value;
                         }
 
@@ -167,7 +153,6 @@ namespace FirefoxPrivateNetwork.ViewModels
                         }
                         else
                         {
-                            Manager.ConnectionStatusUpdater.StartConnectionTransitionStopwatch();
                             tunnelStatus = value;
                         }
 
@@ -213,23 +198,6 @@ namespace FirefoxPrivateNetwork.ViewModels
             set
             {
                 ranOnStartup = value;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the updater toast message.
-        /// </summary>
-        public UI.Components.Toast.Toast UpdateToast
-        {
-            get
-            {
-                return updateToast;
-            }
-
-            set
-            {
-                updateToast = value;
-                OnPropertyChanged("UpdateToast");
             }
         }
 
@@ -779,18 +747,6 @@ namespace FirefoxPrivateNetwork.ViewModels
             {
                 additionalLanguagesList = value;
                 OnPropertyChanged("AdditionalLanguagesList");
-            }
-        }
-
-        /// <summary>
-        /// Gets the translation matching the specified name for localization.
-        /// </summary>
-        /// <param name="name">Index name/key of the translation to access.</param>
-        public string this[string name]
-        {
-            get
-            {
-                return Manager.TranslationService.GetString(name);
             }
         }
 

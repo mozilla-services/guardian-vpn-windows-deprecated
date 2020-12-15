@@ -54,23 +54,6 @@ namespace FirefoxPrivateNetwork.ErrorHandling
         public string Text { get; set; } = string.Empty;
 
         /// <summary>
-        /// Construct a TextBlock and add in messages as contents.
-        /// </summary>
-        public void ConstructTextblock()
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                TextBlock = new TextBlock();
-                TextBlock.Inlines.Add(ConstructInline(messageId, decorations));
-
-                foreach (UserFacingMessage additionalMessage in additionalMessages)
-                {
-                    TextBlock.Inlines.Add(ConstructInline(additionalMessage.messageId, additionalMessage.decorations));
-                }
-            });
-        }
-
-        /// <summary>
         /// Initialize a user facing toasst message by constructing a text block for later processing.
         /// </summary>
         /// <param name="messageId">Message ID based on keys from the language files.</param>
@@ -81,35 +64,6 @@ namespace FirefoxPrivateNetwork.ErrorHandling
             this.messageId = messageId;
             this.decorations = decorations;
             this.additionalMessages = additionalMessages;
-
-            ConstructTextblock();
-        }
-
-        /// <summary>
-        /// Construct inline text based on supplied message ID/key used in language files.
-        /// </summary>
-        /// <param name="messageId">Message ID based on keys from the language files.</param>
-        /// <param name="decorations">Decorations to add to the message (such as links and icons).</param>
-        /// <returns>Inline XAML span element to be used for toast message.</returns>
-        private Span ConstructInline(string messageId, List<Type> decorations)
-        {
-            var localizedString = Manager.TranslationService.GetString(messageId);
-            Text += localizedString;
-
-            var inline = new Span(new Run(localizedString));
-
-            if (decorations != null)
-            {
-                foreach (var decoration in decorations)
-                {
-                    if (decoration.IsSubclassOf(typeof(Span)))
-                    {
-                        inline = (Span)Activator.CreateInstance(decoration, inline);
-                    }
-                }
-            }
-
-            return inline;
         }
     }
 }
