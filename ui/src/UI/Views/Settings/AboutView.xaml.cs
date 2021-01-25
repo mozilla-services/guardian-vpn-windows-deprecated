@@ -53,6 +53,11 @@ namespace FirefoxPrivateNetwork.UI
             Process.Start(ProductConstants.TermsUrl);
         }
 
+        private void License_Click(object sender, RoutedEventArgs e)
+        {
+            Process.Start(ProductConstants.LicenseUrl);
+        }
+
         private void ViewLog_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = Application.Current.MainWindow;
