@@ -10,6 +10,7 @@ navigation-open-contact-link = Open Contact us link
 navigation-open-support-link = Open Help & Support link
 navigation-open-terms-of-service = Open Terms of Service link
 navigation-open-privacy-policy = Open Privacy Policy link
+navigation-open-license-link = Open License link
 navigation-open-debug = Open Debug link
 navigation-open-log = Open View log link
 navigation-open-data-usage = Open data usage
@@ -29,6 +30,7 @@ network-settings-page-title = Network settings
 ## Urls
 terms-service-url-title = Terms of Service
 privacy-policy-url-title = Privacy Policy
+license-url-title = License
 contact-url-title = Contact us
 help-support-url-title = Help & Support
 subscribe-url-title = Subscribe now

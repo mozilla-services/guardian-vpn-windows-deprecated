@@ -32,5 +32,11 @@ namespace FirefoxPrivateNetwork.UI
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
             mainWindow.NavigateToView(new OnboardingView1(), MainWindow.SlideDirection.Up);
         }
+
+        private void GetHelp_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+            mainWindow.NavigateToView(new GetHelpView(this), MainWindow.SlideDirection.Left);
+        }
     }
 }

@@ -263,6 +263,11 @@ namespace FirefoxPrivateNetwork
         public static string PrivacyUrl { get; set; }
 
         /// <summary>
+        /// Gets or sets the constructed License URL.
+        /// </summary>
+        public static string LicenseUrl { get; set; }
+
+        /// <summary>
         /// Gets or sets the logging level for the whole application.
         /// </summary>
         public static ErrorHandling.LogLevel LogLevel { get; set; }
@@ -341,6 +346,9 @@ namespace FirefoxPrivateNetwork
 
             // Privacy policy URL
             PrivacyUrl = string.Concat(BaseUrl, "/r/vpn/privacy", FxAUtmTags);
+
+            // Licese URL
+            LicenseUrl = "https://github.com/mozilla-mobile/mozilla-vpn-client/blob/main/LICENSE.md";
         }
     }
 }
