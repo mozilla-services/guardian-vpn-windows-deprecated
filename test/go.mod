@@ -13,7 +13,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/crypto v0.0.0-20191029031824-8986dd9e96cf // indirect
 	golang.org/x/net v0.0.0-20191101175033-0deb6923b6d9
-	golang.org/x/sys v0.0.0-20191104094858-e8c54fb511f6
+	golang.org/x/sys v0.1.0
 	golang.org/x/text v0.3.2
 	golang.zx2c4.com/wireguard v0.0.20191013-0.20191022095125-f7d0edd2ecf5
 	golang.zx2c4.com/wireguard/windows v0.0.35
